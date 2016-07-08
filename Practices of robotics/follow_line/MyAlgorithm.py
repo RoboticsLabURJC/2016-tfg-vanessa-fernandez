@@ -81,42 +81,8 @@ class MyAlgorithm():
         print " desviation    ", desviation
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
-        #if (desviation == 0):
-             #self.sensor.setV(10)
-             #print "nula"
-        #elif ((abs(desviation)) < 5):
-             #self.sensor.setV(4)
-             #self.sensor.setW(-0.000005 * desviation)
-             #print "debajo 5"
-        #elif ((abs(desviation)) < 15):
-             #self.sensor.setV(4)
-             #self.sensor.setW(-0.000015 * desviation)
-             #print "debajo 15"
-        #elif ((abs(desviation)) < 30):
-             #self.sensor.setV(3.5)
-             #self.sensor.setW(-0.000045 * desviation)
-             #print "entre 15 y 30"
-        #elif ((abs(desviation)) < 80):
-             #self.sensor.setV(3.5)
-             #self.sensor.setW(-0.000055 * desviation)
-             #print "entre 30 y 80"
-        #elif ((abs(desviation)) < 120):
-             #self.sensor.setV(2)
-             #self.sensor.setW(-0.00040 * desviation)
-             #print "entre 80 y 120"
-        #elif ((abs(desviation)) < 150):
-             #self.sensor.setV(1.5)
-             #self.sensor.setW(-0.0005 * desviation)
-             #print "entre 120 y 150"
-        #else:
-             #self.sensor.setV(1.5)
-             #self.sensor.setW(-0.0055 * desviation)
-             #print "mayor a 150"
-
-
 
         if (desviation == 0):
-             #self.sensor.setV(3.5)
              self.sensor.setV(8)
         elif (position_pixel_right[0] == 1000):
              self.sensor.setW(-0.0000035)
