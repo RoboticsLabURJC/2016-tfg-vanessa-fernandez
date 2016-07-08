@@ -1,6 +1,4 @@
 # Follow Line
-* [Go to English instructions (soon?)](#english)
-* [Ir a las instrucciones en Español](#spanish)
 
 <a name="spanish"/>
 # Práctica follow_line
@@ -65,14 +63,3 @@ insertar la lógica de control.
   depuración o con información relevante.
   Debe ser una imagen en formato RGB (Tip: np.dstack())
 
-
-## Video demostrativo
-http://jderobot.org/store/varribas/uploads/curso/videos/follow_line_1.mp4
-
-
-## Atribuciones
-* *Copyright (C) 2016 [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) Victor Arribas (@varhub)*
-
-* *Codigo base realizado por Alberto Martín (@almartinflorido)*
-* *Código de la práctica realizado por Francisco Rivas (@chanfr)*
-* *Modelos y mundos de Gazebo realizados por Francisco Pérez (@fqez)*
