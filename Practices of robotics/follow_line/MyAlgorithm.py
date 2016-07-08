@@ -73,9 +73,6 @@ class MyAlgorithm():
             position_middle = (position_pixel_left[0] + position_pixel_right[0])/ 2
 
 
-        # Pintamos el cuadrado central
-        cv2.rectangle(imageLeft_HSV_filtered_Mask, (position_middle, 365), (position_middle+10, 375), (0,255,0), 2)
-
         # Calculo de la desviacion
         desviation = position_middle - (columnas/2)
         print " desviation    ", desviation
@@ -83,14 +80,20 @@ class MyAlgorithm():
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
 
         if (desviation == 0):
-             self.sensor.setV(8)
+             self.sensor.setV(10)
         elif (position_pixel_right[0] == 1000):
              self.sensor.setW(-0.0000035)
         elif ((abs(desviation)) < 85):
-             self.sensor.setV(3.5)
+             if ((abs(desviation)) < 15):
+                 self.sensor.setV(6)
+             else:
+                 self.sensor.setV(3.5)
              self.sensor.setW(-0.000045 * desviation)
         elif ((abs(desviation)) < 150):
-             self.sensor.setV(1.5)
+             if ((abs(desviation)) < 120):
+                 self.sensor.setV(1.8)
+             else:
+                 self.sensor.setV(1.5)
              self.sensor.setW(-0.00045 * desviation)
         else:
              self.sensor.setV(1.5)
