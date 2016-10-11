@@ -127,7 +127,6 @@ class MyAlgorithm():
 
         # We need some variables in the loop while
         fin = "false"
-        init = "true"
         square = 0
         margin = 30
 
