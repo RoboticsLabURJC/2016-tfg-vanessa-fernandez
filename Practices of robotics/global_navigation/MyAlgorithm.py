@@ -244,7 +244,7 @@ class MyAlgorithm():
                         #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
             self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
             pixelCentral = posMinNeighbour
-            if ((posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
+            if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
                 found = "true"
                 self.grid.setPathFinded()
 
