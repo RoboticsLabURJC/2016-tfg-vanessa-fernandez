@@ -167,52 +167,25 @@ class MyAlgorithm():
 
 
 
-        # MIRAR LA PENALIZACION POR OBSTACULOS QUE FALLA
-
         # Obstacles penalties
-        #fin_obstacles = "false"
-        #init_obstacles = "true"
-        #squareO = 0
-        #while (fin_obstacles == "false"):
-        #    if (init_obstacles == "true"):
-        #        #if (self.grid.getVal(dest[0], dest[1]) == 1000.0):
-        #        if (mapIm[dest[1]][dest[0]] == 0):
-        #            for i in range(dest[0]-1, dest[0]+2):
-        #                for j  in range(dest[1]-1, dest[1]+2):
-        #                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #                        #if (self.grid.getVal(i, j) != 1000.0):
-        #                        if (mapIm[j][i] == 255):
-        #                            self.penaltiesObstacles(i, j, dest[0], dest[1])                                                    
-        #        init_obstacles = "false"
-        #    else:
-        #        for i in range(dest[0]-squareO, dest[0]+squareO+1):
-        #            for j in range(dest[1]-squareO, dest[1]+squareO+1):
-        #                if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #                    #if (self.grid.getVal(i, j) == 1000.0):
-        #                    if (mapIm[j][i] == 0):
-        #                        if (((i< dest[0]-squareO+1) or (i > dest[0]+squareO-1)) or ((i>= dest[0]-squareO+1) and (i<= dest[0]+squareO-1) and ((j< dest[1]-squareO+1) or (j> dest[1]+squareO-1)))):
-        #                            for k in range(i-1, i+2):
-        #                                for l in range(j-1, j+2):
-        #                                    if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
-        #                                        #if (self.grid.getVal(k, l) != 1000.0):
-        #                                        if (mapIm[l][k] == 255):
-        #                                            self.penaltiesObstacles(k, l, i, j)
-        #                # Cases of the margins
-        #                fin_obstacles = self.findStopExpansion(dest, posRobot, margin, i, j, fin_obstacles)
-        #                #if ((dest[0] <= posRobot[0]) and (dest[1] <= posRobot[1])):
-        #                #    if((i > (posRobot[0] + margin)) and (j > (posRobot[1] + margin))):
-        #                #        fin_obstacles = "true"
-        #                #elif ((dest[0] > posRobot[0]) and (dest[1] <= posRobot[1])):
-        #                #    if((i < (posRobot[0] - margin)) and (j > (posRobot[1] + margin))):
-        #                #        fin_obstacles = "true"
-        #                #elif ((dest[0] > posRobot[0]) and (dest[1] > posRobot[1])):
-        #                #    if((i < (posRobot[0] - margin)) and (j < (posRobot[1] - margin))):
-        #                #        fin_obstacles = "true"
-        #                #elif ((dest[0] <= posRobot[0]) and (dest[1] > posRobot[1])):
-        #                #    if((i > (posRobot[0] + margin)) and (j < (posRobot[1] - margin))):
-        #                #        fin_obstacles = "true"
-        #    squareO = squareO + 1 
-
+        fin_obstacles = "false"
+        squareO = 0
+        while (fin_obstacles == "false"):
+            for i in range(dest[0]-squareO, dest[0]+squareO+1):
+                for j in range(dest[1]-squareO, dest[1]+squareO+1):
+                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
+                        if (mapIm[j][i] == 0):
+                            #if (((i< dest[0]-squareO+1) or (i > dest[0]+squareO-1)) or ((i>= dest[0]-squareO+1) and (i<= dest[0]+squareO-1) and ((j< dest[1]-squareO+1) or (j> dest[1]+squareO-1)))):
+                            for k in range(i-3, i+4):
+                                for l in range(j-3, j+4):
+                                    if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
+                                        if (mapIm[l][k] == 255):
+                                            self.penaltiesObstacles(k, l, i, j)
+                                            print "k, l, i, j", k, l, i, j
+                                            #print "hi"
+                    # Cases of the margins
+                    fin_obstacles = self.findStopExpansion(dest, posRobot, margin, i, j, fin_obstacles)
+            squareO = squareO + 1
 
 
         # Find the path
