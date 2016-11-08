@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+  
+    <scene>
+      <grid>false</grid>
+    </scene>
+  
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    
+    <!-- A house -->
+    <include>
+        <uri>model://house_1</uri>
+        <pose>6 2 0 0 0 0</pose>
+    </include>
+    
+    <!-- A kobuki -->
+    <include>
+        <uri>model://turtlebotJde2cam</uri>
+        <pose>30 30 8 0 0 0</pose>
+    </include>
+    
+    <!-- A road -->
+    <model name="road">
+      <static>true</static>
+      <link name="body">
+        <pose>0 -4 -1.25 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>model://road.dae</uri></mesh>
+          </geometry>   
+        </collision>
+        <visual name="visual">
+          
+          <geometry>
+            <mesh><uri>file://road.dae</uri></mesh>
+          </geometry>
+        </visual> 
+      </link> 
+    </model>
+
+  </world>
+</sdf>
