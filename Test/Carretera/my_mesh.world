@@ -10,13 +10,7 @@
     <include>
       <uri>model://sun</uri>
     </include>
-    
-    
-    <!-- Ground -->
-    <!--include>
-      <uri>model://ground_plane</uri>
-    </include-->
-    
+      
     
     <!-- Stop signs -->
     <include>
