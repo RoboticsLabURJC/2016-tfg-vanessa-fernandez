@@ -1,13 +1,12 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
-from sensors import sensor
 import numpy as np
 import threading
+import time
 import cv2
+from datetime import datetime
 
+time_cycle = 80
 
-class MyAlgorithm():
+class MyAlgorithm(threading.Thread):
 
     def __init__(self, cameraL, cameraR, motors):
         self.cameraL = cameraL
