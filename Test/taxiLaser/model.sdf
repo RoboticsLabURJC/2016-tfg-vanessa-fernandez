@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version="1.4">
-<model name="yellowTaxi">
+<model name="taxiLaser">
   <pose>0 0 0 0 0 0</pose>
   <static>false</static>
     <link name="car">
@@ -519,30 +519,30 @@
     </link>
 
 
-	  <joint type="revolute" name="laser_joint">
+	  <joint type="revolute" name="laser1_joint">
         <pose>0 0 0 0 0 0</pose>
         <child>laser1</child>
-        <parent>yellowTaxi</parent>
+        <parent>car</parent>
         <axis>
           <xyz>0 0 0</xyz>
       </axis>
     </joint>
 
 
-	  <joint type="revolute" name="laser_joint">
+	  <joint type="revolute" name="laser2_joint">
         <pose>0 0 0 0 0 0</pose>
         <child>laser2</child>
-        <parent>yellowTaxi</parent>
+        <parent>car</parent>
         <axis>
           <xyz>0 0 0</xyz>
       </axis>
     </joint>
 
 
-	  <joint type="revolute" name="laser_joint">
+	  <joint type="revolute" name="laser3_joint">
         <pose>0 0 0 0 0 0</pose>
         <child>laser3</child>
-        <parent>yellowTaxi</parent>
+        <parent>car</parent>
         <axis>
           <xyz>0 0 0</xyz>
       </axis>
