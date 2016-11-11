@@ -9,22 +9,78 @@ import cv2
 
 class MyAlgorithm():
 
-    def __init__(self, sensor):
-        self.sensor = sensor
+    def __init__(self, cameraL, cameraR, motors):
+        self.cameraL = cameraL
+        self.cameraR = cameraR
+        self.motors = motors
         self.imageRight=None
         self.imageLeft=None
+        self.stop_event = threading.Event()
+        self.kill_event = threading.Event()
         self.lock = threading.Lock()
+        threading.Thread.__init__(self, args=self.stop_event)
 
+    def setRightImageFiltered(self, image):
+        self.lock.acquire()
+        self.imageRight=image
+        self.lock.release()
+
+
+    def setLeftImageFiltered(self, image):
+        self.lock.acquire()
+        self.imageLeft=image
+        self.lock.release()
+
+    def getRightImageFiltered(self):
+        self.lock.acquire()
+        tempImage=self.imageRight
+        self.lock.release()
+        return tempImage
+
+    def getLeftImageFiltered(self):
+        self.lock.acquire()
+        tempImage=self.imageLeft
+        self.lock.release()
+        return tempImage
+
+    def run (self):
+
+        while (not self.kill_event.is_set()):
+           
+            start_time = datetime.now()
+
+            if not self.stop_event.is_set():
+                self.execute()
+
+            finish_Time = datetime.now()
+
+            dt = finish_Time - start_time
+            ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
+            #print (ms)
+            if (ms < time_cycle):
+                time.sleep((time_cycle - ms) / 1000.0)
+
+    def stop (self):
+        self.stop_event.set()
+
+    def play (self):
+        if self.is_alive():
+            self.stop_event.clear()
+        else:
+            self.start()
+
+    def kill (self):
+        self.kill_event.set()
 
 
     def execute(self):
         #GETTING THE IMAGES
-        imageLeft = self.sensor.getImageLeft()
-        imageRight = self.sensor.getImageRight()
+        imageLeft = self.cameraL.getImage()
+        imageRight = self.cameraR.getImage()
 
 
         # Add your code here
-        print "Runing"
+        print ("Runing")
 
         # RGB model change to HSV
         imageRight_HSV = cv2.cvtColor(imageRight, cv2.COLOR_RGB2HSV)
@@ -78,58 +134,32 @@ class MyAlgorithm():
 
         # Calculating the desviation
         desviation = position_middle - (columns/2)
-        print " desviation    ", desviation
+        print (" desviation    ", desviation)
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
-
         if (desviation == 0):
-             self.sensor.setV(10)
+             self.motors.setV(10)
         elif (position_pixel_right[0] == 1000):
-             self.sensor.setW(-0.0000035)
+             self.motors.setW(-0.0000035)
         elif ((abs(desviation)) < 85):
              if ((abs(desviation)) < 15):
-                 self.sensor.setV(6)
+                 self.motors.setV(6)
              else:
-                 self.sensor.setV(3.5)
-             self.sensor.setW(-0.000045 * desviation)
+                 self.motors.setV(3.5)
+             self.motors.setW(-0.000045 * desviation)
         elif ((abs(desviation)) < 150):
              if ((abs(desviation)) < 120):
-                 self.sensor.setV(1.8)
+                 self.motors.setV(1.8)
              else:
-                 self.sensor.setV(1.5)
-             self.sensor.setW(-0.00045 * desviation)
+                 self.motors.setV(1.5)
+             self.motors.setW(-0.00045 * desviation)
         else:
-             self.sensor.setV(1.5)
-             self.sensor.setW(-0.005 * desviation)
-
+             self.motors.setV(1.5)
+             self.motors.setW(-0.0055 * desviation)
+        self.motors.sendVelocities()
 
 
         #SHOW THE FILTERED IMAGE ON THE GUI
         self.setRightImageFiltered(imageRight_HSV_filtered_Mask)
         self.setLeftImageFiltered(imageLeft_HSV_filtered_Mask)
-
-
-
-    def setRightImageFiltered(self, image):
-        self.lock.acquire()
-        self.imageRight=image
-        self.lock.release()
-
-
-    def setLeftImageFiltered(self, image):
-        self.lock.acquire()
-        self.imageLeft=image
-        self.lock.release()
-
-    def getRightImageFiltered(self):
-        self.lock.acquire()
-        tempImage=self.imageRight
-        self.lock.release()
-        return tempImage
-
-    def getLeftImageFiltered(self):
-        self.lock.acquire()
-        tempImage=self.imageLeft
-        self.lock.release()
-        return tempImage
 
