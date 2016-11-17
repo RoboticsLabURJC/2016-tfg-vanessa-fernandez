@@ -20,30 +20,13 @@ namespace gazebo
 
     		public: void OnUpdate(const common::UpdateInfo & ) {
 			pose = this->model->GetWorldPose();
-			
-			if (abs(pose.pos.y+20)<2) {
-				this->model->SetLinearVel(math::Vector3(2, 0, 0));
-    	  			if ( pose.pos.x >=50 ) {
-					pose.pos.x = 10;
-					this->model->SetWorldPose(pose);
-				}
-			}
 
-			if (abs(pose.pos.y)<2) {
-				this->model->SetLinearVel(math::Vector3(7, 0, 0));
-    	  			if ( pose.pos.x >=30 ) {
-					pose.pos.x = -50;
-					this->model->SetWorldPose(pose);
-				}	
-			}
+			this->model->SetLinearVel(math::Vector3(10, 0, 0));
+    	  	if ( pose.pos.x >=50 ) {
+				pose.pos.x = -50;
+				this->model->SetWorldPose(pose);
+			}	
 
-			if (abs(pose.pos.y-20)<2) {
-				this->model->SetLinearVel(math::Vector3(10, 0, 0));
-    	  			if ( pose.pos.x >=50 ) {
-					pose.pos.x = -100;
-					this->model->SetWorldPose(pose);
-				}	
-			}
 		}
 		private: physics::ModelPtr model;
 		private: event::ConnectionPtr updateConnection;
