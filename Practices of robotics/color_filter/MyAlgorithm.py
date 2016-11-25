@@ -99,7 +99,7 @@ class MyAlgorithm(threading.Thread):
             cv2.imshow("HSV", hsv_image)
 
             # Minimum and maximum values ​​of the red
-            value_min_HSV = np.array([110, 175, 140])
+            value_min_HSV = np.array([110, 195, 144])
             value_max_HSV = np.array([180, 255, 255])
             value_min_HSV_blue = np.array([72, 58, 34])
             value_max_HSV_blue = np.array([150, 255, 255])
@@ -109,8 +109,7 @@ class MyAlgorithm(threading.Thread):
             # Filtering image
             image_HSV_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
             image_HSV_filtered_blue = cv2.inRange(hsv_image, value_min_HSV_blue, value_max_HSV_blue)
-            cv2.imshow("HSV filter", image_HSV_filtered)
-            cv2.imshow("HSV filter blue", image_HSV_filtered_blue)
+            cv2.imshow("HSV filter", image_HSV_filtered+image_HSV_filtered_blue)
 
             # Close, morphology element
             kernel = np.ones((19,19), np.uint8)
@@ -145,4 +144,3 @@ class MyAlgorithm(threading.Thread):
 
             # Output image
             self.camera.setColorImage(input_image_Copy)
-
