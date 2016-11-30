@@ -18,37 +18,37 @@
     <include>
       <name>car1</name>
       <uri>model://car</uri>
-      <pose>35 -1.5 0.3 0 0 1.57</pose>
+      <pose>50 -1.5 0.3 0 0 1.57</pose>
     </include>
     <include>
       <name>car2</name>
       <uri>model://car</uri>
-      <pose>25 -1.5 0.3 0 0 1.57</pose>
+      <pose>40 -1.5 0.3 0 0 1.57</pose>
     </include>
     <include>
       <name>car3</name>
       <uri>model://car</uri>
-      <pose>20 1.5 0.3 0 0 1.57</pose>
+      <pose>20 1.5 0.3 0 0 -1.57</pose>
     </include>
     <include>
       <name>car4</name>
       <uri>model://car</uri>
-      <pose>10 1.5 0.3 0 0 1.57</pose>
+      <pose>10 1.5 0.3 0 0 -1.57</pose>
     </include>
     <include>
       <name>car5</name>
       <uri>model://car</uri>
-      <pose>10 -1.5 0.3 0 0 1.57</pose>
+      <pose>35 -1.5 0.3 0 0 1.57</pose>
     </include>
     <include>
       <name>car6</name>
       <uri>model://car</uri>
-      <pose>0 1.8 0.3 0 0 1.57</pose>
+      <pose>0 1.8 0.3 0 0 -1.57</pose>
     </include>
     <include>
       <name>car7</name>
       <uri>model://car</uri>
-      <pose>-10 -1.5 0.3 0 0 1.57</pose>
+      <pose>60 -1.5 0.3 0 0 1.57</pose>
     </include>
 
  
