@@ -40,8 +40,10 @@ class MapWidget(QWidget):
         self.avgy = 0.0
         self.targetx = 0.0
         self.targety = 0.0
-        self.scale = 30.0
-        self.laser = []
+        self.scale = 15.0
+        self.laser1 = []
+        self.laser2 = []
+        self.laser3 = []
         
     def initUI(self):
         layout=QGridLayout()  
@@ -62,21 +64,23 @@ class MapWidget(QWidget):
         painter.setPen(pen)
     
         #Widget center
-        painter.translate(QPoint(_width/2, _height/1.2))
-           
+        painter.translate(QPoint(_width/2, _height/2))
+
+        # Draw laser
+        self.drawLaser1(painter)
+        self.drawLaser2(painter)
+        self.drawLaser3(painter)
+
         # Draw car
         self.drawCar(painter)
 
-        # Draw laser
-        self.drawLasel(painter)
-
         # Draw target
-        self.drawTarget(painter, self.targetx, self.targety)
+        #self.drawTarget(painter, self.targetx, self.targety)
 
         # Draw arrows
-        self.drawArrow(painter, self.carx, self.cary, Qt.green, 2)
-        self.drawArrow(painter, self.obsx, self.obsy, Qt.red, 2)
-        self.drawArrow(painter, self.avgx, self.avgy, Qt.black, 2)
+        #self.drawArrow(painter, self.carx, self.cary, Qt.green, 2)
+        #self.drawArrow(painter, self.obsx, self.obsy, Qt.red, 2)
+        #self.drawArrow(painter, self.avgx, self.avgy, Qt.black, 2)
 
     def drawCar(self, painter):
         carsize = 30
@@ -89,10 +93,10 @@ class MapWidget(QWidget):
         painter.drawLine(QPointF(-carsize/5,carsize/5),QPointF(carsize/5, carsize/5))
 
         # Chassis
-        painter.fillRect(-carsize/6,carsize/2,carsize/3,carsize/2,Qt.red)
-        painter.fillRect(-carsize/16,0,carsize/8,carsize,Qt.red)
-        painter.fillRect(-carsize/6,-carsize/24,carsize/3,carsize/12,Qt.red)
-        painter.fillRect(-carsize/8,carsize-carsize/96,carsize/4,carsize/12,Qt.red)
+        painter.fillRect(-carsize/6,carsize/10,carsize/3,carsize/1,Qt.yellow)
+        #painter.fillRect(-carsize/6,0,carsize/8,carsize,Qt.yellow)
+        #painter.fillRect(-carsize/6,-carsize/24,carsize/3,carsize/12,Qt.yellow)
+        #painter.fillRect(-carsize/6,carsize-carsize/96,carsize/4,carsize/12,Qt.yellow)
 
         # Tires
         painter.fillRect(-carsize/4,carsize/8,tiresize/2,tiresize,Qt.black)
@@ -100,12 +104,30 @@ class MapWidget(QWidget):
         painter.fillRect(-carsize/4,carsize-carsize/8,tiresize/2,tiresize,Qt.black)
         painter.fillRect(carsize/4,carsize-carsize/8,-tiresize/2,tiresize,Qt.black)
 
-    def drawLasel(self, painter):
+    def drawLaser1(self, painter):
         pen = QPen(Qt.blue, 2)
         painter.setPen(pen)
-        for d in self.laser:
+        for d in self.laser1:
             px = -d[0]*math.sin(d[1])*self.scale
             py = d[0]*math.cos(d[1])*self.scale
+            painter.drawLine(QPointF(0,0),QPointF(py, px))
+
+
+    def drawLaser2(self, painter):
+        pen = QPen(Qt.green, 2)
+        painter.setPen(pen)
+        for d in self.laser2:
+            px = d[0]*math.sin(d[1])*self.scale
+            py = d[0]*math.cos(d[1])*self.scale
+            painter.drawLine(QPointF(0,0),QPointF(py, px))
+            
+
+    def drawLaser3(self, painter):
+        pen = QPen(Qt.red, 2)
+        painter.setPen(pen)
+        for d in self.laser2:
+            px = d[0]*math.cos(d[1])*self.scale
+            py = -d[0]*math.sin(d[1])*self.scale
             painter.drawLine(QPointF(0,0),QPointF(py, px))
             
     def drawArrow(self, painter, posx, posy, color, width):
@@ -180,19 +202,38 @@ class MapWidget(QWidget):
         self.targetx = dx*math.cos(-rt) - dy*math.sin(-rt)
         self.targety = dx*math.sin(-rt) + dy*math.cos(-rt)
 
-    def setLaserValues(self, laser):
+    def setLaserValues1(self, laser):
         # Init laser array
-        if len(self.laser) == 0:
+        if len(self.laser1) == 0:
             for i in range(laser.numLaser):
-                self.laser.append((0,0))
+                self.laser1.append((0,0))
 
         for i in range(laser.numLaser):
             dist = laser.distanceData[i]/1000.0
             angle = math.radians(i)
-            self.laser[i] = (dist, angle)
+            self.laser1[i] = (dist, angle)
 
 
+
+    def setLaserValues2(self, laser):
+        if len(self.laser2) == 0:
+            for i in range(laser.numLaser):
+                self.laser2.append((0,0))
+
+        for i in range(laser.numLaser):
+            dist = laser.distanceData[i]/1000.0
+            angle = math.radians(i)
+            self.laser2[i] = (dist, angle)
 
  
-       
+    def setLaserValues3(self, laser):
+        if len(self.laser3) == 0:
+            for i in range(laser.numLaser):
+                self.laser3.append((0,0))
+
+        for i in range(laser.numLaser):
+            dist = laser.distanceData[i]/1000.0
+            angle = math.radians(i)
+            self.laser3[i] = (dist, angle)
+
 
