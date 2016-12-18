@@ -67,9 +67,10 @@ class MapWidget(QWidget):
         painter.translate(QPoint(_width/2, _height/2))
 
         # Draw laser
+        self.drawLaser3(painter)
         self.drawLaser1(painter)
         self.drawLaser2(painter)
-        self.drawLaser3(painter)
+
 
         # Draw car
         self.drawCar(painter)
@@ -80,7 +81,7 @@ class MapWidget(QWidget):
         # Draw arrows
         #self.drawArrow(painter, self.carx, self.cary, Qt.green, 2)
         #self.drawArrow(painter, self.obsx, self.obsy, Qt.red, 2)
-        #self.drawArrow(painter, self.avgx, self.avgy, Qt.black, 2)
+
 
     def drawCar(self, painter):
         carsize = 30
