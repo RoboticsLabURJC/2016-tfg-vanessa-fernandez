@@ -10,39 +10,20 @@ from Parser import Parser
 time_cycle = 80
 
 
-def absolutas2relativas(x, y, rx, ry, rt):
-    # Convert to relatives
-    dx = x - rx
-    dy = y - ry
-
-    # Rotate with current angle
-    x = dx*math.cos(-rt) - dy*math.sin(-rt)
-    y = dx*math.sin(-rt) + dy*math.cos(-rt)
-
-    return x,y
-
-
-def parse_laser_data(laser_data):
-    laser = []
-    for i in range(laser_data.numLaser):
-        dist = laser_data.distanceData[i]/1000.0
-        angle = math.radians(i)
-        laser += [(dist, angle)]
-    return laser
-
-
-
 class MyAlgorithm(threading.Thread):
 
-    def __init__(self, cameraL, cameraR, pose3d, laser, motors):
-        self.cameraL = cameraL
-        self.cameraR = cameraR
+    #def __init__(self, cameraL, cameraR, pose3d, laser, motors):
+    def __init__(self, pose3d, laser1, laser2, laser3, motors):
+        #self.cameraL = cameraL
+        #self.cameraR = cameraR
         self.pose3d = pose3d
-        self.laser = laser
+        self.laser1 = laser1
+        self.laser2 = laser2
+        self.laser3 = laser3
         self.motors = motors
 
-        self.imageRight=None
-        self.imageLeft=None
+        #self.imageRight=None
+        #self.imageLeft=None
 
         # Car direction
         self.carx = 0.0
@@ -76,28 +57,6 @@ class MyAlgorithm(threading.Thread):
 
         return None
 
-    def setRightImageFiltered(self, image):
-        self.lock.acquire()
-        self.imageRight=image
-        self.lock.release()
-
-
-    def setLeftImageFiltered(self, image):
-        self.lock.acquire()
-        self.imageLeft=image
-        self.lock.release()
-
-    def getRightImageFiltered(self):
-        self.lock.acquire()
-        tempImage=self.imageRight
-        self.lock.release()
-        return tempImage
-
-    def getLeftImageFiltered(self):
-        self.lock.acquire()
-        tempImage=self.imageLeft
-        self.lock.release()
-        return tempImage
 
     def getCarDirection(self):
         return (self.carx, self.cary)
@@ -147,101 +106,4 @@ class MyAlgorithm(threading.Thread):
         self.targety = self.currentTarget.getPose().y
 
         # TODO
-        # Get the position of the robot
-        rx = self.pose3d.getX()
-        ry = self.pose3d.getY()
-
-
-        # We marked the subgoals as we go through
-        if(abs(ry)<(abs(self.targety)+1) and abs(ry)>(abs(self.targety)-1)):
-            self.currentTarget.setReached(True)
-
-        # We get the orientation of the robot with respect to the map
-        rt = self.pose3d.getYaw()
-
-
-        # Get the data of the laser sensor, which consists of 180 pairs of values
-        laser_data = self.laser.getLaserData()
-        laser = parse_laser_data(laser_data)
-        # Convert self.targetx y self.targety to relative coordinates
-        self.carx,self.cary=absolutas2relativas(self.targetx,self.targety,rx,ry,rt)
-
-        # Laser       
-        laser_vectorized = []
-        for d,a in laser:
-            # (4.2.1) laser into GUI reference system
-            x = d * math.cos(a) * -1
-            y = d * math.sin(a) * -1
-            v = (x,y)
-            laser_vectorized += [v]
-
-        # Average of the 180 values of the laser
-        laser_mean = np.mean(laser_vectorized, axis=0)
-
-
-        # Repulsor vector
-        dist_threshold = 6
-        vff_repulsor_list = []
-        for d,a in laser:
-            # (4.2.1) laser into GUI reference system
-            if(d < dist_threshold):
-                x = (d - dist_threshold) * math.cos(a) * -1
-                y = (d - dist_threshold) * math.sin(a) * -1
-                v = (x,y)
-                vff_repulsor_list += [v]
-
-        vff_repulsor = np.mean(vff_repulsor_list, axis=0)
-
-
-        self.obsx,self.obsy = vff_repulsor
-
-        # Calculating repulsor vector module
-        mod_repulsor = pow(pow(self.obsx,2) + pow(self.obsy,2),0.5)
-        if (mod_repulsor > 1.55):
-            self.obsx,self.obsy = vff_repulsor * 4.5
-
-
-        # Calculating the coordinates of the resultant vector
-        self.avgx = self.carx + self.obsx
-        self.avgy = self.cary + self.obsy
-
-
-        # Calculating the module of the speed
-        speed = pow(pow(self.avgx,2) + pow(self.avgy,2),0.5)
-
-        # Correction
-        if (abs(self.obsx) > 2):
-            if (abs(self.obsx) < abs(self.carx)):
-                if (self.obsx >= 0):
-                    self.avgx = abs(self.avgx)
-                else:
-                    self.avgx = -abs(self.avgx)
-
-
-        if ((self.obsx == (-self.carx)) and (self.obsy == (-self.cary))):
-            self.avgx = self.obsx
-            self.avgy = self.cary
-
-
-        # Calculating angle
-        if (speed < 1):
-            # Use the tangent to avoid indeterminacy
-            angle = math.atan(abs(self.avgx/self.avgy))
-        else:
-            angle = math.asin(abs(self.avgx/speed))
-        if(self.avgy > 0):
-            angle = math.pi - angle
-
-
-        # Linear speed
-        if ((speed < 1) or (speed > 3)):
-            self.motors.sendV(3)
-        else:
-            self.motors.sendV(speed)
-
-        # Angular speed
-        if(self.avgx < 0):
-            self.motors.sendW(-angle * 0.75)
-        else:
-            self.motors.sendW(angle * 0.75)
-
+        
