@@ -13,7 +13,7 @@ sleep 5 # up to 20 for circuit.world
 
 [ "$1" = "GUI" ] && gzclient &
 
-python3 obstacle_avoidance.py --Ice.Config=obstacle_avoidance.cfg
+python3 autopark.py --Ice.Config=autopark.cfg
 
 killall gzserver
 [ "$1" = "GUI" ] && killall gzclient
