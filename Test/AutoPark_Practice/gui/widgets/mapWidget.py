@@ -67,9 +67,9 @@ class MapWidget(QWidget):
         painter.translate(QPoint(_width/2, _height/2))
 
         # Draw laser
-        self.drawLaser3(painter)
         self.drawLaser1(painter)
         self.drawLaser2(painter)
+        self.drawLaser3(painter)
 
 
         # Draw car
@@ -119,7 +119,7 @@ class MapWidget(QWidget):
         painter.setPen(pen)
         for d in self.laser2:
             px = d[0]*math.sin(d[1])*self.scale
-            py = d[0]*math.cos(d[1])*self.scale
+            py = -d[0]*math.cos(d[1])*self.scale
             painter.drawLine(QPointF(0,0),QPointF(py, px))
             
 
