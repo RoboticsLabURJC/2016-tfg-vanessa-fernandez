@@ -40,12 +40,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.playClicked)
         self.pushButton.setCheckable(True)
         self.updGUI.connect(self.updateGUI)
-        self.camera1=CameraWidget(self)
+        #self.camera1=CameraWidget(self)
 
         self.stopButton.clicked.connect(self.stopClicked)
 
     def updateGUI(self):
-        self.camera1.updateImage()
+        #self.camera1.updateImage()
         (cx, cy) = self.algorithm.getCarDirection()
         (ox, oy) = self.algorithm.getObstaclesDirection()
         (ax, ay) = self.algorithm.getAverageDirection()
@@ -55,22 +55,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.map.setAverageArrow(ax, ay)
         if (self.pose3d):
             self.map.setTarget(tx, ty, self.pose3d.getX()/1000, self.pose3d.getY()/1000, self.pose3d.getYaw())
-        laserdata = self.laser.getLaserData()
-        if (laserdata):
-            self.map.setLaserValues(laserdata)
+        laserdata1 = self.laser1.getLaserData()
+        laserdata2 = self.laser2.getLaserData()
+        laserdata3 = self.laser3.getLaserData()
+        if (laserdata1):
+            self.map.setLaserValues1(laserdata1)
+        if (laserdata2):
+            self.map.setLaserValues2(laserdata2)
+        if (laserdata3):
+            self.map.setLaserValues3(laserdata3)
         self.map.update()
 
-    def getCameraL(self):
-        return self.cameraL
+    #def getCameraL(self):
+     #   return self.cameraL
 
-    def setCameraL(self,camera):
-        self.cameraL=camera
+    #def setCameraL(self,camera):
+      #  self.cameraL=camera
 
-    def getCameraR(self):
-        return self.cameraR
+    #def getCameraR(self):
+    #    return self.cameraR
 
-    def setCameraR(self,camera):
-        self.cameraR=camera
+    #def setCameraR(self,camera):
+    #    self.cameraR=camera
 
     def getPose3D(self):
         return self.pose3d
@@ -81,8 +87,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def getLaser(self):
         return self.laser
 
-    def setLaser(self,laser):
-        self.laser=laser
+    def setLaser1(self,laser):
+        self.laser1=laser
+
+    def setLaser2(self,laser):
+        self.laser2=laser
+
+    def setLaser3(self,laser):
+        self.laser3=laser
 
     def getMotors(self):
         return self.motors
