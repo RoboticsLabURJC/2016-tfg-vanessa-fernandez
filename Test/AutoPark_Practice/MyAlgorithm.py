@@ -6,6 +6,7 @@ import jderobot
 import math
 from Target import Target
 from Parser import Parser
+import cv2
 
 time_cycle = 80
 
@@ -21,6 +22,7 @@ class MyAlgorithm(threading.Thread):
         self.laser2 = laser2
         self.laser3 = laser3
         self.motors = motors
+        self.grid = np.empty([300, 300], float)
 
         #self.imageRight=None
         #self.imageLeft=None
@@ -106,4 +108,5 @@ class MyAlgorithm(threading.Thread):
         self.targety = self.currentTarget.getPose().y
 
         # TODO
-        
+        self.grid[150][150] = 255
+        cv2.imshow("grid", self.grid)        
