@@ -3,7 +3,7 @@
   <world name="default">
   
     <scene>
-      <grid>false</grid>
+      <grid>true</grid>
     </scene>
   
     <!-- A global light source -->
@@ -21,7 +21,7 @@
     <!-- A taxi with lasers-->
     <include>
       <uri>model://taxiLaser</uri>
-      <pose>-25 -3 0 0 0 1.57</pose> 
+      <pose>-5.5 -3 0 0 0 1.57</pose> 
     </include>
     
     
