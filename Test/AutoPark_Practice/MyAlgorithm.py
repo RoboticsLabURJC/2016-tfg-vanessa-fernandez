@@ -72,6 +72,26 @@ class MyAlgorithm(threading.Thread):
     def getCurrentTarget(self):
         return (self.targetx, self.targety)
 
+
+    def parse_laser_data(self,laser_data):
+        laser = []
+        for i in range(laser_data.numLaser):
+            dist = laser_data.distanceData[i]/1000.0
+            angle = math.radians(i)
+            laser += [(dist, angle)]
+        return laser
+
+
+    def laser_vector(self,laser_array):
+        laser_vectorized = []
+        for d,a in laser_array:
+            # (4.2.1) laser into GUI reference system
+            x = d * math.cos(a) * -1
+            y = d * math.sin(a) * -1
+            v = (x,y)
+            laser_vectorized += [v]
+        return laser_vectorized
+
     def run (self):
 
         while (not self.kill_event.is_set()):
@@ -103,10 +123,21 @@ class MyAlgorithm(threading.Thread):
 
 
     def execute(self):
-        self.currentTarget=self.getNextTarget()
+        self.currentTarget = self.getNextTarget()
         self.targetx = self.currentTarget.getPose().x
         self.targety = self.currentTarget.getPose().y
 
         # TODO
-        self.grid[150][150] = 255
+        laser_data1 = self.laser1.getLaserData()
+        laser1_array = self.parse_laser_data(laser_data1)
+        laser1_vect = self.laser_vector(laser1_array)
+
+        for x,y in laser1_vect:
+            for i in range(0, 300):
+                for j in range(0, 300):
+                   self.grid[int(x[0])][int(x[1])] = 255
+
+        #for x in range(self.grid):
+        #    for y in range(self.grid):
+        #        self.grid[x][y] = 255
         cv2.imshow("grid", self.grid)        
