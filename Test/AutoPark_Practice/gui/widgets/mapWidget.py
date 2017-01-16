@@ -67,7 +67,10 @@ class MapWidget(QWidget):
         painter.translate(QPoint(_width/2, _height/2))
 
         # Draw laser
-        self.drawLaser1(painter)
+        colorLaser1 = Qt.blue
+        colorLaser1 = Qt.green
+        colorLaser1 = Qt.red
+        self.drawLaser1(painter, colorLaser1)
         self.drawLaser2(painter)
         self.drawLaser3(painter)
 
@@ -94,31 +97,32 @@ class MapWidget(QWidget):
         painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
         painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
 
-    def drawLaser1(self, painter):
-        pen = QPen(Qt.blue, 2)
+    def drawLaser1(self, painter, color):
+        pen = QPen(color, 2)
         painter.setPen(pen)
         for d in self.laser1:
-            px = -d[0]*math.sin(d[1])*self.scale
-            py = d[0]*math.cos(d[1])*self.scale
-            painter.drawLine(QPointF(0,-50),QPointF(py, px-50))
+            #px = d[0]*math.cos(d[1])*self.scale
+            #py = -d[0]*math.sin(d[1])*self.scale
+            [[px], [py], [1]] = [[math.cos(d[1]), 0, 0], [math.sin(d[1]), 0, 0], [0, 0, 1]]*[[d[0]], [-d[0]], [1]] *self.scale
+            painter.drawLine(QPointF(0,-50),QPointF(px, py-50))
 
 
-    def drawLaser2(self, painter):
-        pen = QPen(Qt.green, 2)
+    def drawLaser2(self, painter, color):
+        pen = QPen(color, 2)
         painter.setPen(pen)
         for d in self.laser2:
-            px = d[0]*math.sin(d[1])*self.scale
-            py = -d[0]*math.cos(d[1])*self.scale
-            painter.drawLine(QPointF(0,50),QPointF(py, px+50))
+            px = -d[0]*math.cos(d[1])*self.scale
+            py = d[0]*math.sin(d[1])*self.scale
+            painter.drawLine(QPointF(0,50),QPointF(px, py+50))
             
 
-    def drawLaser3(self, painter):
-        pen = QPen(Qt.red, 2)
+    def drawLaser3(self, painter, color):
+        pen = QPen(color, 2)
         painter.setPen(pen)
         for d in self.laser3:
-            px = -d[0]*math.cos(d[1])*self.scale
-            py = -d[0]*math.sin(d[1])*self.scale
-            painter.drawLine(QPointF(-25,0),QPointF(py-25, px))
+            px = -d[0]*math.sin(d[1])*self.scale
+            py = -d[0]*math.cos(d[1])*self.scale
+            painter.drawLine(QPointF(-25,0),QPointF(px-25, py))
             
 
     def setCarArrow(self, x, y):
