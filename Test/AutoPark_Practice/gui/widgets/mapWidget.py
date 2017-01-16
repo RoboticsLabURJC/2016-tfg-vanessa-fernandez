@@ -21,6 +21,7 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout
 from PyQt5.QtGui import QPen, QPainter
 from PyQt5.QtCore import QPoint, QPointF, pyqtSignal, Qt
+from numpy import matrix
 import math
 
 class MapWidget(QWidget):
@@ -68,11 +69,11 @@ class MapWidget(QWidget):
 
         # Draw laser
         colorLaser1 = Qt.blue
-        colorLaser1 = Qt.green
-        colorLaser1 = Qt.red
+        colorLaser2 = Qt.green
+        colorLaser3 = Qt.red
         self.drawLaser1(painter, colorLaser1)
-        self.drawLaser2(painter)
-        self.drawLaser3(painter)
+        self.drawLaser2(painter, colorLaser2)
+        self.drawLaser3(painter, colorLaser3)
 
 
         # Draw car
@@ -103,7 +104,9 @@ class MapWidget(QWidget):
         for d in self.laser1:
             #px = d[0]*math.cos(d[1])*self.scale
             #py = -d[0]*math.sin(d[1])*self.scale
-            [[px], [py], [1]] = [[math.cos(d[1]), 0, 0], [math.sin(d[1]), 0, 0], [0, 0, 1]]*[[d[0]], [-d[0]], [1]] *self.scale
+            #[[px], [py], [1]] = np.empty((2, 3))
+            #[[px], [py], [1]] = [[math.cos(d[1]), 0, 0], [math.sin(d[1]), 0, 0], [0, 0, 1]]*[[d[0]], [-d[0]], [1]] *self.scale
+            poses = matrix([[math.cos(d[1]), 0, 0], [math.sin(d[1]), 0, 0], [0, 0, 1]])*matrix([[d[0]], [-d[0]], [1]]) *self.scale
             painter.drawLine(QPointF(0,-50),QPointF(px, py-50))
 
 
