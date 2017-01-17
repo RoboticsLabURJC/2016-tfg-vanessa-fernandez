@@ -148,38 +148,46 @@ class MapWidget(QWidget):
         self.targetx = dx*math.cos(-rt) - dy*math.sin(-rt)
         self.targety = dx*math.sin(-rt) + dy*math.cos(-rt)
 
-    def setLaserValues1(self, laser):
+    def setLaserValues(self, laser, num):
         # Init laser array
-        if len(self.laser1) == 0:
+        #if len(self.laser1) == 0:
+        if num == 1:
+             laserX = self.laser1
+        elif num == 2:
+             laserX = self.laser2
+        elif num == 3:
+             laserX = self.laser3
+        if len(laserX) == 0:
             for i in range(laser.numLaser):
-                self.laser1.append((0,0))
+                #self.laser1.append((0,0))
+                laserX.append((0,0))
 
         for i in range(laser.numLaser):
             dist = laser.distanceData[i]/1000.0
             angle = math.radians(i)
-            self.laser1[i] = (dist, angle)
+            laserX[i] = (dist, angle)
 
 
 
-    def setLaserValues2(self, laser):
-        if len(self.laser2) == 0:
-            for i in range(laser.numLaser):
-                self.laser2.append((0,0))
+    #def setLaserValues2(self, laser):
+    #    if len(self.laser2) == 0:
+    #        for i in range(laser.numLaser):
+    #            self.laser2.append((0,0))
 
-        for i in range(laser.numLaser):
-            dist = laser.distanceData[i]/1000.0
-            angle = math.radians(i)
-            self.laser2[i] = (dist, angle)
+#        for i in range(laser.numLaser):
+#            dist = laser.distanceData[i]/1000.0
+#            angle = math.radians(i)
+#            self.laser2[i] = (dist, angle)
 
  
-    def setLaserValues3(self, laser):
-        if len(self.laser3) == 0:
-            for i in range(laser.numLaser):
-                self.laser3.append((0,0))
+  #  def setLaserValues3(self, laser):
+  #      if len(self.laser3) == 0:
+  #          for i in range(laser.numLaser):
+  #              self.laser3.append((0,0))
 
-        for i in range(laser.numLaser):
-            dist = laser.distanceData[i]/1000.0
-            angle = math.radians(i)
-            self.laser3[i] = (dist, angle)
+  #      for i in range(laser.numLaser):
+  #          dist = laser.distanceData[i]/1000.0
+  #          angle = math.radians(i)
+  #          self.laser3[i] = (dist, angle)
 
 
