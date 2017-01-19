@@ -97,15 +97,15 @@ class MapWidget(QWidget):
 
 
     def RTLaser1(self, angle):
-        RT = np.array([[math.cos(angle), 0, 0], [-math.sin(angle), 0, 0], [0, 0, 1]])
+        RT = np.matrix([[math.cos(angle), 0, 0], [-math.sin(angle), 0, 0], [0, 0, 1]])
         return RT
 
     def RTLaser2(self, angle):
-        RT = np.array([[-math.cos(angle), 0, 0], [math.sin(angle), 0, 0], [0, 0, 1]])
+        RT = np.matrix([[-math.cos(angle), 0, 0], [math.sin(angle), 0, 0], [0, 0, 1]])
         return RT
 
     def RTLaser3(self, angle):
-        RT = np.array([[-math.sin(angle), 0, 0], [-math.cos(angle), 0, 0], [0, 0, 1]])
+        RT = np.matrix([[-math.sin(angle), 0, 0], [-math.cos(angle), 0, 0], [0, 0, 1]])
         return RT
 
 
@@ -122,9 +122,9 @@ class MapWidget(QWidget):
                 RT = self.RTLaser2(angle)
             else:
                 RT = self.RTLaser3(angle)
-            orig_poses = np.array([[dist], [dist], [1]]) * self.scale
+            orig_poses = np.matrix([[dist], [dist], [1]]) * self.scale
             final_poses = RT * orig_poses
-            painter.drawLine(QPointF(xTraslate,yTraslate),QPointF(final_poses[0][0] + xTraslate, final_poses[1][0]+yTraslate))
+            painter.drawLine(QPointF(xTraslate,yTraslate),QPointF(final_poses.flat[0] + xTraslate, final_poses.flat[1]+yTraslate))
 
 
     def setCarArrow(self, x, y):
