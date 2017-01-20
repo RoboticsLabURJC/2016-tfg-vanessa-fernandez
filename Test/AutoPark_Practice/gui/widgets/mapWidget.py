@@ -96,57 +96,42 @@ class MapWidget(QWidget):
         painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
 
 
-    def RTLaser1(self, angle):
-        RT = np.matrix([[math.cos(angle), 0, 0], [-math.sin(angle), 0, 0], [0, 0, 1]])
+    def RTLaser(self, num):
+        if num == 1:
+            RT = np.matrix([[math.cos(0), -math.sin(0), 0, 0], [math.sin(0), math.cos(0), 0, -2.79], [0, 0, 1, 0.772], [0, 0, 0, 1]])
+        elif num == 2:
+            RT = np.matrix([[math.cos(180), -math.sin(180), 0, 0], [math.sin(180), math.cos(180), 0, 2.79], [0, 0, 1, 0.772], [0, 0, 0, 1]])
+        elif num == 3:
+            RT = np.matrix([[math.cos(90), -math.sin(90), 0, 1.5], [math.sin(90), math.cos(90), 0, 0], [0, 0, 1, 0.772], [0, 0, 0, 1]])
         return RT
 
-    def RTLaser2(self, angle):
-        RT = np.matrix([[-math.cos(angle), 0, 0], [math.sin(angle), 0, 0], [0, 0, 1]])
-        return RT
+    #def RTLaser2(self, angle):
+    #    RT = np.matrix([[-math.cos(angle), 0, 0], [math.sin(angle), 0, 0], [0, 0, 1]])
+    #    return RT
 
-    def RTLaser3(self, angle):
-        RT = np.matrix([[-math.sin(angle), 0, 0], [-math.cos(angle), 0, 0], [0, 0, 1]])
-        return RT
+    #def RTLaser3(self, angle):
+    #    RT = np.matrix([[-math.sin(angle), 0, 0], [-math.cos(angle), 0, 0], [0, 0, 1]])
+    #    return RT
 
+    def coordLaser(self, dist, angle):
+        coord = [0, 0]
+        coord[0] = dist * math.cos(angle)
+        coord[1] = dist * math.sin(angle) 
+        return coord
 
-
-    def drawLaser(self, numLaser, painter, color, xTraslate, yTraslate, laser):
+    def drawLaser(self, num, painter, color, xTraslate, yTraslate, laser):
         pen = QPen(color, 2)
         painter.setPen(pen)
+        RT = self.RTLaser(num)
         for d in laser:
             dist = d[0]
             angle = d[1]
-            if (numLaser == 1):
-                RT = self.RTLaser1(angle)
-            elif (numLaser == 2):
-                RT = self.RTLaser2(angle)
-            else:
-                RT = self.RTLaser3(angle)
-            orig_poses = np.matrix([[dist], [dist], [1]]) * self.scale
+            coord = self.coordLaser(dist, angle)
+            orig_poses = np.matrix([[coord[0]], [coord[1]], [1], [1]]) * self.scale
             final_poses = RT * orig_poses
-            painter.drawLine(QPointF(xTraslate,yTraslate),QPointF(final_poses.flat[0] + xTraslate, final_poses.flat[1]+yTraslate))
+            #painter.drawLine(QPointF(xTraslate,yTraslate),QPointF(final_poses.flat[0] + xTraslate, final_poses.flat[1]+yTraslate))
+            painter.drawLine(QPointF(0,0),QPointF(final_poses.flat[0], final_poses.flat[1]))
 
-
-    def setCarArrow(self, x, y):
-        self.carx = x
-        self.cary = y
-
-    def setObstaclesArrow(self, x, y):
-        self.obsx = x
-        self.obsy = y
-
-    def setAverageArrow(self, x, y):
-        self.avgx = x
-        self.avgy = y
-
-    def setTarget(self, x, y, rx, ry, rt):
-        # Convert to relatives
-        dx = x - rx
-        dy = y - ry
-
-        # Rotate with current angle
-        self.targetx = dx*math.cos(-rt) - dy*math.sin(-rt)
-        self.targety = dx*math.sin(-rt) + dy*math.cos(-rt)
 
     def setLaserValues(self, laser, num):
         # Init laser array
@@ -166,28 +151,4 @@ class MapWidget(QWidget):
             dist = laser.distanceData[i]/1000.0
             angle = math.radians(i)
             laserX[i] = (dist, angle)
-
-
-
-    #def setLaserValues2(self, laser):
-    #    if len(self.laser2) == 0:
-    #        for i in range(laser.numLaser):
-    #            self.laser2.append((0,0))
-
-#        for i in range(laser.numLaser):
-#            dist = laser.distanceData[i]/1000.0
-#            angle = math.radians(i)
-#            self.laser2[i] = (dist, angle)
-
- 
-  #  def setLaserValues3(self, laser):
-  #      if len(self.laser3) == 0:
-  #          for i in range(laser.numLaser):
-  #              self.laser3.append((0,0))
-
-  #      for i in range(laser.numLaser):
-  #          dist = laser.distanceData[i]/1000.0
-  #          angle = math.radians(i)
-  #          self.laser3[i] = (dist, angle)
-
 
