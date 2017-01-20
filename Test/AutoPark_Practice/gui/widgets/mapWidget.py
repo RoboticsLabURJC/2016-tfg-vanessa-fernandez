@@ -33,14 +33,6 @@ class MapWidget(QWidget):
         self.winParent=winParent
         self.initUI()
 
-        self.carx = 0.0
-        self.cary = 0.0
-        self.obsx = 0.0
-        self.obsy = 0.0
-        self.avgx = 0.0
-        self.avgy = 0.0
-        self.targetx = 0.0
-        self.targety = 0.0
         self.scale = 20.0
         self.laser1 = []
         self.laser2 = []
@@ -135,7 +127,6 @@ class MapWidget(QWidget):
 
     def setLaserValues(self, laser, num):
         # Init laser array
-        #if len(self.laser1) == 0:
         if num == 1:
              laserX = self.laser1
         elif num == 2:
@@ -144,7 +135,6 @@ class MapWidget(QWidget):
              laserX = self.laser3
         if len(laserX) == 0:
             for i in range(laser.numLaser):
-                #self.laser1.append((0,0))
                 laserX.append((0,0))
 
         for i in range(laser.numLaser):
