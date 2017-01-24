@@ -104,6 +104,11 @@ class MyAlgorithm(threading.Thread):
             value_min_HSV_blue = np.array([72, 58, 34])
             value_max_HSV_blue = np.array([150, 255, 255])
 
+            # Video drone1
+            #value_min_HSV = np.array([144.55, 135.15, 76.53])
+            #value_max_HSV = np.array([187.5, 245, 255])
+            #value_min_HSV_blue = np.array([110.2, 145.86, 110.515])
+            #value_max_HSV_blue = np.array([150.54, 225, 150.96])
 
 
             # Filtering image
