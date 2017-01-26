@@ -5,6 +5,7 @@ import math
 import threading
 import time
 from datetime import datetime
+from matplotlib import pyplot as plt
 
 time_cycle = 80
 
@@ -101,6 +102,7 @@ class MyAlgorithm(threading.Thread):
         This method will be call when you press the Generate Path button. 
         Call to grid.setPath(path) mathod for setting the path. """
     def generatePath(self):
+
         print("LOOKING FOR SHORTER PATH")
         # mapIm is the image of the map
         mapIm = self.grid.getMap()
@@ -121,7 +123,8 @@ class MyAlgorithm(threading.Thread):
         square = 0
         margin = 20
         pos_obstacles_border = []
-
+        fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+        out = cv2.VideoWriter('video1.avi', fourcc, 30, (400, 400),False)
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
             self.grid.setVal(dest[0], dest[1], 0.0)
@@ -129,8 +132,11 @@ class MyAlgorithm(threading.Thread):
             self.grid.setVal(dest[0], dest[1], 20000.0)
 
 
+        imagen = np.zeros((400, 400),np.uint8)
         #obst_border = 0
         #casillas  = 0
+        x=1
+        o=1
         # Expansion of the field
         while (fin == "false"):
             for i in range(dest[0]-square, dest[0]+square+1):
@@ -158,94 +164,23 @@ class MyAlgorithm(threading.Thread):
                                        if (mapIm[l][k] == 0):
                                            val_pos = self.grid.getVal(k, l)
                                            self.grid.setVal(k, l, (val_pos+20000.0))
+                               #if (x == 3 and mapIm[l][k] == 0):
+                               imagen[l][k] = self.grid.getVal(k, l)
+                               #plt.imshow(imagen,'gray')
+                               #plt.show()
+                               #img = cv2.cvtColor(imagen, cv2.COLOR_GRAY2RGB)
+                               #if (x/o) == 200:
+                               #    out.write((imagen))
+                               #    o = o+1
                        if (((i < dest[0]-square+1) or (i > dest[0]+square-1)) or ((i >= dest[0]-square+1) and (i <= dest[0]+square-1) and ((j < dest[1]-square+1) or (j > dest[1]+square-1)))):
                            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
                                if (border != 9 and mapIm[j][i] == 0):
-                                   pos_obstacles_border.append([i,j])                     
+                                   pos_obstacles_border.append([i,j])                    
                     # Cases of the margins
                     fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
+                    #x = x+1
             square = square + 1
-
-
-
-        # Expansion of the field
-        #while (fin == "false"):
-        #    for i in range(dest[0]-square, dest[0]+square+1):
-        #        for j in range(dest[1]-square, dest[1]+square+1):
-        #            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #               border = 0
-        #               for k in range(i-1, i+2):
-        #                   for l in range(j-1, j+2):
-        #                       if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
-        #                           val = self.grid.getVal(k, l)
-        #                           val_init = self.grid.getVal(i, j)
-        #                           if(mapIm[l][k] == 0):
-        #                               border = border + 1
-        #                           if ((k == dest[0]) and (l == dest[1])):
-        #                               self.grid.setVal(k, l, self.grid.getVal(k, l))
-        #                           elif ((k == i) and (l == j)):
-        #                               self.grid.setVal(k, l, val_init+0.0)
-        #                           else:
-        #                               if ((k != i) and (l != j)):
-        #                                   if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-        #                                       self.grid.setVal(k, l, val_init+math.sqrt(2.0))
-        #                               else:
-        #                                   if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
-        #                                       self.grid.setVal(k, l, val_init+1.0)
-        #                               if (mapIm[l][k] == 0):
-        #                                   val_pos = self.grid.getVal(k, l)
-        #                                   self.grid.setVal(k, l, (val_pos+20000.0))
-        #               if (((i < dest[0]-square+1) or (i > dest[0]+square-1)) or ((i >= dest[0]-square+1) and (i <= dest[0]+square-1) and ((j < dest[1]-square+1) or (j > dest[1]+square-1)))):
-        #                   if (border != 9 and mapIm[j][i] == 0):
-        #                       pos_obstacles_border.append([i,j])
-        #                   if (mapIm[j][i] == 0):
-        #                       obst_border = obst_border+1
-        #                   casillas = casillas+1
-        #            # Cases of the margins
-        #            fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
-        #    square = square + 1
-
-        #print (len(pos_obstacles_border))
-        #print ("bordes", obst_border)
-        #print("casillas", casillas)
-
-        # Expansion of the field
-        #while (fin == "false"):
-        #    for i in range(dest[0]-square, dest[0]+square+1):
-        #        for j in range(dest[1]-square, dest[1]+square+1):
-        #            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #               for k in range(i-1, i+2):
-        #                   for l in range(j-1, j+2):
-        #                       if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
-        #                           val = self.grid.getVal(k, l)
-        #                           val_init = self.grid.getVal(i, j)
-        #                           if ((k == dest[0]) and (l == dest[1])):
-        #                               self.grid.setVal(k, l, self.grid.getVal(k, l))
-        #                           elif ((k == i) and (l == j)):
-        #                               self.grid.setVal(k, l, val_init+0.0)
-        #                           else:
-        #                               if ((k != i) and (l != j)):
-        #                                   if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-        #                                       self.grid.setVal(k, l, val_init+math.sqrt(2.0))
-        #                               else:
-        #                                   if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
-        #                                       self.grid.setVal(k, l, val_init+1.0)
-        #                               if (mapIm[l][k] == 0):
-        #                                   val_pos = self.grid.getVal(k, l)
-        #                                   self.grid.setVal(k, l, (val_pos+20000.0))
-        #            # Cases of the margins
-        #            fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
-        #    square = square + 1
-
-        #for i in range(0, len(pos_obstacles_border)):
-        #    mapIm[pos_obstacles_border[1], pos_obstacles_border[0]] = 128
-        #cv2.imshow("map", mapIm)
-
-
-
-
-        #for i in range(0, len(pos_obstacles_border)):
-        #    print("i", "j", pos_obstacles_border[i][0], pos_obstacles_border[i][1])
+        #out.release()
 
         # Obstacles penalties
         for i in range(0, len(pos_obstacles_border)):
@@ -254,6 +189,12 @@ class MyAlgorithm(threading.Thread):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
+                    imagen[l][k] = self.grid.getVal(k, l)
+                    if (x/o) == 50:
+                        out.write((imagen))
+                        o = o+1
+            x=x+1
+        out.release()
 
 
 
@@ -290,11 +231,7 @@ class MyAlgorithm(threading.Thread):
                 found = "true"
                 self.grid.setPathFinded()
 
-        print (len(pos_obstacles_border))
-
-
-
-
+        #print (len(pos_obstacles_border))
 
         #Represent the Gradient Field in a window using cv2.imshow
         self.grid.showGrid()
