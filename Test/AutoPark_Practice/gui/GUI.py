@@ -51,11 +51,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         laserdata2 = self.laser2.getLaserData()
         laserdata3 = self.laser3.getLaserData()
         if (laserdata1):
-            self.map.setLaserValues(laserdata1, 1)
+            self.map.setLaserValues(1,laserdata1)
         if (laserdata2):
-            self.map.setLaserValues(laserdata2, 2)
+            self.map.setLaserValues(2,laserdata2)
         if (laserdata3):
-            self.map.setLaserValues(laserdata3, 3)
+            self.map.setLaserValues(3,laserdata3)
         self.map.update()
 
     def getPose3D(self):
