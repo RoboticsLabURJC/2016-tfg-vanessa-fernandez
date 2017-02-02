@@ -49,28 +49,28 @@ class MyAlgorithm(threading.Thread):
         threading.Thread.__init__(self, args=self.stop_event)
 
         # Init targets
-        parser = Parser('targets.json')
-        self.targets = parser.getTargets()
+        #parser = Parser('targets.json')
+        #self.targets = parser.getTargets()
 
-    def getNextTarget(self):
-        for target in self.targets:
-            if target.isReached() == False:
-                return target
+    #def getNextTarget(self):
+    #    for target in self.targets:
+    #        if target.isReached() == False:
+    #            return target
 
-        return None
+    #    return None
 
 
     def getCarDirection(self):
         return (self.carx, self.cary)
 
-    def getObstaclesDirection(self):
-        return (self.obsx, self.obsy)
+    #def getObstaclesDirection(self):
+    #    return (self.obsx, self.obsy)
 
-    def getAverageDirection(self):
-        return (self.avgx, self.avgy)
+    #def getAverageDirection(self):
+    #    return (self.avgx, self.avgy)
 
-    def getCurrentTarget(self):
-        return (self.targetx, self.targety)
+    #def getCurrentTarget(self):
+    #    return (self.targetx, self.targety)
 
 
     def parse_laser_data(self,laser_data):
@@ -123,19 +123,19 @@ class MyAlgorithm(threading.Thread):
 
 
     def execute(self):
-        self.currentTarget = self.getNextTarget()
-        self.targetx = self.currentTarget.getPose().x
-        self.targety = self.currentTarget.getPose().y
+        #self.currentTarget = self.getNextTarget()
+        #self.targetx = self.currentTarget.getPose().x
+        #self.targety = self.currentTarget.getPose().y
 
         # TODO
         laser_data1 = self.laser1.getLaserData()
         laser1_array = self.parse_laser_data(laser_data1)
         laser1_vect = self.laser_vector(laser1_array)
 
-        for x,y in laser1_vect:
-            for i in range(0, 300):
-                for j in range(0, 300):
-                   self.grid[int(x[0])][int(x[1])] = 255
+        #for x,y in laser1_vect:
+        #    for i in range(0, 300):
+        #        for j in range(0, 300):
+        #           self.grid[int(x[0])][int(x[1])] = 255
 
         #for x in range(self.grid):
         #    for y in range(self.grid):
