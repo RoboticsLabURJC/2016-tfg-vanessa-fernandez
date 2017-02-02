@@ -124,12 +124,12 @@ class MyAlgorithm(threading.Thread):
         margin = 20
         pos_obstacles_border = []
         fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        out = cv2.VideoWriter('video1.avi', fourcc, 30, (400, 400),False)
+        out = cv2.VideoWriter('Expansion_campo.avi', fourcc, 30, (400, 400),False)
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
             self.grid.setVal(dest[0], dest[1], 0.0)
-        else:
-            self.grid.setVal(dest[0], dest[1], 20000.0)
+        #else:
+        #    self.grid.setVal(dest[0], dest[1], 20000.0)
 
 
         imagen = np.zeros((400, 400),np.uint8)
@@ -137,6 +137,7 @@ class MyAlgorithm(threading.Thread):
         #casillas  = 0
         x=1
         o=1
+        mas = 25.5
         # Expansion of the field
         while (fin == "false"):
             for i in range(dest[0]-square, dest[0]+square+1):
@@ -150,20 +151,21 @@ class MyAlgorithm(threading.Thread):
                                    val_init = self.grid.getVal(i, j)
                                    if(mapIm[l][k] == 0):
                                        border = border + 1
-                                   if ((k == dest[0]) and (l == dest[1])):
-                                       self.grid.setVal(k, l, self.grid.getVal(k, l))
-                                   elif ((k == i) and (l == j)):
-                                       self.grid.setVal(k, l, val_init+0.0)
-                                   else:
-                                       if ((k != i) and (l != j)):
-                                           if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-                                               self.grid.setVal(k, l, val_init+math.sqrt(2.0))
+                                   elif (mapIm[j][i] == 255):
+                                       if ((k == dest[0]) and (l == dest[1])):
+                                           self.grid.setVal(k, l, self.grid.getVal(k, l))
+                                       elif ((k == i) and (l == j)):
+                                           self.grid.setVal(k, l, val_init+0.0)
                                        else:
-                                           if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
-                                               self.grid.setVal(k, l, val_init+1.0)
-                                       if (mapIm[l][k] == 0):
-                                           val_pos = self.grid.getVal(k, l)
-                                           self.grid.setVal(k, l, (val_pos+20000.0))
+                                           if ((k != i) and (l != j) and (mapIm[l][k] == 255)):
+                                               if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
+                                                   self.grid.setVal(k, l, val_init+math.sqrt(2.0))
+                                           else:
+                                               if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)) and (mapIm[l][k] == 255):
+                                                   self.grid.setVal(k, l, val_init+1.0)
+                                       #if (mapIm[l][k] == 0):
+                                       #    val_pos = self.grid.getVal(k, l)
+                                       #    self.grid.setVal(k, l, (val_pos+20000.0))
                                #if (x == 3 and mapIm[l][k] == 0):
                                imagen[l][k] = self.grid.getVal(k, l)
                                #plt.imshow(imagen,'gray')
@@ -178,7 +180,7 @@ class MyAlgorithm(threading.Thread):
                                    pos_obstacles_border.append([i,j])                    
                     # Cases of the margins
                     fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
-                    #x = x+1
+                    x = x+1
             square = square + 1
         #out.release()
 
@@ -190,46 +192,47 @@ class MyAlgorithm(threading.Thread):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
                     imagen[l][k] = self.grid.getVal(k, l)
-                    if (x/o) == 50:
-                        out.write((imagen))
-                        o = o+1
-            x=x+1
-        out.release()
+                    #if (x/o) == 50:
+                    #    out.write((imagen))
+                    #    o = o+1
+            #x=x+1
+        #out.release()
+        print(mas)
 
 
 
         # Find the path
-        pixelCentral = [posRobot[0], posRobot[1]]
-        valMin = self.grid.getVal(posRobot[0], posRobot[1])
-        posMin = pixelCentral
-        self.grid.setPathVal(posRobot[0], posRobot[1], valMin)
-        found = "false"
-        while (found == "false"):
-            FoundNeighbour = "false"
-            for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
-                for j in range(pixelCentral[1]-1, pixelCentral[1]+2):
-                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-                        if (FoundNeighbour == "false"):
-                            valMinNeighbour = self.grid.getVal(i, j)
-                            posMinNeighbour = [i, j]
-                            FoundNeighbour = "true"
-                        val = self.grid.getVal(i, j)
-                        if ((val <= valMin) and (val >=  0.0)):
-                            if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
-                                valMin = val
-                                posMin = [i, j]
-                                valMinNeighbour = valMin
-                                posMinNeighbour = posMin
-                        elif (val < valMinNeighbour):
-                            valMinNeighbour = val
-                            posMinNeighbour = [i, j]
-                        print("posactual",i, j, "posMin", posMin,"dest", dest, "posnei", posMinNeighbour)
-                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
-            self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
-            pixelCentral = posMinNeighbour
-            if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
-                found = "true"
-                self.grid.setPathFinded()
+        #pixelCentral = [posRobot[0], posRobot[1]]
+        #valMin = self.grid.getVal(posRobot[0], posRobot[1])
+        #posMin = pixelCentral
+        #self.grid.setPathVal(posRobot[0], posRobot[1], valMin)
+        #found = "false"
+        #while (found == "false"):
+        #    FoundNeighbour = "false"
+        #    for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
+        #        for j in range(pixelCentral[1]-1, pixelCentral[1]+2):
+        #            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
+        #                if (FoundNeighbour == "false"):
+        #                    valMinNeighbour = self.grid.getVal(i, j)
+        #                    posMinNeighbour = [i, j]
+        #                    FoundNeighbour = "true"
+        #                val = self.grid.getVal(i, j)
+        #                if ((val <= valMin) and (val >=  0.0)):
+        #                    if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
+        #                        valMin = val
+        #                        posMin = [i, j]
+        #                        valMinNeighbour = valMin
+        #                        posMinNeighbour = posMin
+        #                elif (val < valMinNeighbour):
+        #                    valMinNeighbour = val
+        #                    posMinNeighbour = [i, j]
+        #                print("posactual",i, j, "posMin", posMin,"dest", dest, "posnei", posMinNeighbour)
+        #                print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
+        #    self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
+        #    pixelCentral = posMinNeighbour
+        #    if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
+        #        found = "true"
+        #        self.grid.setPathFinded()
 
         #print (len(pos_obstacles_border))
 
