@@ -1,4 +1,3 @@
-
 #!/bin/sh
 #
 # Copyright (c) 2016
