@@ -59,13 +59,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         laserdata3 = self.laser3.getLaserData()
         if (laserdata1):
             self.map.setLaserValues(1,laserdata1)
-            self.map1.setLaserValues(1,laserdata1)
         if (laserdata2):
             self.map.setLaserValues(2,laserdata2)
-            self.map1.setLaserValues(2,laserdata2)
         if (laserdata3):
             self.map.setLaserValues(3,laserdata3)
-            self.map1.setLaserValues(3,laserdata3)
         self.map.update()
         self.map1.update()
 
