@@ -146,7 +146,7 @@ class MyAlgorithm(threading.Thread):
                        border = 0
                        for k in range(i-1, i+2):
                            for l in range(j-1, j+2):
-                               if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
+                               if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400) and (mapIm[j][i] == 255)):
                                    val = self.grid.getVal(k, l)
                                    val_init = self.grid.getVal(i, j)
                                    if(mapIm[l][k] == 0):
@@ -163,17 +163,13 @@ class MyAlgorithm(threading.Thread):
                                            else:
                                                if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)) and (mapIm[l][k] == 255):
                                                    self.grid.setVal(k, l, val_init+1.0)
-                                       #if (mapIm[l][k] == 0):
-                                       #    val_pos = self.grid.getVal(k, l)
-                                       #    self.grid.setVal(k, l, (val_pos+20000.0))
-                               #if (x == 3 and mapIm[l][k] == 0):
                                imagen[l][k] = self.grid.getVal(k, l)
                                #plt.imshow(imagen,'gray')
                                #plt.show()
                                #img = cv2.cvtColor(imagen, cv2.COLOR_GRAY2RGB)
-                               #if (x/o) == 200:
-                               #    out.write((imagen))
-                               #    o = o+1
+                               if (x/o) == 200:
+                                   out.write((imagen))
+                                   o = o+1
                        if (((i < dest[0]-square+1) or (i > dest[0]+square-1)) or ((i >= dest[0]-square+1) and (i <= dest[0]+square-1) and ((j < dest[1]-square+1) or (j > dest[1]+square-1)))):
                            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
                                if (border != 9 and mapIm[j][i] == 0):
@@ -182,7 +178,7 @@ class MyAlgorithm(threading.Thread):
                     fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
                     x = x+1
             square = square + 1
-        #out.release()
+        out.release()
 
         # Obstacles penalties
         for i in range(0, len(pos_obstacles_border)):
