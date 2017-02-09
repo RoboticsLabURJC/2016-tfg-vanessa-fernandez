@@ -24,6 +24,7 @@ from PyQt5.QtGui import QPen, QPainter
 from PyQt5.QtCore import QPoint, QPointF, pyqtSignal, Qt
 import numpy as np
 import math
+from math import pi as pi
 
 class MapWidget(QWidget):
 
@@ -118,7 +119,6 @@ class MapWidget(QWidget):
         return RT   
 
     def RTLaser(self, num):
-        pi = math.pi
         if num == 1:
             #Rotación en Z / Traslación en X
             RT = self.RTz(0, 2.79, 0, 0)
@@ -134,25 +134,29 @@ class MapWidget(QWidget):
         coord = [0,0] 
         coord[0] = dist * math.cos(angle)
         coord[1] = dist * math.sin(angle)
-        return coord     
+        return coord
+
+    def RTCar(self):
+        RTx = self.RTx(pi, 0, 0, 0)
+        RTz = self.RTz(pi/2, 0, 0, 0)
+        return RTx*RTz
 
     def drawLaser(self, num, painter, color, laser):
-        pi = math.pi
         pen = QPen(color, 2)
         painter.setPen(pen)
         RT = self.RTLaser(num)
-        RTx = self.RTx(pi, 0, 0, 0)
-        RTz = self.RTz(pi/2, 0, 0, 0)
+        #RTx = self.RTx(pi, 0, 0, 0)
+        #RTz = self.RTz(pi/2, 0, 0, 0)
         RTOrigLaser = np.matrix([[0],[0],[0],[1]]) * self.scale
         RTFinalLaser1 = RT * RTOrigLaser
-        RTFinalLaser = RTx * RTz * RTFinalLaser1
+        RTFinalLaser = self.RTCar() * RTFinalLaser1
         for d in laser:
             dist = d[0]
             angle = d[1]
             coord = self.coordLaser(dist,angle)
             orig_poses = np.matrix([[coord[0]], [coord[1]], [1], [1]]) * self.scale
             final_poses1 = RT * orig_poses
-            final_poses = RTx * RTz * final_poses1
+            final_poses = self.RTCar() * final_poses1
             painter.drawLine(QPointF(RTFinalLaser.flat[0],RTFinalLaser.flat[1]),QPointF(final_poses.flat[0], final_poses.flat[1]))
 
     def setLaserValues(self, num, laser):
@@ -183,9 +187,6 @@ class MapWidget1(QWidget):
         self.winParent=winParent
         self.initUI()
         self.scale = 19.0
-        self.laser1 = []
-        self.laser2 = []
-        self.laser3 = []
         
     def initUI(self):
         layout=QGridLayout() 
@@ -211,20 +212,43 @@ class MapWidget1(QWidget):
         # Draw car
         self.drawCar(painter)
 
+
+        painter2=QPainter(self)
+        pen = QPen(Qt.blue, 2)
+        painter2.setPen(pen)
+
+        # Widget center
+        painter2.translate(QPoint(_width/2, _height/2))
+
         # Draw obstacles
-        self.drawObstacles(painter)
+        self.drawObstacles(painter2)
+
+
+
+    def RTCar(self):
+        RTx = self.RTx(pi, 0, 0, 0)
+        RTz = self.RTz(pi/2, 0, 0, 0)
+        return RTx*RTz     
 
     def drawCar(self, painter):
-        carsize = 30
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        yaw = pose.getYaw()
 
+        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
+        final_poses = self.RTCar() * orig_poses
+
+        carsize = 30
+        painter.rotate(-180*yaw/pi)
         # Chassis
-        painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
+        painter.fillRect(-carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1],carsize,2*carsize,Qt.yellow)
 
         # Tires
-        painter.fillRect(-carsize/2,-carsize,carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2,-carsize,-carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(-carsize/2+final_poses.flat[0],-carsize+final_poses.flat[1],carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(carsize/2+final_poses.flat[0],-carsize+final_poses.flat[1],-carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(-carsize/2+final_poses.flat[0],carsize-2*carsize/5+final_poses.flat[1],carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(carsize/2+final_poses.flat[0],carsize-2*carsize/5+final_poses.flat[1],-carsize/5,2*carsize/5,Qt.black)
 
 
     def drawObstacles(self, painter):
@@ -238,7 +262,7 @@ class MapWidget1(QWidget):
         # Obstacle 4
         painter.fillRect(-5/2*carsize, 4*carsize, carsize, 2*carsize, Qt.black)
 
-              
+
     def RTx(self, angle, tx, ty, tz):
         RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
         return RT
