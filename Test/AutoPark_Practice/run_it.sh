@@ -13,7 +13,10 @@ sleep 5 # up to 20 for circuit.world
 
 [ "$1" = "GUI" ] && gzclient &
 
-python3 autopark.py --Ice.Config=autopark.cfg
+python3 autopark.py --Ice.Config=autopark.cfg &
+
+python3 referee.py --Ice.Config=autopark.cfg
 
 killall gzserver
+killall python3
 [ "$1" = "GUI" ] && killall gzclient
