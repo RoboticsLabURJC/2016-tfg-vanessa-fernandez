@@ -223,6 +223,9 @@ class MapWidget1(QWidget):
         # Draw obstacles
         self.drawObstacles(painter2)
 
+        # Draw ideal position
+        self.drawIdeal(painter2)
+
 
 
     def RTCar(self):
@@ -270,6 +273,18 @@ class MapWidget1(QWidget):
         orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
         final_poses4 = self.RTCar() * orig_poses4
         painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
+
+
+    def drawIdeal(self, painter):
+        carsize = 30
+
+        # Ideal position
+        orig_poses = np.matrix([[7.25], [3], [1], [1]]) * self.scale
+        final_poses = self.RTCar() * orig_poses
+        painter.drawLine(-carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1], carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1])
+        painter.drawLine(carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1], carsize/2+final_poses.flat[0], carsize+final_poses.flat[1])
+        painter.drawLine(carsize/2+final_poses.flat[0], carsize+final_poses.flat[1], -carsize/2+final_poses.flat[0], carsize+final_poses.flat[1])
+        painter.drawLine(-carsize/2+final_poses.flat[0], carsize+final_poses.flat[1], -carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1])
 
 
     def RTx(self, angle, tx, ty, tz):
