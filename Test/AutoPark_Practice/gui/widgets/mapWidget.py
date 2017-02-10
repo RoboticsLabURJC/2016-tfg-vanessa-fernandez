@@ -95,7 +95,7 @@ class MapWidget(QWidget):
         painter.drawLine(QPointF(RT4.flat[0],RT4.flat[1]),QPointF(RT6.flat[0],RT6.flat[1]))
 
     def drawCar(self, painter):
-        carsize = 50
+        carsize = 40
 
         # Chassis
         painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
@@ -186,7 +186,7 @@ class MapWidget1(QWidget):
         super(MapWidget1, self).__init__()
         self.winParent=winParent
         self.initUI()
-        self.scale = 19.0
+        self.scale = 12.0
         
     def initUI(self):
         layout=QGridLayout() 
@@ -253,14 +253,23 @@ class MapWidget1(QWidget):
 
     def drawObstacles(self, painter):
         carsize = 30
+
         # Obstacle 1
-        painter.fillRect(-5/2*carsize, -6*carsize, carsize, 2*carsize, Qt.black)
+        orig_poses1 = np.matrix([[-13.5], [3], [1], [1]]) * self.scale
+        final_poses1 = self.RTCar() * orig_poses1
+        painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 2
-        painter.fillRect(-5/2*carsize, -carsize, carsize, 2*carsize, Qt.black)
+        orig_poses2 = np.matrix([[-7], [3], [1], [1]]) * self.scale
+        final_poses2 = self.RTCar() * orig_poses2
+        painter.fillRect(-carsize/2+final_poses2.flat[0], -carsize+final_poses2.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 3
-        painter.fillRect(-5/2*carsize, 3/2*carsize, carsize, 2*carsize, Qt.black)
+        orig_poses3 = np.matrix([[0.5], [3], [1], [1]]) * self.scale
+        final_poses3 = self.RTCar() * orig_poses3
+        painter.fillRect(-carsize/2+final_poses3.flat[0], -carsize+final_poses3.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 4
-        painter.fillRect(-5/2*carsize, 4*carsize, carsize, 2*carsize, Qt.black)
+        orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
+        final_poses4 = self.RTCar() * orig_poses4
+        painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
 
 
     def RTx(self, angle, tx, ty, tz):
