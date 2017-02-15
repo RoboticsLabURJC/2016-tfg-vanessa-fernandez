@@ -16,6 +16,14 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
+    <include>
+      <uri>model://acera</uri>
+      <pose>5 9 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://acera</uri>
+      <pose>5 -9 0 0 0 0</pose>
+    </include>
     
 
     <!-- A taxi with lasers-->
