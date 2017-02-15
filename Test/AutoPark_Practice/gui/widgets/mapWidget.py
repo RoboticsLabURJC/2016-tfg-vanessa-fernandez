@@ -300,6 +300,14 @@ class MapWidget1(QWidget):
         orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
         final_poses4 = self.RTCar() * orig_poses4
         painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
+        # Sidewalk 1
+        orig_poses5 = np.matrix([[5], [9], [1], [1]]) * self.scale
+        final_poses5 = self.RTCar() * orig_poses5
+        painter.fillRect(-5*carsize+final_poses5.flat[0], -6*carsize+final_poses5.flat[1], 6.75*carsize, 16*carsize, Qt.black)
+        # Sidewalk 2
+        orig_poses6 = np.matrix([[5], [-9], [1], [1]]) * self.scale
+        final_poses6 = self.RTCar() * orig_poses6
+        painter.fillRect(-2*carsize+final_poses6.flat[0], -6*carsize+final_poses6.flat[1], 6.75*carsize, 16*carsize, Qt.black)
 
 
     def drawIdeal(self, painter):
