@@ -25,7 +25,8 @@ import sys
 #from gui.threadGUI import ThreadGUI
 from parallelIce.pose3dClient import Pose3DClient
 import easyiceconfig as EasyIce
-
+import math
+from math import pi as pi
 
 
 
@@ -43,6 +44,8 @@ if __name__ == "__main__":
     #myGUI.setAlgorithm(algorithm)
     #myGUI.show()
 
+    idealAngle = 0
+
     while True:
         pose = pose3d.getPose3D()
         x = pose3d.getX()
@@ -50,6 +53,15 @@ if __name__ == "__main__":
         yaw = pose3d.getYaw()
 
         print('Pose 3D (Referee): x: ', x, ' y: ', y, ' yaw: ', yaw)
+
+        if yaw <= 20*pi/180 and yaw >= -20*pi/180:
+            print("verde")
+        elif yaw > 20*pi/180 and yaw <= 40*pi/180 or yaw < -20*pi/180 and yaw >= -40*pi/180:
+            print("amarillo")
+        elif yaw > 40*pi/180 and yaw <= 60*pi/180 or yaw < -40*pi/180 and yaw >= -60*pi/180:
+            print("naranja")
+        else:
+            print("rojo")
 
     #t2 = ThreadGUI(myGUI)
     #t2.daemon=True
