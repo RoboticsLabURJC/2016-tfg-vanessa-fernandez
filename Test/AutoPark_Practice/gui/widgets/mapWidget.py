@@ -202,7 +202,21 @@ class MapWidget1(QWidget):
     def paintEvent(self, e):
         _width = self.width()
         _height = self.height()
-    
+
+
+        painter2=QPainter(self)
+        pen = QPen(Qt.blue, 2)
+        painter2.setPen(pen)
+
+        # Widget center
+        painter2.translate(QPoint(_width/2, _height/2))
+
+        # Draw obstacles
+        self.drawObstacles(painter2)
+
+        # Draw ideal position
+        self.drawIdeal(painter2)
+
         painter=QPainter(self)
         pen = QPen(Qt.black, 2)
         painter.setPen(pen)
@@ -221,20 +235,6 @@ class MapWidget1(QWidget):
 
         # Draw the car's way
         self.drawTrail(painter1)
-
-
-        painter2=QPainter(self)
-        pen = QPen(Qt.blue, 2)
-        painter2.setPen(pen)
-
-        # Widget center
-        painter2.translate(QPoint(_width/2, _height/2))
-
-        # Draw obstacles
-        self.drawObstacles(painter2)
-
-        # Draw ideal position
-        self.drawIdeal(painter2)
 
 
 
