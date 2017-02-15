@@ -205,7 +205,7 @@ class MapWidget1(QWidget):
 
 
         painter2=QPainter(self)
-        pen = QPen(Qt.blue, 2)
+        pen = QPen(Qt.green, 2)
         painter2.setPen(pen)
 
         # Widget center
@@ -252,31 +252,36 @@ class MapWidget1(QWidget):
         orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
 
+        carsize = 30
+        painter.translate(QPoint(final_poses[0], final_poses[1]))
+        painter.rotate(-180*yaw/pi)
+        # Chassis
+        painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
+
+        # Tires
+        painter.fillRect(-carsize/2,-carsize,carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(carsize/2,-carsize,-carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
+        painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
+
+
+    def drawTrail(self, painter):
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        #yaw = pose.getYaw()
+
+        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
+        final_poses = self.RTCar() * orig_poses
+
         # Car's way
-        if len(self.trail) < 100:
+        if len(self.trail) < 300:
             self.trail.append([final_poses.flat[0], final_poses.flat[1]])
         else:
             for i in range(1, len(self.trail)):
                 self.trail[i-1] = self.trail[i]
             self.trail[len(self.trail)-1] = [final_poses.flat[0], final_poses.flat[1]]
 
-
-        carsize = 30
-        painter.rotate(-180*yaw/pi)
-        # Chassis
-        painter.fillRect(-carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1],carsize,2*carsize,Qt.yellow)
-
-        # Tires
-        painter.fillRect(-carsize/2+final_poses.flat[0],-carsize+final_poses.flat[1],carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2+final_poses.flat[0],-carsize+final_poses.flat[1],-carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(-carsize/2+final_poses.flat[0],carsize-2*carsize/5+final_poses.flat[1],carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2+final_poses.flat[0],carsize-2*carsize/5+final_poses.flat[1],-carsize/5,2*carsize/5,Qt.black)
-
-
-    def drawTrail(self, painter):
-        pose = self.winParent.getPose3D()
-        yaw = pose.getYaw()
-        painter.rotate(-180*yaw/pi)
         for i in range(0, len(self.trail)):
             painter.drawPoint(self.trail[i][0], self.trail[i][1])
 
@@ -300,6 +305,7 @@ class MapWidget1(QWidget):
         orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
         final_poses4 = self.RTCar() * orig_poses4
         painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
+
         # Sidewalk 1
         orig_poses5 = np.matrix([[5], [9], [1], [1]]) * self.scale
         final_poses5 = self.RTCar() * orig_poses5
