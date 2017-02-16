@@ -17,7 +17,7 @@ class MainWindow(QWidget):
         self.quesito = quesoWidget(self, pose3d)
         self.tiempo = tiempoWidget(self)
         self.calidad = calidadWidget(self)
-        self.distancia = distanciaWidget(self)
+        self.distancia = distanciaWidget(self, pose3d)
         layout.addWidget(self.quesito,1,0)
         layout.addWidget(self.tiempo,0,0)
         layout.addWidget(self.distancia,0,2)
@@ -34,6 +34,7 @@ class MainWindow(QWidget):
 
     def update(self):
         self.quesito.updateG()
+        self.distancia.updateG()
 
 
 class calidadWidget(QWidget):
@@ -59,22 +60,42 @@ class calidadWidget(QWidget):
 
 
 class distanciaWidget(QWidget):
-    def __init__(self,winParent):    
+    def __init__(self,winParent, pose3d):    
         super(distanciaWidget, self).__init__()
         self.winParent=winParent
+        self.pose3d = pose3d
+        self.distanceFrontal = [0, 0]
+        self.distanceRear = [0, 0]
+        self.distanceSidewalk = [0, 0]
 
         vLayout = QVBoxLayout()
 
-        distanciasLabel = QLabel("Distancias:")
-        distanciaFrontalLabel = QLabel("Distancia frontal:	" + str(0))
-        distanciaTraseraLabel = QLabel("Distancia trasera:	" + str(0))
-        distanciaAceraLabel = QLabel("Distancia a la acera: " + str(0))
-        vLayout.addWidget(distanciasLabel, 0)
-        vLayout.addWidget(distanciaFrontalLabel, 0)
-        vLayout.addWidget(distanciaTraseraLabel, 0)
-        vLayout.addWidget(distanciaAceraLabel, 0)
+        self.distances()
+
+        distancesLabel = QLabel("Distancias:")
+        distanceFrontalLabel = QLabel("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
+        distanceRearLabel = QLabel("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
+        distanceSidewalkLabel = QLabel("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
+        vLayout.addWidget(distancesLabel, 0)
+        vLayout.addWidget(distanceFrontalLabel, 0)
+        vLayout.addWidget(distanceRearLabel, 0)
+        vLayout.addWidget(distanceSidewalkLabel, 0)
 
         self.setLayout(vLayout)
+
+
+    def distances(self):
+        positionCarFrontal = [14, 3]
+        positionCarRear = [0.5, 3]
+        carSize = [5.75, 2.5]
+        x = self.pose3d.getX()
+        y = self.pose3d.getY()
+        self.distanceFrontal = [positionCarFrontal[0]-x-carSize[0], positionCarFrontal[1]-y-carSize[1]]
+        self.distanceRear = [positionCarRear[0]-x-carSize[0], positionCarRear[1]-y-carSize[1]]
+
+
+    def updateG(self):
+        self.update()      
         
         
 
