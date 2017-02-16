@@ -25,6 +25,7 @@ import sys
 #from gui.threadGUI import ThreadGUI
 from parallelIce.pose3dClient import Pose3DClient
 import easyiceconfig as EasyIce
+from datetime import timedelta,datetime,time,date
 import math
 from math import pi as pi
 
@@ -62,6 +63,10 @@ if __name__ == "__main__":
             print("naranja")
         else:
             print("rojo")
+
+
+    # Timer
+    print('TIME: ' )
 
     #t2 = ThreadGUI(myGUI)
     #t2.daemon=True
