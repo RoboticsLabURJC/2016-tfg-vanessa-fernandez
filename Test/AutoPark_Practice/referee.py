@@ -18,10 +18,12 @@ class MainWindow(QWidget):
         self.tiempo = tiempoWidget(self)
         self.calidad = calidadWidget(self)
         self.distancia = distanciaWidget(self, pose3d)
+        self.nota = notaWidget(self,pose3d)
         layout.addWidget(self.quesito,1,0)
         layout.addWidget(self.tiempo,0,0)
         layout.addWidget(self.distancia,0,2)
         layout.addWidget(self.calidad,1,2)
+        layout.addWidget(self.nota,0,1)
     
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
@@ -35,6 +37,7 @@ class MainWindow(QWidget):
     def update(self):
         self.quesito.updateG()
         self.distancia.updateG()
+        self.nota.updateG()
 
 
 class calidadWidget(QWidget):
@@ -96,8 +99,65 @@ class distanciaWidget(QWidget):
 
     def updateG(self):
         self.update()      
+   
+   
         
+class notaWidget(QWidget):
+    def __init__(self,winParent,pose3d):    
+        super(notaWidget, self).__init__()
+        self.winParent=winParent
+        self.pose3d = pose3d
+
+        hLayout = QHBoxLayout()
         
+        notaAngle = self.testAngle() * 0.025
+        notaTime = self.testTime() * 0.025
+        notaDist = self.testDistance() * 0.025
+        notaCol = self.testCollision() * 0.025
+        nota = notaAngle + notaTime + notaDist + notaCol
+        
+        notaLabel = QLabel('Nota final: ' + str(nota))
+        hLayout.addWidget(notaLabel, 0) 
+        self.setLayout(hLayout) 
+        
+    def testAngle(self):
+        yawRad = self.pose3d.getYaw()
+        angle = math.degrees(yawRad) + 90
+        if (angle >= 85 and angle <= 105):
+            notaAngle = 100
+        elif (angle < 85 and angle >= 70 or angle > 105 and angle <= 120):
+            notaAngle = 80
+        elif (angle < 70 and angle >= 60 or angle > 120 and angle <= 130):
+            notaAngle = 50
+        else: 
+            notaAngle = 0
+        return notaAngle
+    
+    def testTime(self):
+        time = tiempoWidget(self)
+        myTime = time.seconds
+        if myTime <= 30:
+            notaTime = 100
+        elif myTime > 30 and myTime <= 60:
+            notaTime = 80
+        elif myTime > 60 and myTime <= 120:
+            notaTime = 50
+        else:
+            notaTime = 0    
+        return notaTime
+    
+    def testDistance(self):
+        notaDist = 0
+        return notaDist
+    
+    def testCollision(self):
+        notaCol = 0
+        return notaCol
+
+    def updateG(self):
+        self.update() 
+        
+             
 
 class tiempoWidget(QWidget):
 
@@ -142,7 +202,6 @@ class tiempoWidget(QWidget):
 
     def printTime(self):
         self.seconds += 1
-        print(self.seconds)
         self.lcd.display(self.seconds)
 
 
@@ -153,8 +212,7 @@ class quesoWidget(QWidget):
         super(quesoWidget, self).__init__()
         self.winParent=winParent
         self.rectangle = QRectF(0.0, 0.0, 300.0, 300.0)
-        self.pose3d = pose3d
-            
+        self.pose3d = pose3d       
 
     def drawRedZones(self, painter):
         self.setStyle(painter, QColor(255,70,70),QColor(255,70,70),1)
@@ -222,6 +280,7 @@ class quesoWidget(QWidget):
 
     def updateG(self):
         self.update()
+
 
 
 if __name__ == "__main__":
