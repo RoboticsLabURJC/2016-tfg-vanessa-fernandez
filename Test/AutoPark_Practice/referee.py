@@ -122,7 +122,7 @@ class notaWidget(QWidget):
         
     def testAngle(self):
         yawRad = self.pose3d.getYaw()
-        angle = math.degrees(yawRad) + 90
+        angle = math.degrees(yawRad)
         if (angle >= 85 and angle <= 105):
             notaAngle = 100
         elif (angle < 85 and angle >= 70 or angle > 105 and angle <= 120):
