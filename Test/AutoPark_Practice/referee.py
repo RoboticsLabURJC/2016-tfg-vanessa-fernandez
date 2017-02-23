@@ -33,7 +33,6 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         self.updGUI.connect(self.update)
 
-
     def update(self):
         self.quesito.updateG()
         self.distancia.updateG()
@@ -67,18 +66,18 @@ class distanciaWidget(QWidget):
         super(distanciaWidget, self).__init__()
         self.winParent=winParent
         self.pose3d = pose3d
-        self.distanceFrontal = [0, 0]
-        self.distanceRear = [0, 0]
-        self.distanceSidewalk = [0, 0]
+        self.distFrontFinal = 0
+        self.distRearFinal = 0
+        self.distanceSidewalk = 0
 
         vLayout = QVBoxLayout()
 
         self.distances()
 
         distancesLabel = QLabel("Distancias:")
-        self.distanceFrontalLabel = QLabel("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
-        self.distanceRearLabel = QLabel("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
-        self.distanceSidewalkLabel = QLabel("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
+        self.distanceFrontalLabel = QLabel("Distancia frontal: " + str(round(self.distFrontFinal, 3)) + ' m')
+        self.distanceRearLabel = QLabel("Distancia trasera: " + str(round(self.distRearFinal, 3)) + ' m')
+        self.distanceSidewalkLabel = QLabel("Distancia a la acera: " + str(round(self.distanceSidewalk, 3)) + ' m')
         vLayout.addWidget(distancesLabel, 0)
         vLayout.addWidget(self.distanceFrontalLabel, 0)
         vLayout.addWidget(self.distanceRearLabel, 0)
@@ -86,22 +85,28 @@ class distanciaWidget(QWidget):
 
         self.setLayout(vLayout)
 
-
     def distances(self):
-        positionCarFrontal = [14, 3]
-        positionCarRear = [0.5, 3]
         carSize = [5.75, 2.5]
-        x = self.pose3d.getX()
+        positionCarFrontal = [14 - carSize[0]/2, 3]
+        positionCarRear = [0.5 + carSize[0]/2, 3]
+        positionSideWalk = 5 #y=5
+        
+        xFront = self.pose3d.getX() + carSize[0]/2
+        xRear = self.pose3d.getX() - carSize[0]/2
         y = self.pose3d.getY()
-        self.distanceFrontal = [positionCarFrontal[0]-x-carSize[0], positionCarFrontal[1]-y-carSize[1]]
-        self.distanceRear = [positionCarRear[0]-x-carSize[0], positionCarRear[1]-y-carSize[1]]
-
+        distanceFrontal = [abs(positionCarFrontal[0]-xFront), abs(positionCarFrontal[1]-y)]
+        self.distFrontFinal = pow(pow(distanceFrontal[0],2) + pow(distanceFrontal[1],2),0.5)
+        
+        distanceRear = [abs(positionCarRear[0]-xRear), abs(positionCarRear[1]-y)]
+        self.distRearFinal = pow(pow(distanceRear[0],2) + pow(distanceRear[1],2),0.5)
+        
+        self.distanceSidewalk = abs(y+carSize[1]/2-positionSideWalk)
 
     def updateG(self):
         self.distances()
-        self.distanceFrontalLabel.setText("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
-        self.distanceRearLabel.setText("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
-        self.distanceSidewalkLabel.setText("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
+        self.distanceFrontalLabel.setText("Distancia frontal: " + str(round(self.distFrontFinal, 3)) + ' m')
+        self.distanceRearLabel.setText("Distancia trasera: " + str(round(self.distRearFinal, 3)) + ' m')
+        self.distanceSidewalkLabel.setText("Distancia a la acera: " + str(round(self.distanceSidewalk, 3)) + ' m')
         self.update()      
    
    
