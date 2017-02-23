@@ -76,13 +76,13 @@ class distanciaWidget(QWidget):
         self.distances()
 
         distancesLabel = QLabel("Distancias:")
-        distanceFrontalLabel = QLabel("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
-        distanceRearLabel = QLabel("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
-        distanceSidewalkLabel = QLabel("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
+        self.distanceFrontalLabel = QLabel("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
+        self.distanceRearLabel = QLabel("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
+        self.distanceSidewalkLabel = QLabel("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
         vLayout.addWidget(distancesLabel, 0)
-        vLayout.addWidget(distanceFrontalLabel, 0)
-        vLayout.addWidget(distanceRearLabel, 0)
-        vLayout.addWidget(distanceSidewalkLabel, 0)
+        vLayout.addWidget(self.distanceFrontalLabel, 0)
+        vLayout.addWidget(self.distanceRearLabel, 0)
+        vLayout.addWidget(self.distanceSidewalkLabel, 0)
 
         self.setLayout(vLayout)
 
@@ -98,6 +98,10 @@ class distanciaWidget(QWidget):
 
 
     def updateG(self):
+        self.distances()
+        self.distanceFrontalLabel.setText("Distancia frontal:	x = " + str(round(self.distanceFrontal[0], 3)) + "  y = " + str(round(self.distanceFrontal[1], 3)))
+        self.distanceRearLabel.setText("Distancia trasera:	x = " + str(round(self.distanceRear[0], 3)) + "  y = " + str(round(self.distanceRear[1], 3)))
+        self.distanceSidewalkLabel.setText("Distancia a la acera: x = " + str(round(self.distanceSidewalk[0], 3)) + " y = " + str(round(self.distanceSidewalk[1], 3)))
         self.update()      
    
    
@@ -122,7 +126,7 @@ class notaWidget(QWidget):
         
     def testAngle(self):
         yawRad = self.pose3d.getYaw()
-        angle = math.degrees(yawRad)
+        angle = math.degrees(yawRad) + 90
         if (angle >= 85 and angle <= 105):
             notaAngle = 100
         elif (angle < 85 and angle >= 70 or angle > 105 and angle <= 120):
