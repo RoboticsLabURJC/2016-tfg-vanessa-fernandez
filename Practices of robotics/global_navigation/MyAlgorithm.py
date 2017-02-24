@@ -71,6 +71,17 @@ class MyAlgorithm(threading.Thread):
         return fin
 
 
+    def incorporateNode(self, pos0, pos1, nodos):
+        found = False
+        for i in range(0, len(nodos)):
+            if self.grid.getVal(pos0, pos1) == self.grid.getVal(nodos[i][0][0], nodos[i][0][1]):
+                nodos[i].append([pos0, pos1])
+                found = True
+        if found == False:
+            nodos.append([[pos0, pos1]])
+        return nodos
+
+
     def penaltiesObstacles(self, i, j, dest0, dest1):
         found = "false"
         pos = []
@@ -123,8 +134,8 @@ class MyAlgorithm(threading.Thread):
         square = 0
         margin = 20
         pos_obstacles_border = []
-        #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        #out = cv2.VideoWriter('Expansion_campo.avi', fourcc, 30, (400, 400),False)
+        fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+        out = cv2.VideoWriter('Expansion_campo.avi', fourcc, 30, (400, 400),False)
 
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
@@ -223,11 +234,14 @@ class MyAlgorithm(threading.Thread):
         #    square = square + 1
         #out.release()
 
+        # New nodes
+        nodos = []
 
         # Expansion of the field
         while (fin == "false"):
             for i in range(0, len(nodo)):
                 if ((mapIm[nodo[i][1], nodo[i][0]] == 255) and nodo[i][0] >= 0 and nodo[i][0] < mapIm.shape[0] and nodo[i][1] >= 0 and nodo[i][1] < mapIm.shape[1]):
+                    # Wave fronts of each node
                     frente1 = [[nodo[i][0]-1, nodo[i][1]], [nodo[i][0], nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]], [nodo[i][0], nodo[i][1]+1]]
                     frente2 = [[nodo[i][0]-1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]+1], [nodo[i][0]-1, nodo[i][1]+1]]
                     val_init = self.grid.getVal(nodo[i][0], nodo[i][1])
@@ -235,15 +249,34 @@ class MyAlgorithm(threading.Thread):
                         if mapIm[frente1[j][1], frente1[j][0]] == 255:
                             val = self.grid.getVal(frente1[j][0], frente1[j][1])
                             if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
-                                self.grid.setVal(frente1[j][0], frente1[j][1], val_init+1.0)
+                                if frente1[j][0] != dest[0] or frente1[j][1] != dest[1]:
+                                    self.grid.setVal(frente1[j][0], frente1[j][1], val_init+1.0)
+                                    nodos = self.incorporateNode(frente1[j][0], frente1[j][1], nodos)
+                        else:
+                            pos_obstacles_border.append([frente1[j][0],frente1[j][1]])
+                        imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
+                        if (x/o) == 100:
+                            out.write((imagen))
+                            o = o + 1
                     for j in range(0, len(frente2)):
                         if mapIm[frente2[j][1], frente2[j][0]] == 255:
                             val = self.grid.getVal(frente2[j][0], frente2[j][1])
                             if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-                                self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
+                                if frente2[j][0] != dest[0] or frente2[j][1] != dest[1]:
+                                    self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
+                                    nodos = self.incorporateNode(frente2[j][0], frente2[j][1], nodos)
+                        imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
+                        if (x/o) == 100:
+                            out.write((imagen))
+                            o = o + 1
                 # Cases of the margins
                 fin = self.findStopExpansion(dest, posRobot, margin, nodo[i][0], nodo[i][1], fin)
-            fin = True
+                x = x + 1
+            if (nodos != []):
+                nodo = nodos[0]
+                nodos.pop(0)
+        out.release()
+
 
 
         # Obstacles penalties
