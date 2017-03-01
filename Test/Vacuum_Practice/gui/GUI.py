@@ -49,7 +49,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def updateGUI(self):
         laserdata = self.laser.getLaserData()
-        self.map.setLaserValues(laserdata)
+        #self.map.setLaserValues(laserdata)
+        if (laserdata):
+            self.map.setLaserValues(laserdata)
         self.map.update()
         self.map1.update()
 
