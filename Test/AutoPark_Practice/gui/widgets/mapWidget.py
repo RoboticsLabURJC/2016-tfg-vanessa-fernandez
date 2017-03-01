@@ -269,7 +269,6 @@ class MapWidget1(QWidget):
         pose = self.winParent.getPose3D()
         x = pose.getX()
         y = pose.getY()
-        #yaw = pose.getYaw()
 
         orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
