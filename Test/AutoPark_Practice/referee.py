@@ -85,20 +85,74 @@ class distanciaWidget(QWidget):
 
         self.setLayout(vLayout)
 
+    def EquationRect(self, x1, y1, x2, y2):
+        # Equation: a*x+b*y+c = 0
+        # Return a, b and c
+        a = y2 - y1
+        b = x1 - x2
+        c = x2*y1 -  x1*y2
+        return a,b,c
+
+
+    def distancePointRect(self, parameters, x0, y0):
+        a = parameters[0]
+        b = parameters[1]
+        c = parameters[2]
+        distance = abs(a*x0 + b*y0 + c) / (math.sqrt(pow(a,2) + pow(b,2)))
+        return distance
+
+
+    def distancePoint2Point(self, x1, y1, x2, y2):
+        return math.sqrt(pow((x2-x1),2) + pow((y2-y1),2))
+
+    def distanceCar2Car(self, xCarLeft, xcarRight, yCarLeft, yCarRight, pointLeft, pointRight):
+        if ((yCarRight > pointLeft[1]) or (yCarLeft < pointRight[1])):
+            distance = distancePoint2Point(xCarLeft, yCarLeft, pointLeft[0], pointLeft[1])
+            if (distancePoint2Point(xCar, yCarRight, pointLeft[0], pointLeft[1]) < distance):
+                distance = distancePoint2Point(xCarRight, yCarRight, pointLeft[0], pointLeft[1])
+            if (distancePoint2Point(xCar, yCarLeft, pointRight[0], pointRight[1]) < distance):
+                distance = distancePoint2Point(xCarLeft, yCarLeft, pointRight[0], pointRight[1])
+            if (distancePoint2Point(xCar, yCarRight, pointRight[0], pointRight[1]) < distance):
+                distance = distancePoint2Point(xCarRight, yCarRight, pointRight[0], pointRight[1])
+        else:
+            # Calculate equation's parameters
+            parameters = EquationRect(pointLeft[0], pointLeft[1], pointRight[0], pointRight[1])
+            # Calculate parameters of car
+            parameters2 = EquationRect(xCarLeft, yCarLeft,  xCarRight, yCarRight)
+            distance = distancePointRect(parameters, xCarLeft, yCarLeft)
+            dist = distancePointRect(parameters, xCarRight, yCarRight)
+            if (dist < distance):
+                distance = dist
+            if (distancePointRect(parameters2, pointLeft[0], pointLeft[1]) < distance):
+                distance = distancePointRect(parameters2, pointLeft[0], pointLeft[1])
+            if (distancePointRect(parameters2, pointRight[0], pointRight[1]) < distance):
+                distance = distancePointRect(parameters2, pointRight[0], pointRight[1])
+        return distance
+
+
     def distances(self):
         carSize = [5.75, 2.5]
-        positionCarFrontal = [14 - carSize[0]/2, 3]
-        positionCarRear = [0.5 + carSize[0]/2, 3]
-        positionSideWalk = 5 #y=5
+        #positionCarFrontal = [14 - carSize[0]/2, 3]
+        #positionCarRear = [0.5 + carSize[0]/2, 3]
+        pointCarFrontal_left = [14 - carSize[0]/2, 3+carSize[1]/2]
+        pointCarFrontal_right = [14 - carSize[0]/2, 3-carSize[1]/2]
+        pointCarRearleft = [0.5 + carSize[0]/2, 3+carSize[1]/2]
+        pointCarRearright = [0.5 + carSize[0]/2, 3-carSize[1]/2]
+        positionSideWalk = 5
         
+        # Falta meter matrices de rotaciones
         xFront = self.pose3d.getX() + carSize[0]/2
         xRear = self.pose3d.getX() - carSize[0]/2
-        y = self.pose3d.getY()
-        distanceFrontal = [abs(positionCarFrontal[0]-xFront), abs(positionCarFrontal[1]-y)]
-        self.distFrontFinal = pow(pow(distanceFrontal[0],2) + pow(distanceFrontal[1],2),0.5)
+        #y = self.pose3d.getY()
+        yLeft = self.pose3d.getY()+carSize[1]/2
+        yRight = self.pose3d.getY()-carSize[1]/2
+        #distanceFrontal = [abs(positionCarFrontal[0]-xFront), abs(positionCarFrontal[1]-y)]
+        #self.distFrontFinal = pow(pow(distanceFrontal[0],2) + pow(distanceFrontal[1],2),0.5)
+        self.distFrontFinal = 
         
-        distanceRear = [abs(positionCarRear[0]-xRear), abs(positionCarRear[1]-y)]
-        self.distRearFinal = pow(pow(distanceRear[0],2) + pow(distanceRear[1],2),0.5)
+        #distanceRear = [abs(positionCarRear[0]-xRear), abs(positionCarRear[1]-y)]
+        #self.distRearFinal = pow(pow(distanceRear[0],2) + pow(distanceRear[1],2),0.5)
+        self.distRearFinal =
         
         self.distanceSidewalk = abs(y+carSize[1]/2-positionSideWalk)
 
