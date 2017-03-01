@@ -1,5 +1,6 @@
 import sys, math
 from math import pi as pi
+import numpy as np
 from PyQt5.QtCore import QPoint, QRect, QSize, Qt, QPointF, QRectF, pyqtSignal, QTimer
 from PyQt5.QtGui import (QBrush, QConicalGradient, QLinearGradient, QPainter, QPainterPath, QPalette, QPen, QPixmap, QPolygon, QRadialGradient, QColor, QTransform, QPolygonF, QKeySequence, QIcon)
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QSpinBox, QWidget, QPushButton, QSpacerItem, QSizePolicy, QLCDNumber )
@@ -85,6 +86,24 @@ class distanciaWidget(QWidget):
 
         self.setLayout(vLayout)
 
+    def RTx(self, angle, tx, ty, tz):
+        RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
+        return RT
+        
+    def RTy(self, angle, tx, ty, tz):
+        RT = np.matrix([[math.cos(angle), 0, math.sin(angle), tx], [0, 1, 0, ty], [-math.sin(angle), 0, math.cos(angle), tz], [0,0,0,1]])
+        return RT
+    
+    def RTz(self, angle, tx, ty, tz):
+        RT = np.matrix([[math.cos(angle), -math.sin(angle), 0, tx], [math.sin(angle), math.cos(angle),0, ty], [0, 0, 1, tz], [0,0,0,1]])
+        return RT
+
+    def RTCar(self):
+        RTx = self.RTx(pi, 0, 0, 0)
+        RTz = self.RTz(pi/2, 0, 0, 0)
+        return RTx*RTz
+
+
     def EquationRect(self, x1, y1, x2, y2):
         # Equation: a*x+b*y+c = 0
         # Return a, b and c
@@ -105,28 +124,28 @@ class distanciaWidget(QWidget):
     def distancePoint2Point(self, x1, y1, x2, y2):
         return math.sqrt(pow((x2-x1),2) + pow((y2-y1),2))
 
-    def distanceCar2Car(self, xCarLeft, xcarRight, yCarLeft, yCarRight, pointLeft, pointRight):
+    def distanceCar2Car(self, xCarLeft,xCarRight, yCarLeft, yCarRight, pointLeft, pointRight):
         if ((yCarRight > pointLeft[1]) or (yCarLeft < pointRight[1])):
-            distance = distancePoint2Point(xCarLeft, yCarLeft, pointLeft[0], pointLeft[1])
-            if (distancePoint2Point(xCar, yCarRight, pointLeft[0], pointLeft[1]) < distance):
-                distance = distancePoint2Point(xCarRight, yCarRight, pointLeft[0], pointLeft[1])
-            if (distancePoint2Point(xCar, yCarLeft, pointRight[0], pointRight[1]) < distance):
-                distance = distancePoint2Point(xCarLeft, yCarLeft, pointRight[0], pointRight[1])
-            if (distancePoint2Point(xCar, yCarRight, pointRight[0], pointRight[1]) < distance):
-                distance = distancePoint2Point(xCarRight, yCarRight, pointRight[0], pointRight[1])
+            distance = self.distancePoint2Point(xCarLeft, yCarLeft, pointLeft[0], pointLeft[1])
+            if (self.distancePoint2Point(xCarRight, yCarRight, pointLeft[0], pointLeft[1]) < distance):
+                distance = self.distancePoint2Point(xCarRight, yCarRight, pointLeft[0], pointLeft[1])
+            if (self.distancePoint2Point(xCarLeft, yCarLeft, pointRight[0], pointRight[1]) < distance):
+                distance = self.distancePoint2Point(xCarLeft, yCarLeft, pointRight[0], pointRight[1])
+            if (self.distancePoint2Point(xCarRight, yCarRight, pointRight[0], pointRight[1]) < distance):
+                distance = self.distancePoint2Point(xCarRight, yCarRight, pointRight[0], pointRight[1])
         else:
             # Calculate equation's parameters
-            parameters = EquationRect(pointLeft[0], pointLeft[1], pointRight[0], pointRight[1])
+            parameters = self.EquationRect(pointLeft[0], pointLeft[1], pointRight[0], pointRight[1])
             # Calculate parameters of car
-            parameters2 = EquationRect(xCarLeft, yCarLeft,  xCarRight, yCarRight)
-            distance = distancePointRect(parameters, xCarLeft, yCarLeft)
-            dist = distancePointRect(parameters, xCarRight, yCarRight)
+            parameters2 = self.EquationRect(xCarLeft, yCarLeft,  xCarRight, yCarRight)
+            distance = self.distancePointRect(parameters, xCarLeft, yCarLeft)
+            dist = self.distancePointRect(parameters, xCarRight, yCarRight)
             if (dist < distance):
                 distance = dist
-            if (distancePointRect(parameters2, pointLeft[0], pointLeft[1]) < distance):
-                distance = distancePointRect(parameters2, pointLeft[0], pointLeft[1])
-            if (distancePointRect(parameters2, pointRight[0], pointRight[1]) < distance):
-                distance = distancePointRect(parameters2, pointRight[0], pointRight[1])
+            if (self.distancePointRect(parameters2, pointLeft[0], pointLeft[1]) < distance):
+                distance = self.distancePointRect(parameters2, pointLeft[0], pointLeft[1])
+            if (self.distancePointRect(parameters2, pointRight[0], pointRight[1]) < distance):
+                distance = self.distancePointRect(parameters2, pointRight[0], pointRight[1])
         return distance
 
 
@@ -136,23 +155,39 @@ class distanciaWidget(QWidget):
         #positionCarRear = [0.5 + carSize[0]/2, 3]
         pointCarFrontal_left = [14 - carSize[0]/2, 3+carSize[1]/2]
         pointCarFrontal_right = [14 - carSize[0]/2, 3-carSize[1]/2]
-        pointCarRearleft = [0.5 + carSize[0]/2, 3+carSize[1]/2]
-        pointCarRearright = [0.5 + carSize[0]/2, 3-carSize[1]/2]
+        pointCarRear_left = [0.5 + carSize[0]/2, 3+carSize[1]/2]
+        pointCarRear_right = [0.5 + carSize[0]/2, 3-carSize[1]/2]
         positionSideWalk = 5
-        
-        # Falta meter matrices de rotaciones
+
         xFront = self.pose3d.getX() + carSize[0]/2
         xRear = self.pose3d.getX() - carSize[0]/2
-        #y = self.pose3d.getY()
         yLeft = self.pose3d.getY()+carSize[1]/2
         yRight = self.pose3d.getY()-carSize[1]/2
+        
+        # Falta meter matrices de rotaciones
+        orig_poses_Front_Left = np.matrix([[xFront], [yLeft], [1], [1]])
+        poses_Front_Left = self.RTCar() * orig_poses_Front_Left
+
+        orig_poses_Front_Right = np.matrix([[xFront], [yRight], [1], [1]])
+        poses_Front_Right = self.RTCar() * orig_poses_Front_Right
+
+        orig_poses_Rear_Left = np.matrix([[xRear], [yLeft], [1], [1]])
+        poses_Rear_Left = self.RTCar() * orig_poses_Front_Left
+
+        orig_poses_Rear_Right = np.matrix([[xRear], [yRight], [1], [1]])
+        poses_Rear_Right = self.RTCar() * orig_poses_Rear_Right
+
+        #y = self.pose3d.getY()
+
         #distanceFrontal = [abs(positionCarFrontal[0]-xFront), abs(positionCarFrontal[1]-y)]
         #self.distFrontFinal = pow(pow(distanceFrontal[0],2) + pow(distanceFrontal[1],2),0.5)
-        self.distFrontFinal = 
+        self.distFrontFinal = self.distanceCar2Car(poses_Front_Left[0], poses_Front_Right[0], poses_Front_Left[1], poses_Front_Right[1], pointCarFrontal_left, pointCarFrontal_right)
         
         #distanceRear = [abs(positionCarRear[0]-xRear), abs(positionCarRear[1]-y)]
         #self.distRearFinal = pow(pow(distanceRear[0],2) + pow(distanceRear[1],2),0.5)
-        self.distRearFinal =
+        self.distRearFinal = self.distanceCar2Car(poses_Rear_Left[0], poses_Rear_Right[0], poses_Rear_Left[1], poses_Rear_Right[1], pointCarRear_left, pointCarRear_right)
+
+        y = self.pose3d.getY()
         
         self.distanceSidewalk = abs(y+carSize[1]/2-positionSideWalk)
 
