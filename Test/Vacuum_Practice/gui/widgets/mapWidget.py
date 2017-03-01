@@ -243,6 +243,8 @@ class MapWidget1(QWidget):
         y = pose.getY()
         yaw = pose.getYaw()
 
+        print(x,y, yaw)
+
         orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
 
