@@ -66,6 +66,9 @@ class MapWidget(QWidget):
         # Draw vacuum
         self.drawVacuum(painter)
 
+        # Draw obstacles
+        self.drawObstacles(painter)
+
         # Draw axis
         self.drawAxis(painter)
 
@@ -94,13 +97,14 @@ class MapWidget(QWidget):
         carsize = 40
 
         # Chassis
-        painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
+        #painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
+        painter.drawEllipse (0, 0, carsize/2, carsize/2)
 
         # Tires
-        painter.fillRect(-carsize/2,-carsize,carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2,-carsize,-carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
-        painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
+        #painter.fillRect(-carsize/2,-carsize,carsize/5,2*carsize/5,Qt.black)
+        #painter.fillRect(carsize/2,-carsize,-carsize/5,2*carsize/5,Qt.black)
+        #painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
+        #painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
               
     
     def RTx(self, angle, tx, ty, tz):
@@ -138,7 +142,7 @@ class MapWidget(QWidget):
         return coord
 
     
-    def RTCar(self):
+    def RTVacuum(self):
         RTx = self.RTx(pi, 0, 0, 0)
         RTz = self.RTz(pi/2, 0, 0, 0)
         return RTx*RTz
@@ -150,15 +154,46 @@ class MapWidget(QWidget):
         RT = self.RTLaser(num)
         RTOrigLaser = np.matrix([[0],[0],[0],[1]]) * self.scale
         RTFinalLaser1 = RT * RTOrigLaser
-        RTFinalLaser = self.RTCar() * RTFinalLaser1
+        RTFinalLaser = self.RTVacuum() * RTFinalLaser1
         for d in laser:
             dist = d[0]
             angle = d[1]
             coord = self.coordLaser(dist,angle)
             orig_poses = np.matrix([[coord[0]], [coord[1]], [1], [1]]) * self.scale
             final_poses1 = RT * orig_poses
-            final_poses = self.RTCar() * final_poses1
+            final_poses = self.RTVacuum() * final_poses1
             painter.drawLine(QPointF(RTFinalLaser.flat[0],RTFinalLaser.flat[1]),QPointF(final_poses.flat[0], final_poses.flat[1]))
+
+
+    def drawObstacles(self, painter):
+        carsize = 30
+
+        # Obstacle 1
+        orig_poses1 = np.matrix([[-13.5], [3], [1], [1]]) * self.scale
+        final_poses1 = self.RTVacuum() * orig_poses1
+        painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
+        # Obstacle 2
+        orig_poses2 = np.matrix([[-7], [3], [1], [1]]) * self.scale
+        final_poses2 = self.RTVacuum() * orig_poses2
+        painter.fillRect(-carsize/2+final_poses2.flat[0], -carsize+final_poses2.flat[1], carsize, 2*carsize, Qt.black)
+        # Obstacle 3
+        orig_poses3 = np.matrix([[0.5], [3], [1], [1]]) * self.scale
+        final_poses3 = self.RTVacuum() * orig_poses3
+        painter.fillRect(-carsize/2+final_poses3.flat[0], -carsize+final_poses3.flat[1], carsize, 2*carsize, Qt.black)
+        # Obstacle 4
+        orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
+        final_poses4 = self.RTVacuum() * orig_poses4
+        painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
+        
+        # Sidewalk 1
+        orig_poses5 = np.matrix([[5], [9], [1], [1]]) * self.scale
+        final_poses5 = self.RTVacuum() * orig_poses5
+        painter.fillRect(-5*carsize+final_poses5.flat[0], -6*carsize+final_poses5.flat[1], 6.75*carsize, 16*carsize, Qt.black)
+        # Sidewalk 2
+        orig_poses6 = np.matrix([[5], [-9], [1], [1]]) * self.scale
+        final_poses6 = self.RTVacuum() * orig_poses6
+        painter.fillRect(-2*carsize+final_poses6.flat[0], -6*carsize+final_poses6.flat[1], 6.75*carsize, 16*carsize, Qt.black)
+
 
    
     def setLaserValues(self, laser):
@@ -242,8 +277,6 @@ class MapWidget1(QWidget):
         x = pose.getX()
         y = pose.getY()
         yaw = pose.getYaw()
-
-        print(x,y, yaw)
 
         orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
