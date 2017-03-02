@@ -33,13 +33,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.teleop=TeleopWidget(self)
         self.map=MapWidget(self)
-        self.map1=MapWidget1(self)
+        #self.map1=MapWidget1(self)
         self.tlLayout.addWidget(self.teleop)
         self.teleop.setVisible(True)
         self.mapLayout.addWidget(self.map)
-        self.map1Layout.addWidget(self.map1)
+        #self.map1Layout.addWidget(self.map1)
         self.map.setVisible(True)
-        self.map1.setVisible(True)
+        #self.map1.setVisible(True)
 
         self.pushButton.clicked.connect(self.playClicked)
         self.pushButton.setCheckable(True)
@@ -53,7 +53,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if (laserdata):
             self.map.setLaserValues(laserdata)
         self.map.update()
-        self.map1.update()
+        #self.map1.update()
 
     def getPose3D(self):
         return self.pose3d
