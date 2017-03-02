@@ -134,8 +134,8 @@ class MyAlgorithm(threading.Thread):
         square = 0
         margin = 20
         pos_obstacles_border = []
-        fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        out = cv2.VideoWriter('Expansion_campo.avi', fourcc, 30, (400, 400),False)
+        #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+        #out = cv2.VideoWriter('Penalización.avi', fourcc, 30, (400, 400),False)
 
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
@@ -146,7 +146,7 @@ class MyAlgorithm(threading.Thread):
         imagen = np.zeros((400, 400),np.uint8)
         x=1
         o=1
-        #mas = 25.5
+
         # Expansion of the field
         #while (fin == "false"):
         #    for i in range(dest[0]-square, dest[0]+square+1):
@@ -255,9 +255,9 @@ class MyAlgorithm(threading.Thread):
                         else:
                             pos_obstacles_border.append([frente1[j][0],frente1[j][1]])
                         imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
-                        if (x/o) == 100:
-                            out.write((imagen))
-                            o = o + 1
+                        #if (x/o) == 100:
+                        #    out.write((imagen))
+                        #    o = o + 1
                     for j in range(0, len(frente2)):
                         if mapIm[frente2[j][1], frente2[j][0]] == 255:
                             val = self.grid.getVal(frente2[j][0], frente2[j][1])
@@ -266,33 +266,32 @@ class MyAlgorithm(threading.Thread):
                                     self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
                                     nodos = self.incorporateNode(frente2[j][0], frente2[j][1], nodos)
                         imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
-                        if (x/o) == 100:
-                            out.write((imagen))
-                            o = o + 1
+                        #if (x/o) == 100:
+                        #    out.write((imagen))
+                        #    o = o + 1
                 # Cases of the margins
                 fin = self.findStopExpansion(dest, posRobot, margin, nodo[i][0], nodo[i][1], fin)
-                x = x + 1
+                #x = x + 1
             if (nodos != []):
                 nodo = nodos[0]
                 nodos.pop(0)
-        out.release()
+        #out.release()
 
 
 
         # Obstacles penalties
-#        for i in range(0, len(pos_obstacles_border)):
-#            for k in range(pos_obstacles_border[i][0]-3, pos_obstacles_border[i][0]+4):
-#                for l in range(pos_obstacles_border[i][1]-3, pos_obstacles_border[i][1]+4):
-#                    if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
-#                        if (mapIm[l][k] == 255):
-#                            self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
-#                    imagen[l][k] = self.grid.getVal(k, l)
-                    #if (x/o) == 50:
+        for i in range(0, len(pos_obstacles_border)):
+            for k in range(pos_obstacles_border[i][0]-3, pos_obstacles_border[i][0]+4):
+                for l in range(pos_obstacles_border[i][1]-3, pos_obstacles_border[i][1]+4):
+                    if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
+                        if (mapIm[l][k] == 255):
+                            self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
+                    imagen[l][k] = self.grid.getVal(k, l)
+                    #if (x/o) == 100:
                     #    out.write((imagen))
                     #    o = o+1
             #x=x+1
         #out.release()
-        #print(mas)
 
 
 
