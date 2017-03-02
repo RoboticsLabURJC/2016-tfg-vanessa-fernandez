@@ -46,7 +46,7 @@ class MapWidget(QWidget):
         p.setColor(self.backgroundRole(), Qt.white)
         self.setPalette(p)
         self.resize(300,300)
-        self.setMinimumSize(500,300)
+        self.setMinimumSize(500,500)
         
     
     def paintEvent(self, e):
@@ -92,10 +92,20 @@ class MapWidget(QWidget):
         painter.setPen(pen)
         painter.drawLine(QPointF(RT4.flat[0],RT4.flat[1]),QPointF(RT6.flat[0],RT6.flat[1]))
 
-    
-    def drawVacuum(self, painter):
-        carsize = 40
 
+    def drawVacuum(self, painter):
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        yaw = pose.getYaw()
+
+        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
+        final_poses = self.RTVacuum() * orig_poses
+
+        carsize = 30
+        painter.translate(QPoint(final_poses[0],final_poses[1]))
+        painter.rotate(-180*yaw/pi)
+        
         # Chassis
         #painter.fillRect(-carsize/2, -carsize,carsize,2*carsize,Qt.yellow)
         painter.drawEllipse (0, 0, carsize/2, carsize/2)
@@ -105,7 +115,7 @@ class MapWidget(QWidget):
         #painter.fillRect(carsize/2,-carsize,-carsize/5,2*carsize/5,Qt.black)
         #painter.fillRect(-carsize/2,carsize-2*carsize/5,carsize/5,2*carsize/5,Qt.black)
         #painter.fillRect(carsize/2,carsize-2*carsize/5,-carsize/5,2*carsize/5,Qt.black)
-              
+    
     
     def RTx(self, angle, tx, ty, tz):
         RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
@@ -168,10 +178,11 @@ class MapWidget(QWidget):
     def drawObstacles(self, painter):
         carsize = 30
 
-        # Obstacle 1
-        orig_poses1 = np.matrix([[-13.5], [3], [1], [1]]) * self.scale
-        final_poses1 = self.RTVacuum() * orig_poses1
-        painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
+        # Walls
+        #orig_poses1 = np.matrix([[4.7266], [0], [1], [1]]) * self.scale
+        #final_poses1 = self.RTVacuum() * orig_poses1
+        #painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
+        painter.fillRect(-self.width()/2, -self.height()/2, 25, 500, Qt.black)
         # Obstacle 2
         orig_poses2 = np.matrix([[-7], [3], [1], [1]]) * self.scale
         final_poses2 = self.RTVacuum() * orig_poses2
@@ -184,15 +195,6 @@ class MapWidget(QWidget):
         orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
         final_poses4 = self.RTVacuum() * orig_poses4
         painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
-        
-        # Sidewalk 1
-        orig_poses5 = np.matrix([[5], [9], [1], [1]]) * self.scale
-        final_poses5 = self.RTVacuum() * orig_poses5
-        painter.fillRect(-5*carsize+final_poses5.flat[0], -6*carsize+final_poses5.flat[1], 6.75*carsize, 16*carsize, Qt.black)
-        # Sidewalk 2
-        orig_poses6 = np.matrix([[5], [-9], [1], [1]]) * self.scale
-        final_poses6 = self.RTVacuum() * orig_poses6
-        painter.fillRect(-2*carsize+final_poses6.flat[0], -6*carsize+final_poses6.flat[1], 6.75*carsize, 16*carsize, Qt.black)
 
 
    
