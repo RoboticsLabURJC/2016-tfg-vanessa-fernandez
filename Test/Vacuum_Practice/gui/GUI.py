@@ -19,7 +19,7 @@
 
 from gui.widgets.teleopWidget import TeleopWidget
 from gui.widgets.mapWidget import MapWidget
-from gui.widgets.mapWidget import MapWidget1
+#from gui.widgets.mapWidget import MapWidget1
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from gui.form import Ui_MainWindow
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #self.map.setLaserValues(laserdata)
         if (laserdata):
             self.map.setLaserValues(laserdata)
-        self.map.update()
+        self.map.updateMap()
         #self.map1.update()
 
     def getPose3D(self):
