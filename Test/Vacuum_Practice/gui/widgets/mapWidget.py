@@ -19,12 +19,15 @@
 
 
 #import resources_rc
-from PyQt5.QtWidgets import QWidget, QGridLayout
+from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel
 from PyQt5.QtGui import QPen, QPainter
 from PyQt5.QtCore import QPoint, QPointF, pyqtSignal, Qt
+from PyQt5 import QtGui, QtCore
+import threading
 import numpy as np
 import math
 from math import pi as pi
+import cv2
 
 class MapWidget(QWidget):
 
@@ -33,27 +36,130 @@ class MapWidget(QWidget):
     def __init__(self,winParent):    
         super(MapWidget, self).__init__()
         self.winParent=winParent
+        self.lock = threading.Lock()
         self.initUI()
         self.scale = 15.0
         self.laser = []
         
     
     def initUI(self):
-        layout=QGridLayout() 
-        self.setLayout(layout)
-        self.setAutoFillBackground(True)
-        p = self.palette()
-        p.setColor(self.backgroundRole(), Qt.white)
-        self.setPalette(p)
+        self.map = cv2.imread("resources/images/mapgrannyannie.png", cv2.IMREAD_GRAYSCALE)
+        print (self.map.shape)
+        self.map = cv2.resize(self.map, (500, 500))
+        image = QtGui.QImage(self.map.data, self.map.shape[1], self.map.shape[0], self.map.shape[1], QtGui.QImage.Format_Indexed8);
+        self.pixmap = QtGui.QPixmap.fromImage(image)
+        self.height = self.pixmap.height()
+        self.width = self.pixmap.width()
+        self.mapWidget = QLabel(self)
+        self.mapWidget.setPixmap(self.pixmap)
+        self.mapWidget.resize(self.width, self.height)
+
         self.resize(300,300)
         self.setMinimumSize(500,500)
+
+
+    def setLaserValues(self, laser):
+        # Init laser array
+        if len(self.laser) == 0:
+            for i in range(laser.numLaser):
+                self.laser.append((0,0))
+
+        for i in range(laser.numLaser):
+            dist = laser.distanceData[i]/1000.0
+            angle = -math.pi/2 + math.radians(i)
+            self.laser[i] = (dist, angle)
+
+
+    def setPainterSettings(self, painter, color, width):
+        pen = QtGui.QPen(color)
+        pen.setWidth(width)
+        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        brush.setColor(QtGui.QColor(color))
+        painter.setPen(pen)
+        painter.setBrush(brush)
+
+
+    def getPainter(self, copy):
+        painter = QtGui.QPainter(copy)
+        return painter
+
+
+    def paintPosition(self, x, y, angle, img, painter):
+        #Compensating the position
+
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        yaw = pose.getYaw()
+
+        if yaw >= 0 and yaw < 90:
+            x = x + 5
+        elif yaw >= 90 and yaw < 180:
+            x = x - 5
+            y = y + 3
+        elif yaw >= 90 and yaw < 180:
+            y = y + 5
+
+        triangle = QtGui.QPolygon()
+        triangle.append(QtCore.QPoint(x-4, y-4))
+        triangle.append(QtCore.QPoint(x+4, y-4))
+        triangle.append(QtCore.QPoint(x, y+5))
+        matrix = QtGui.QTransform()
+        matrix.rotate(-angle + yaw)
+        triangle = matrix.map(triangle)
+        center = matrix.map(QtCore.QPoint(x, y))
+        xDif = x - center.x()
+        yDif = y - center.y()
+        triangle.translate(xDif, yDif)
+
+        self.setPainterSettings(painter, QtCore.Qt.blue, 1)
+        painter.drawPolygon(triangle)
+
+
+
+    def paintPath(self, painter, path):
+        points = QtGui.QPolygonF()
+        for i in range(path.shape[0]):
+            for j in range(path.shape[1]):
+                if path[i][j] > 0:
+                    points.append(QtCore.QPointF(j, i))
+
+        self.setPainterSettings(painter, QtCore.Qt.green, 2)
+        painter.drawPoints(points)
+
+
+
+    def isNewPos(self, pos):
+        return (self.lastPos == None or (self.lastPos[0] != pos[0] and self.lastPos[1] != pos[1]))
+
+
+    def updateMap(self):
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        yaw = pose.getYaw()
+           
+
+        self.lock.acquire()
+        copy = self.pixmap.copy()
+        painter = self.getPainter(copy)
+
+        self.setPainterSettings(painter, QtCore.Qt.green, 3)
+
+        self.paintPosition(x, y, yaw, copy, painter)
+
+        self.mapWidget.setPixmap(copy)
+        self.lock.release()
+        painter.end()
+
         
-    
+'''    
     def paintEvent(self, e):
-        _width = self.width()
-        _height = self.height()
-    
-        painter=QPainter(self)
+        _width = self.width
+        _height = self.height
+
+        copy = self.pixmap.copy()
+        painter=QPainter(copy)
         pen = QPen(Qt.black, 2)
         painter.setPen(pen)
     
@@ -99,7 +205,7 @@ class MapWidget(QWidget):
         y = pose.getY()
         yaw = pose.getYaw()
 
-        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
+        orig_poses = np.matrix([[x], [y], [1], [1]]) #* self.scale
         final_poses = self.RTVacuum() * orig_poses
 
         carsize = 30
@@ -175,26 +281,26 @@ class MapWidget(QWidget):
             painter.drawLine(QPointF(RTFinalLaser.flat[0],RTFinalLaser.flat[1]),QPointF(final_poses.flat[0], final_poses.flat[1]))
 
 
+    def drawObstacle(self, painter, xGazebo, yGazebo, width, height):
+        # Draw each obstacle
+        casilla = 50
+        orig_poses = np.matrix([[xGazebo], [yGazebo], [1], [1]])
+        final_poses = self.RTVacuum() * orig_poses
+        painter.fillRect(self.width()/2+final_poses.flat[0]-width*casilla, -self.height()/2+final_poses.flat[1], width*casilla, height*casilla, Qt.black)
+
+
     def drawObstacles(self, painter):
-        carsize = 30
+        casilla = 50
 
         # Walls
-        #orig_poses1 = np.matrix([[4.7266], [0], [1], [1]]) * self.scale
+        #orig_poses1 = np.matrix([[4.7266], [0], [1], [1]])
         #final_poses1 = self.RTVacuum() * orig_poses1
-        #painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
-        painter.fillRect(-self.width()/2, -self.height()/2, 25, 500, Qt.black)
-        # Obstacle 2
-        orig_poses2 = np.matrix([[-7], [3], [1], [1]]) * self.scale
-        final_poses2 = self.RTVacuum() * orig_poses2
-        painter.fillRect(-carsize/2+final_poses2.flat[0], -carsize+final_poses2.flat[1], carsize, 2*carsize, Qt.black)
-        # Obstacle 3
-        orig_poses3 = np.matrix([[0.5], [3], [1], [1]]) * self.scale
-        final_poses3 = self.RTVacuum() * orig_poses3
-        painter.fillRect(-carsize/2+final_poses3.flat[0], -carsize+final_poses3.flat[1], carsize, 2*carsize, Qt.black)
-        # Obstacle 4
-        orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
-        final_poses4 = self.RTVacuum() * orig_poses4
-        painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
+        #painter.fillRect(-self.width()/2+final_poses1.flat[0], -self.height()/2+final_poses1.flat[1], 10*casilla, 0.25*casilla, Qt.black)
+        #painter.fillRect(-self.width()/2, -self.height()/2, 0.25*50, 500, Qt.black)
+
+        #self.drawObstacle(painter, 4.7266, 0, 10, 0.25)
+        #self.drawObstacle(painter, 0.024876, 1.8, 0.25, 4)  
+        #self.drawObstacle(painter, 0.024876, 1.8, 0.25, 4)       
 
 
    
@@ -358,4 +464,4 @@ class MapWidget1(QWidget):
     def RTz(self, angle, tx, ty, tz):
         RT = np.matrix([[math.cos(angle), -math.sin(angle), 0, tx], [math.sin(angle), math.cos(angle),0, ty], [0, 0, 1, tz], [0,0,0,1]])
         return RT   
-
+'''
