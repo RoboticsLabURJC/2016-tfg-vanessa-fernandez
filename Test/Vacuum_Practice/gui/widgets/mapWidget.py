@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel
 from PyQt5.QtGui import QPen, QPainter
 from PyQt5.QtCore import QPoint, QPointF, pyqtSignal, Qt
 from PyQt5 import QtGui, QtCore
-import threading
+#import threading
 import numpy as np
 import math
 from math import pi as pi
@@ -36,7 +36,7 @@ class MapWidget(QWidget):
     def __init__(self,winParent):    
         super(MapWidget, self).__init__()
         self.winParent=winParent
-        self.lock = threading.Lock()
+        #self.lock = threading.Lock()
         self.initUI()
         #self.scale = 15.0
         self.laser = []
@@ -71,10 +71,6 @@ class MapWidget(QWidget):
 
 
 
-    def getPainter(self, copy):
-        painter = QtGui.QPainter(copy)
-        return painter
-
     def RTx(self, angle, tx, ty, tz):
         RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
         return RT
@@ -95,10 +91,12 @@ class MapWidget(QWidget):
         return RTx*RTz
 
 
-    def paintPosition(self, x, y, angle, img, painter):
+    def drawVacuum(self, img, painter):
         #Compensating the position
 
         pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
         yaw = pose.getYaw()
 
         if yaw >= 0 and yaw < 90:
@@ -115,7 +113,7 @@ class MapWidget(QWidget):
         triangle.append(QtCore.QPoint(x+4, y-4))
         triangle.append(QtCore.QPoint(x, y+9))
         matrix = QtGui.QTransform()
-        matrix.rotate(-angle + yaw)
+        #matrix.rotate(-angle + yaw)
         triangle = matrix.map(triangle)
         #center = matrix.map(QtCore.QPoint(x, y))
         center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
@@ -130,18 +128,14 @@ class MapWidget(QWidget):
         painter.drawPolygon(triangle)
 
 
-    def updateMap(self):
-        pose = self.winParent.getPose3D()
-        x = pose.getX()
-        y = pose.getY()
-        yaw = pose.getYaw()
+    def paintEvent(self, e):
            
 
         #self.lock.acquire()
         copy = self.pixmap.copy()
-        painter = self.getPainter(copy)
+        painter = QtGui.QPainter(copy)
 
-        self.paintPosition(x, y, yaw, copy, painter)
+        self.drawVacuum(copy, painter)
 
         self.mapWidget.setPixmap(copy)
         #self.lock.release()
