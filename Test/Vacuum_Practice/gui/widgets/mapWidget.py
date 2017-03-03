@@ -70,14 +70,6 @@ class MapWidget(QWidget):
             self.laser[i] = (dist, angle)
 
 
-    def setPainterSettings(self, painter, color, width):
-        pen = QtGui.QPen(color)
-        pen.setWidth(width)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        brush.setColor(QtGui.QColor(color))
-        painter.setPen(pen)
-        painter.setBrush(brush)
-
 
     def getPainter(self, copy):
         painter = QtGui.QPainter(copy)
@@ -110,18 +102,18 @@ class MapWidget(QWidget):
         yaw = pose.getYaw()
 
         if yaw >= 0 and yaw < 90:
-            x = x + 5
+            x = x + 7
         elif yaw >= 90 and yaw < 180:
-            x = x - 5
+            x = x - 7
             y = y + 3
         elif yaw >= 90 and yaw < 180:
-            y = y + 5
+            y = y + 7
 
 
         triangle = QtGui.QPolygon()
         triangle.append(QtCore.QPoint(x-4, y-4))
         triangle.append(QtCore.QPoint(x+4, y-4))
-        triangle.append(QtCore.QPoint(x, y+5))
+        triangle.append(QtCore.QPoint(x, y+9))
         matrix = QtGui.QTransform()
         matrix.rotate(-angle + yaw)
         triangle = matrix.map(triangle)
@@ -133,7 +125,8 @@ class MapWidget(QWidget):
         yDif = y + center.y()
         triangle.translate(xDif, yDif)
 
-        self.setPainterSettings(painter, QtCore.Qt.blue, 1)
+        pen = QPen(Qt.red, 2)
+        painter.setPen(pen)
         painter.drawPolygon(triangle)
 
 
@@ -144,26 +137,23 @@ class MapWidget(QWidget):
         yaw = pose.getYaw()
            
 
-        self.lock.acquire()
+        #self.lock.acquire()
         copy = self.pixmap.copy()
         painter = self.getPainter(copy)
-
-        #self.setPainterSettings(painter, QtCore.Qt.green, 3)
 
         self.paintPosition(x, y, yaw, copy, painter)
 
         self.mapWidget.setPixmap(copy)
-        self.lock.release()
+        #self.lock.release()
         painter.end()
 
         
 '''    
     def paintEvent(self, e):
-        _width = self.width
-        _height = self.height
+        _width = self.width()
+        _height = self.height()
 
-        copy = self.pixmap.copy()
-        painter=QPainter(copy)
+
         pen = QPen(Qt.black, 2)
         painter.setPen(pen)
     
