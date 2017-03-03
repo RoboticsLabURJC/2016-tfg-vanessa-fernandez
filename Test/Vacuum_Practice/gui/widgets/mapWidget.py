@@ -116,23 +116,6 @@ class MapWidget(QWidget):
         painter.drawPolygon(triangle)
 
 
-
-    def paintPath(self, painter, path):
-        points = QtGui.QPolygonF()
-        for i in range(path.shape[0]):
-            for j in range(path.shape[1]):
-                if path[i][j] > 0:
-                    points.append(QtCore.QPointF(j, i))
-
-        self.setPainterSettings(painter, QtCore.Qt.green, 2)
-        painter.drawPoints(points)
-
-
-
-    def isNewPos(self, pos):
-        return (self.lastPos == None or (self.lastPos[0] != pos[0] and self.lastPos[1] != pos[1]))
-
-
     def updateMap(self):
         pose = self.winParent.getPose3D()
         x = pose.getX()
