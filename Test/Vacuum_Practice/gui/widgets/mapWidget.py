@@ -38,7 +38,7 @@ class MapWidget(QWidget):
         self.winParent=winParent
         self.lock = threading.Lock()
         self.initUI()
-        self.scale = 15.0
+        #self.scale = 15.0
         self.laser = []
         
     
@@ -83,13 +83,30 @@ class MapWidget(QWidget):
         painter = QtGui.QPainter(copy)
         return painter
 
+    def RTx(self, angle, tx, ty, tz):
+        RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
+        return RT
+        
+    
+    def RTy(self, angle, tx, ty, tz):
+        RT = np.matrix([[math.cos(angle), 0, math.sin(angle), tx], [0, 1, 0, ty], [-math.sin(angle), 0, math.cos(angle), tz], [0,0,0,1]])
+        return RT
+    
+    
+    def RTz(self, angle, tx, ty, tz):
+        RT = np.matrix([[math.cos(angle), -math.sin(angle), 0, tx], [math.sin(angle), math.cos(angle),0, ty], [0, 0, 1, tz], [0,0,0,1]])
+        return RT
+
+    def RTVacuum(self):
+        RTx = self.RTx(pi, 0, 0, 0)
+        RTz = self.RTz(pi/2, 0, 0, 0)
+        return RTx*RTz
+
 
     def paintPosition(self, x, y, angle, img, painter):
         #Compensating the position
 
         pose = self.winParent.getPose3D()
-        x = pose.getX()
-        y = pose.getY()
         yaw = pose.getYaw()
 
         if yaw >= 0 and yaw < 90:
@@ -100,6 +117,7 @@ class MapWidget(QWidget):
         elif yaw >= 90 and yaw < 180:
             y = y + 5
 
+
         triangle = QtGui.QPolygon()
         triangle.append(QtCore.QPoint(x-4, y-4))
         triangle.append(QtCore.QPoint(x+4, y-4))
@@ -107,9 +125,12 @@ class MapWidget(QWidget):
         matrix = QtGui.QTransform()
         matrix.rotate(-angle + yaw)
         triangle = matrix.map(triangle)
-        center = matrix.map(QtCore.QPoint(x, y))
-        xDif = x - center.x()
-        yDif = y - center.y()
+        #center = matrix.map(QtCore.QPoint(x, y))
+        center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
+        #xDif = x - center.x()
+        #yDif = y - center.y()
+        xDif = x + center.x()
+        yDif = y + center.y()
         triangle.translate(xDif, yDif)
 
         self.setPainterSettings(painter, QtCore.Qt.blue, 1)
@@ -127,7 +148,7 @@ class MapWidget(QWidget):
         copy = self.pixmap.copy()
         painter = self.getPainter(copy)
 
-        self.setPainterSettings(painter, QtCore.Qt.green, 3)
+        #self.setPainterSettings(painter, QtCore.Qt.green, 3)
 
         self.paintPosition(x, y, yaw, copy, painter)
 
