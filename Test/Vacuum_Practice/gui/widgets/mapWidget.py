@@ -91,13 +91,15 @@ class MapWidget(QWidget):
         return RTx*RTz
 
 
-    def drawVacuum(self, img, painter):
+    def drawVacuum(self, painter):
         #Compensating the position
 
         pose = self.winParent.getPose3D()
         x = pose.getX()
         y = pose.getY()
         yaw = pose.getYaw()
+
+        print(x,y)
 
         if yaw >= 0 and yaw < 90:
             x = x + 7
@@ -109,11 +111,12 @@ class MapWidget(QWidget):
 
 
         triangle = QtGui.QPolygon()
-        triangle.append(QtCore.QPoint(x-4, y-4))
         triangle.append(QtCore.QPoint(x+4, y-4))
-        triangle.append(QtCore.QPoint(x, y+9))
+        triangle.append(QtCore.QPoint(x+4, y+4))
+        triangle.append(QtCore.QPoint(x-9, y))
         matrix = QtGui.QTransform()
         #matrix.rotate(-angle + yaw)
+        #matrix.rotate(yaw)
         triangle = matrix.map(triangle)
         #center = matrix.map(QtCore.QPoint(x, y))
         center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
@@ -121,11 +124,13 @@ class MapWidget(QWidget):
         #yDif = y - center.y()
         xDif = x + center.x()
         yDif = y + center.y()
+        print(xDif, yDif)
         triangle.translate(xDif, yDif)
 
         pen = QPen(Qt.red, 2)
         painter.setPen(pen)
         painter.drawPolygon(triangle)
+        painter.drawLine(QPoint(0,0), QPoint(200,100))
 
 
     def paintEvent(self, e):
@@ -135,7 +140,7 @@ class MapWidget(QWidget):
         copy = self.pixmap.copy()
         painter = QtGui.QPainter(copy)
 
-        self.drawVacuum(copy, painter)
+        self.drawVacuum(painter)
 
         self.mapWidget.setPixmap(copy)
         #self.lock.release()
