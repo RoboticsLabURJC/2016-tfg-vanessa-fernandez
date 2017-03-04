@@ -8,8 +8,13 @@ world=GrannyAnnie.world
 
 gzserver --verbose --minimal_comms $world &
 sleep 10 # up to 20 for circuit.world
+
 [ "$1" = "GUI" ] && gzclient &
-python3 vacuum.py --Ice.Config=vacuum.cfg
+
+python3 vacuum.py --Ice.Config=vacuum.cfg &
+
+python3 referee.py --Ice.Config=vacuum.cfg
 
 killall gzserver
+killall python3
 [ "$1" = "GUI" ] && killall gzclient
