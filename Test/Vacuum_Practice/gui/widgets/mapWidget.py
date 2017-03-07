@@ -86,9 +86,10 @@ class MapWidget(QWidget):
         return RT
 
     def RTVacuum(self):
-        RTx = self.RTx(pi, 0, 0, 0)
-        RTz = self.RTz(pi/2, 0, 0, 0)
-        return RTx*RTz
+        #RTx = self.RTx(pi, 0, 0, 0)
+        #RTz = self.RTz(pi/2, 0, 0, 0)
+        RTy = self.RTz(pi, 0, 0, 0)
+        return RTy
 
 
     def drawVacuum(self, painter):
@@ -99,19 +100,13 @@ class MapWidget(QWidget):
         y = pose.getY()
         yaw = pose.getYaw()
 
-        print(x,y)
-        # Mirar que las x en positivo en Gazebo son las X en negativo en la gui, pero se mueve en unas direcciones raras
-
-        ##if yaw >= 0 and yaw < 90:
-        #    x = x + 7
-        #elif yaw >= 90 and yaw < 180:
-        #    x = x - 7
-        #    y = y + 3
-        #elif yaw >= 90 and yaw < 180:
-        #    y = y + 7
-
         error_gazebo_gui_x = self.width/10
         error_gazebo_gui_y = -self.height/11
+
+        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]])
+        painter.translate(QPoint(self.width/2+final_poses[0]+error_gazebo_gui_x, self.height/2+final_poses[1]+error_gazebo_gui_y))
+        painter.rotate(-180*yaw/pi)
+
 
         triangle = QtGui.QPolygon()
         triangle.append(QtCore.QPoint(x+50/4, y-4))
@@ -119,7 +114,7 @@ class MapWidget(QWidget):
         triangle.append(QtCore.QPoint(x-9, y+2.25))
         matrix = QtGui.QTransform()
         #matrix.rotate(-angle + yaw)
-        matrix.rotate(yaw)
+        #matrix.rotate(yaw)
         triangle = matrix.map(triangle)
         #center = matrix.map(QtCore.QPoint(x, y))
         center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
@@ -127,7 +122,7 @@ class MapWidget(QWidget):
         #yDif = y - center.y()
         xDif = x + center.x() + error_gazebo_gui_x
         yDif = y + center.y() + error_gazebo_gui_y
-        triangle.translate(xDif, yDif)
+        #triangle.translate(xDif, yDif)
 
         pen = QPen(Qt.red, 2)
         painter.setPen(pen)
