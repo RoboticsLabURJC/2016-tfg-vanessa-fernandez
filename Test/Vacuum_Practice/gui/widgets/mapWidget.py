@@ -100,7 +100,7 @@ class MapWidget(QWidget):
         yaw = pose.getYaw()
 
         print(x,y)
-        print(self.width, self.height)
+        # Mirar que las x en positivo en Gazebo son las X en negativo en la gui, pero se mueve en unas direcciones raras
 
         ##if yaw >= 0 and yaw < 90:
         #    x = x + 7
@@ -111,12 +111,12 @@ class MapWidget(QWidget):
         #    y = y + 7
 
         error_gazebo_gui_x = self.width/10
-        error_gazebo_gui_y = -self.height/10
+        error_gazebo_gui_y = -self.height/11
 
         triangle = QtGui.QPolygon()
-        triangle.append(QtCore.QPoint(x+4, y-4))
-        triangle.append(QtCore.QPoint(x+4, y+4))
-        triangle.append(QtCore.QPoint(x-9, y))
+        triangle.append(QtCore.QPoint(x+50/4, y-4))
+        triangle.append(QtCore.QPoint(x+50/4, y+50/4-4))
+        triangle.append(QtCore.QPoint(x-9, y+2.25))
         matrix = QtGui.QTransform()
         #matrix.rotate(-angle + yaw)
         matrix.rotate(yaw)
@@ -127,7 +127,6 @@ class MapWidget(QWidget):
         #yDif = y - center.y()
         xDif = x + center.x() + error_gazebo_gui_x
         yDif = y + center.y() + error_gazebo_gui_y
-        print(xDif, yDif)
         triangle.translate(xDif, yDif)
 
         pen = QPen(Qt.red, 2)
