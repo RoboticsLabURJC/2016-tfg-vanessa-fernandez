@@ -100,15 +100,18 @@ class MapWidget(QWidget):
         yaw = pose.getYaw()
 
         print(x,y)
+        print(self.width, self.height)
 
-        if yaw >= 0 and yaw < 90:
-            x = x + 7
-        elif yaw >= 90 and yaw < 180:
-            x = x - 7
-            y = y + 3
-        elif yaw >= 90 and yaw < 180:
-            y = y + 7
+        ##if yaw >= 0 and yaw < 90:
+        #    x = x + 7
+        #elif yaw >= 90 and yaw < 180:
+        #    x = x - 7
+        #    y = y + 3
+        #elif yaw >= 90 and yaw < 180:
+        #    y = y + 7
 
+        error_gazebo_gui_x = self.width/10
+        error_gazebo_gui_y = -self.height/10
 
         triangle = QtGui.QPolygon()
         triangle.append(QtCore.QPoint(x+4, y-4))
@@ -116,14 +119,14 @@ class MapWidget(QWidget):
         triangle.append(QtCore.QPoint(x-9, y))
         matrix = QtGui.QTransform()
         #matrix.rotate(-angle + yaw)
-        #matrix.rotate(yaw)
+        matrix.rotate(yaw)
         triangle = matrix.map(triangle)
         #center = matrix.map(QtCore.QPoint(x, y))
         center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
         #xDif = x - center.x()
         #yDif = y - center.y()
-        xDif = x + center.x()
-        yDif = y + center.y()
+        xDif = x + center.x() + error_gazebo_gui_x
+        yDif = y + center.y() + error_gazebo_gui_y
         print(xDif, yDif)
         triangle.translate(xDif, yDif)
 
