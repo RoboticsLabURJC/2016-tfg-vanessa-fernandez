@@ -17,10 +17,10 @@ class MainWindow(QWidget):
         layout = QGridLayout()
         self.tiempo = tiempoWidget(self)
         self.porcentaje = porcentajeWidget(self, pose3d)
-        self.nota = notaWidget(self,pose3d)
+        #self.nota = notaWidget(self,pose3d)
         layout.addWidget(self.tiempo,0,0)
         layout.addWidget(self.porcentaje,0,2)
-        layout.addWidget(self.nota,0,1)
+        #layout.addWidget(self.nota,0,1)
     
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
@@ -32,7 +32,7 @@ class MainWindow(QWidget):
 
     def update(self):
         self.porcentaje.updateG()
-        self.nota.updateG()
+        #self.nota.updateG()
 
 
 class porcentajeWidget(QWidget):
@@ -78,12 +78,12 @@ class porcentajeWidget(QWidget):
 
     def updateG(self):
         self.porcentajeRecorrido()
-        self.Porcentaje.setText("Distancia a la acera: " + str(round(self.porcentajeCasa, 3)) + ' %')
+        self.Porcentaje.setText("Superficie recorrida: " + str(round(self.porcentajeCasa, 3)) + ' %')
         self.update()      
    
    
         
-class notaWidget(QWidget):
+'''class notaWidget(QWidget):
     def __init__(self,winParent,pose3d):    
         super(notaWidget, self).__init__()
         self.winParent=winParent
@@ -91,34 +91,47 @@ class notaWidget(QWidget):
 
         hLayout = QHBoxLayout()
         
-        notaTime = self.testTime() * 0.025
-        notaPorc = self.testPorcentaje() * 0.025
-        nota = notaTime + notaPorc
+        if self.testTime():
+            print ('seconds = 0')
+    
+        #notaTime = self.testTime() * 0.025
+        #notaPorc = self.testPorcentaje() * 0.025
+        nota = self.testPorcentaje()
         
         notaLabel = QLabel('Nota final: ' + str(nota))
         hLayout.addWidget(notaLabel, 0) 
         self.setLayout(hLayout)
-    
+
+        
     def testTime(self):
         time = tiempoWidget(self)
-        myTime = time.seconds
-        if myTime <= 30:
-            notaTime = 100
-        elif myTime > 30 and myTime <= 60:
-            notaTime = 80
-        elif myTime > 60 and myTime <= 120:
-            notaTime = 50
-        else:
-            notaTime = 0    
-        return notaTime
+        seconds = time.seconds
+        myTime = False
+        while seconds > 0:
+            print(seconds)
+            seconds -= 1
+        if seconds == 0:
+            myTime = True
+        return myTime
     
     def testPorcentaje(self):
-        notaDist = 0
-        return notaDist
+        porcentaje = porcentajeWidget(self,pose3d)
+        pCasa = porcentaje.porcentajeCasa
+        if pCasa >= 90:
+            notaPorc = 10
+        elif pCasa < 90 and pCasa >= 75:
+            notaPorc = 8
+        elif pCasa < 75 and pCasa >= 60:
+            notaPorc = 6
+        elif pCasa < 60 and pCasa >= 50:
+            notaPorc = 5
+        else:
+            notaPorc = 0
+        return notaPorc
 
     def updateG(self):
         self.update() 
-        
+    '''
              
 
 class tiempoWidget(QWidget):
@@ -127,25 +140,26 @@ class tiempoWidget(QWidget):
     def __init__(self,winParent):    
         super(tiempoWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 0
-        
-        hLayout = QHBoxLayout()
-        
+        self.seconds = 50
+        self.pose3d = pose3d
+        self.show = False
+
+        self.hLayout = QHBoxLayout()
+  
         tiempoLabel = QLabel("Tiempo")
         self.lcd = QLCDNumber(self)
         self.lcd.setMaximumSize(100,50)
-        hLayout.addWidget(tiempoLabel,0)
-        hLayout.addWidget(self.lcd, 1)
+        self.hLayout.addWidget(tiempoLabel,0)
+        self.hLayout.addWidget(self.lcd, 1)
 
         hSpacer = QSpacerItem(300, 30, QSizePolicy.Ignored, QSizePolicy.Ignored)
-        hLayout.addItem(hSpacer)
+        self.hLayout.addItem(hSpacer)
 
-        self.setLayout(hLayout)
+        self.setLayout(self.hLayout)
 
         timer = QTimer(self)
         timer.start(1000)
         timer.timeout.connect(self.printTime)
-
 
         # get the palette
         palette = self.lcd.palette()
@@ -161,10 +175,37 @@ class tiempoWidget(QWidget):
 
         # set the palette
         self.lcd.setPalette(palette)
+        
+    def showNota(self):
+        self.show = True
+        nota = self.testPorcentaje()
+        notaLabel = QLabel('Nota final: ' + str(nota))
+        self.hLayout.addWidget(notaLabel, 0) 
+        self.setLayout(self.hLayout)
 
     def printTime(self):
-        self.seconds += 1
+        if self.seconds >0:
+            self.seconds -= 1
+        else:
+            if not self.show:
+                self.showNota()
         self.lcd.display(self.seconds)
+    
+    def testPorcentaje(self):
+        porcentaje = porcentajeWidget(self,pose3d)
+        pCasa = porcentaje.porcentajeCasa
+        if pCasa >= 90:
+            notaPorc = 10
+        elif pCasa < 90 and pCasa >= 75:
+            notaPorc = 8
+        elif pCasa < 75 and pCasa >= 60:
+            notaPorc = 6
+        elif pCasa < 60 and pCasa >= 50:
+            notaPorc = 5
+        else:
+            notaPorc = 0
+        return notaPorc
+
 
 
 
@@ -172,7 +213,7 @@ if __name__ == "__main__":
     
     app = QApplication(sys.argv)
     ic = EasyIce.initialize(sys.argv)
-    pose3d = Pose3DClient(ic, "Autopark.Pose3D", True)
+    pose3d = Pose3DClient(ic, "Vacuum.Pose3D", True)
 
     myGUI = MainWindow(pose3d)
     myGUI.show()
