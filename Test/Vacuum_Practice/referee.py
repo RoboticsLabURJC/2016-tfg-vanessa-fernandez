@@ -65,10 +65,9 @@ class porcentajeWidget(QWidget):
         RT = np.matrix([[math.cos(angle), -math.sin(angle), 0, tx], [math.sin(angle), math.cos(angle),0, ty], [0, 0, 1, tz], [0,0,0,1]])
         return RT
 
-    def RTCar(self):
-        RTx = self.RTx(pi, 0, 0, 0)
-        RTz = self.RTz(pi/2, 0, 0, 0)
-        return RTx*RTz
+    def RTVacuum(self):
+        RTy = self.RTy(pi, 0, 0, 0)
+        return RTy
 
 
     def porcentajeRecorrido(self):
