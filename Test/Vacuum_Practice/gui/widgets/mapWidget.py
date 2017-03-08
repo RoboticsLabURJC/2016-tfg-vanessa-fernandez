@@ -38,7 +38,6 @@ class MapWidget(QWidget):
         self.winParent=winParent
         #self.lock = threading.Lock()
         self.initUI()
-        #self.scale = 15.0
         self.laser = []
         
     
@@ -70,7 +69,6 @@ class MapWidget(QWidget):
             self.laser[i] = (dist, angle)
 
 
-
     def RTx(self, angle, tx, ty, tz):
         RT = np.matrix([[1, 0, 0, tx], [0, math.cos(angle), -math.sin(angle), ty], [0, math.sin(angle), math.cos(angle), tz], [0,0,0,1]])
         return RT
@@ -86,14 +84,14 @@ class MapWidget(QWidget):
         return RT
 
     def RTVacuum(self):
-        #RTx = self.RTx(pi, 0, 0, 0)
-        #RTz = self.RTz(pi/2, 0, 0, 0)
-        RTy = self.RTz(pi, 0, 0, 0)
+        RTy = self.RTy(pi, 0, 0, 0)
         return RTy
 
 
     def drawVacuum(self, painter):
         #Compensating the position
+
+        scale = 50
 
         pose = self.winParent.getPose3D()
         x = pose.getX()
@@ -103,35 +101,21 @@ class MapWidget(QWidget):
         error_gazebo_gui_x = self.width/10
         error_gazebo_gui_y = -self.height/11
 
-        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]])
+        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
         painter.translate(QPoint(self.width/2+final_poses[0]+error_gazebo_gui_x, self.height/2+final_poses[1]+error_gazebo_gui_y))
         painter.rotate(-180*yaw/pi)
-
 
         triangle = QtGui.QPolygon()
         triangle.append(QtCore.QPoint(x+50/4, y-4))
         triangle.append(QtCore.QPoint(x+50/4, y+50/4-4))
         triangle.append(QtCore.QPoint(x-9, y+2.25))
-        matrix = QtGui.QTransform()
-        #matrix.rotate(-angle + yaw)
-        #matrix.rotate(yaw)
-        triangle = matrix.map(triangle)
-        #center = matrix.map(QtCore.QPoint(x, y))
-        center = matrix.map(QtCore.QPoint(self.width/2, self.height/2))
-        #xDif = x - center.x()
-        #yDif = y - center.y()
-        xDif = x + center.x() + error_gazebo_gui_x
-        yDif = y + center.y() + error_gazebo_gui_y
-        #triangle.translate(xDif, yDif)
 
         pen = QPen(Qt.red, 2)
         painter.setPen(pen)
         painter.drawPolygon(triangle)
-        painter.drawLine(QPoint(0,0), QPoint(200,100))
 
 
     def paintEvent(self, e):
-           
 
         #self.lock.acquire()
         copy = self.pixmap.copy()
