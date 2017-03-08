@@ -83,7 +83,7 @@ class MapWidget(QWidget):
         return RT
 
     def RTVacuum(self):
-        RTy = self.RTy(pi, 0, 0, 0)
+        RTy = self.RTy(pi, 1, -1, 0)
         return RTy
 
 
@@ -97,11 +97,8 @@ class MapWidget(QWidget):
         y = pose.getY()
         yaw = pose.getYaw()
 
-        error_gazebo_gui_x = self.width/10
-        error_gazebo_gui_y = -self.height/11
-
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
-        painter.translate(QPoint(self.width/2+final_poses[0]+error_gazebo_gui_x, self.height/2+final_poses[1]+error_gazebo_gui_y))
+        painter.translate(QPoint(self.width/2+final_poses[0], self.height/2+final_poses[1]))
         painter.rotate(-180*yaw/pi)
 
         triangle = QtGui.QPolygon()
