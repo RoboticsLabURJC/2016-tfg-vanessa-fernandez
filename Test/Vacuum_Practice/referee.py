@@ -1,6 +1,7 @@
 import sys, math
 from math import pi as pi
 import numpy as np
+import cv2
 from PyQt5.QtCore import QPoint, QRect, QSize, Qt, QPointF, QRectF, pyqtSignal, QTimer
 from PyQt5.QtGui import (QBrush, QConicalGradient, QLinearGradient, QPainter, QPainterPath, QPalette, QPen, QPixmap, QPolygon, QRadialGradient, QColor, QTransform, QPolygonF, QKeySequence, QIcon)
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QSpinBox, QWidget, QPushButton, QSpacerItem, QSizePolicy, QLCDNumber )
@@ -39,6 +40,8 @@ class porcentajeWidget(QWidget):
     def __init__(self,winParent, pose3d):    
         super(porcentajeWidget, self).__init__()
         self.winParent=winParent
+        self.map = cv2.imread("resources/images/mapgrannyannie.png", cv2.IMREAD_GRAYSCALE)
+        self.map = cv2.resize(self.map, (500, 500))
         self.pose3d = pose3d
         self.porcentajeCasa = 0
 
@@ -70,15 +73,48 @@ class porcentajeWidget(QWidget):
         return RTy
 
 
+    def calculatePixelsWhite(self):
+        # Calculating the 100% of the pixels that can be traversed
+        numPixels = 0
+        for i in range(0, self.map.shape[1]):
+            for j in range(0, self.map.shape[0]):
+                if self.map[i][j] == 255:
+                    numPixels = numPixels + 1
+        return numPixels
+
+
     def porcentajeRecorrido(self):
         x = self.pose3d.getX()
         y = self.pose3d.getY()
+        numPixels = self.calculatePixelsWhite()
         self.porcentajeCasa = 30
 
     def updateG(self):
         self.porcentajeRecorrido()
         self.Porcentaje.setText("Superficie recorrida: " + str(round(self.porcentajeCasa, 3)) + ' %')
-        self.update()      
+        self.update()
+
+
+'''
+    def drawTrail(self, painter):
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+
+        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
+        final_poses = self.RTCar() * orig_poses
+
+        # Car's way
+        if len(self.trail) < 300:
+            self.trail.append([final_poses.flat[0], final_poses.flat[1]])
+        else:
+            for i in range(1, len(self.trail)):
+                self.trail[i-1] = self.trail[i]
+            self.trail[len(self.trail)-1] = [final_poses.flat[0], final_poses.flat[1]]
+
+        for i in range(0, len(self.trail)):
+            painter.drawPoint(self.trail[i][0], self.trail[i][1])
+'''
    
    
         
