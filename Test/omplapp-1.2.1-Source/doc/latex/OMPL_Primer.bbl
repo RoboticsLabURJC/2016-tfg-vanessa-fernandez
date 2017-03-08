@@ -1,0 +1,72 @@
+\begin{thebibliography}{10}
+
+\bibitem{Latombe:1991}
+Jean-Claude Latombe.
+\newblock {\em Robot Motion Planning}.
+\newblock Kluwer Academic Publishers, Norwell, MA, USA, 1991.
+
+\bibitem{Choset:2005}
+Howie Choset, Kevin~M. Lynch, Seth Hutchinson, George~A Kantor, Wolfram
+  Burgard, Lydia~E. Kavraki, and Sebastian Thrun.
+\newblock {\em Principles of Robot Motion: Theory, Algorithms, and
+  Implementations}.
+\newblock MIT Press, Cambridge, MA, June 2005.
+
+\bibitem{LaValle:2006}
+Steven~M. LaValle.
+\newblock {\em Planning Algorithms}.
+\newblock Cambridge University Press, New York, NY, USA, 2006.
+
+\bibitem{Kavraki:1996}
+Lydia~E. Kavraki, Petr Svestka, Jean-Claude Latombe, and Mark~H. Overmars.
+\newblock Probabilistic roadmaps for path planning in high-dimensional
+  configuration spaces.
+\newblock {\em IEEE Transactions on Robotics and Automation}, 12(4):566--580,
+  1996.
+
+\bibitem{LaValle:2001}
+Steven~M. LaValle and James~J. Kuffner.
+\newblock Randomized kinodynamic planning.
+\newblock {\em International Journal of Robotics Research}, 17(5):378--400,
+  2001.
+
+\bibitem{Hsu:1999}
+David Hsu, Jean-Claude Latombe, and Rajeev Motwani.
+\newblock Path planning in expansive configuration spaces.
+\newblock {\em International Journal of Computational Geometry and
+  Applications}, 9(4/5):495--512, 1999.
+
+\bibitem{Sanchez:2003}
+Gildardo Sanchez and Jean-Claude Latombe.
+\newblock A single-query bi-directional probabilistic roadmap planner with lazy
+  collision checking.
+\newblock In {\em Robotics Research}, volume~6 of {\em Springer Tracts in
+  Advanced Robotics}, pages 403--417. 2003.
+
+\bibitem{Sucan:2011}
+Ioan \c{S}ucan and Lydia~E. Kavraki.
+\newblock A sampling-based tree planner for systems with complex dynamics.
+\newblock {\em IEEE Transactions on Robotics}, 28(1):116--131, 2012.
+
+\bibitem{Larsen:2000}
+Eric Larsen, Stefan Gottschalk, Ming~C. Lin, and Dinesh Manocha.
+\newblock Fast proximity queries with swept sphere volumes.
+\newblock In {\em IEEE International Conference on Robotics and Automation},
+  pages 3719--3726, 2000.
+
+\bibitem{Jia:2011}
+Jia Pan, Sachin Chitta, and Dinesh Manocha.
+\newblock {FCL}: A general purpose library for collision and proximity queries.
+\newblock In {\em IEEE International Conference on Robotics and Automation},
+  May 2012.
+
+\bibitem{Boost}
+\url{http://www.boost.org/}.
+
+\bibitem{Brin:1995}
+Sergey Brin.
+\newblock Near neighbor search in large metric spaces.
+\newblock In {\em Proc.\ 21st Conf. on Very Large Databases}, pages 574--584,
+  1995.
+
+\end{thebibliography}
