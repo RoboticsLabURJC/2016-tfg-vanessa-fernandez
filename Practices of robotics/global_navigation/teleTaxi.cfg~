@@ -1,6 +1,0 @@
-TeleTaxi.Motors.Proxy = Motors:default -h localhost -p 9999
-TeleTaxi.Pose3D.Proxy = Pose3D:default -h localhost -p 8998
-TeleTaxi.robot=Pioneer
-
-TeleTaxi.Motors.maxV = 5
-TeleTaxi.Motors.maxW = 0.5
