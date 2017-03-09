@@ -113,29 +113,6 @@ class porcentajeWidget(QWidget):
         self.porcentajeRecorrido()
         self.Porcentaje.setText("Superficie recorrida: " + str(round(self.porcentajeCasa, 3)) + ' %')
         self.update()
-
-
-'''
-    def drawTrail(self, painter):
-        pose = self.winParent.getPose3D()
-        x = pose.getX()
-        y = pose.getY()
-
-        orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
-        final_poses = self.RTCar() * orig_poses
-
-        # Car's way
-        if len(self.trail) < 300:
-            self.trail.append([final_poses.flat[0], final_poses.flat[1]])
-        else:
-            for i in range(1, len(self.trail)):
-                self.trail[i-1] = self.trail[i]
-            self.trail[len(self.trail)-1] = [final_poses.flat[0], final_poses.flat[1]]
-
-        for i in range(0, len(self.trail)):
-            painter.drawPoint(self.trail[i][0], self.trail[i][1])
-'''
-   
    
         
 '''class notaWidget(QWidget):
