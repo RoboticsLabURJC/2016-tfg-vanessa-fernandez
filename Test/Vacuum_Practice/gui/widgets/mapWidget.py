@@ -18,12 +18,10 @@
 #       Vanessa Fernández Matínez<vanessa_1895@msn.com>
 
 
-#import resources_rc
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel
 from PyQt5.QtGui import QPen, QPainter
 from PyQt5.QtCore import QPoint, QPointF, pyqtSignal, Qt
 from PyQt5 import QtGui, QtCore
-#import threading
 import numpy as np
 import math
 from math import pi as pi
