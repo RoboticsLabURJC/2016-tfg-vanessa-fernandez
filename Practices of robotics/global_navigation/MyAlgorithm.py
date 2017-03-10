@@ -147,93 +147,6 @@ class MyAlgorithm(threading.Thread):
         x=1
         o=1
 
-        # Expansion of the field
-        #while (fin == "false"):
-        #    for i in range(dest[0]-square, dest[0]+square+1):
-        #        for j in range(dest[1]-square, dest[1]+square+1):
-        #            if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400) and (mapIm[j][i])):
-        #               border = 0
-        #               for k in range(i-1, i+2):
-        #                   for l in range(j-1, j+2):
-        #                       if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400) and (mapIm[j][i] == 255)):
-        #                           val = self.grid.getVal(k, l)
-        #                           val_init = self.grid.getVal(i, j)
-        #                           if(mapIm[l][k] == 0):
-        #                               border = border + 1
-        #                           elif (mapIm[j][i] == 255):
-        #                               if ((k == dest[0]) and (l == dest[1])):
-        #                                   self.grid.setVal(k, l, self.grid.getVal(k, l))
-        #                               elif ((k == i) and (l == j)):
-        #                                   self.grid.setVal(k, l, val_init+0.0)
-        #                               else:
-        #                                   if ((k != i) and (l != j) and (mapIm[l][k] == 255)):
-        #                                       if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-        #                                           self.grid.setVal(k, l, val_init+math.sqrt(2.0))
-        #                                   else:
-        #                                       if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)) and (mapIm[l][k] == 255):
-        #                                           self.grid.setVal(k, l, val_init+1.0)
-        #                       imagen[l][k] = self.grid.getVal(k, l)
-        #                       #plt.imshow(imagen,'gray')
-        #                       #plt.show()
-        #                       #img = cv2.cvtColor(imagen, cv2.COLOR_GRAY2RGB)
-        #                       if (x/o) == 200:
-        #                           out.write((imagen))
-        #                           o = o+1
-        #               if (((i < dest[0]-square+1) or (i > dest[0]+square-1)) or ((i >= dest[0]-square+1) and (i <= dest[0]+square-1) and ((j < dest[1]-square+1) or (j > dest[1]+square-1)))):
-        #                   if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #                       if (border != 9 and mapIm[j][i] == 0):
-        #                           pos_obstacles_border.append([i,j])                    
-        #            # Cases of the margins
-        #            fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
-        #            x = x+1
-        #    square = square + 1
-        #out.release()
-
-
-        # Expansion of the field
-        #while (fin == "false"):
-        #    for i in range(dest[0]-square, dest[0]+square+1):
-        #        for j in range(dest[1]-square, dest[1]+square+1):
-        #            if ((i >= 0) and (i < mapIm.shape[0]) and (j >= 0) and (j < mapIm.shape[1])):
-        #               border = 0
-        #               for k in range(i-1, i+2):
-        #                   for l in range(j-1, j+2):
-        #                       if ((k >= 0) and (k < mapIm.shape[0]) and (l >= 0) and (l < mapIm.shape[1])):
-        #                           val = self.grid.getVal(k, l)
-        #                           val_init = self.grid.getVal(i, j)
-        #                           if(mapIm[l][k] == 0):
-        #                               border = border + 1
-        #                           elif (mapIm[j][i] == 255):
-        #                               if ((k == dest[0]) and (l == dest[1])):
-        #                                   self.grid.setVal(k, l, self.grid.getVal(k, l))
-        #                               elif ((k == i) and (l == j)):
-        #                                   self.grid.setVal(k, l, val_init+0.0)
-        #                               else:
-        #                                   if ((k != i) and (l != j) and (mapIm[l][k] == 255)):
-        #                                       if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-        #                                           self.grid.setVal(k, l, val_init+math.sqrt(2.0))
-        #                                   else:
-        #                                       if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)) and (mapIm[l][k] == 255):
-        #                                           self.grid.setVal(k, l, val_init+1.0)
-        #                       imagen[l][k] = self.grid.getVal(k, l)
-        #                       if self.grid.getVal(k, l) > mas:
-        #                           mas = self.grid.getVal(k, l)
-        #                       #plt.imshow(imagen,'gray')
-        #                       #plt.show()
-        #                       #img = cv2.cvtColor(imagen, cv2.COLOR_GRAY2RGB)
-        #                       #if (x/o) == 200:
-        #                       #    out.write((imagen))
-        #                       #    o = o+1
-        #               if (((i < dest[0]-square+1) or (i > dest[0]+square-1)) or ((i >= dest[0]-square+1) and (i <= dest[0]+square-1) and ((j < dest[1]-square+1) or (j > dest[1]+square-1)))):
-        #                   if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-        #                       if (border != 9 and mapIm[j][i] == 0):
-        #                           pos_obstacles_border.append([i,j])                
-        #            # Cases of the margins
-        #            fin = self.findStopExpansion(dest, posRobot, margin, i, j, fin)
-        #            x = x+1
-        #    square = square + 1
-        #out.release()
-
         # New nodes
         nodos = []
 
@@ -246,7 +159,7 @@ class MyAlgorithm(threading.Thread):
                     frente2 = [[nodo[i][0]-1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]+1], [nodo[i][0]-1, nodo[i][1]+1]]
                     val_init = self.grid.getVal(nodo[i][0], nodo[i][1])
                     for j in range(0, len(frente1)):
-                        if (j >= 0) and (j <400):
+                        if (frente1[j][1] >= 0) and (frente1[j][1] < 400) and (frente1[j][0] >= 0) and (frente1[j][0] < 400):
                             if mapIm[frente1[j][1], frente1[j][0]] == 255:
                                 val = self.grid.getVal(frente1[j][0], frente1[j][1])
                                 if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
@@ -260,7 +173,7 @@ class MyAlgorithm(threading.Thread):
                             #    out.write((imagen))
                             #    o = o + 1
                     for j in range(0, len(frente2)):
-                        if (j >= 0) and (j <400):
+                        if (frente2[j][1] >= 0) and (frente2[j][1] <400) and (frente2[j][0] >= 0) and (frente2[j][0] < 400):
                             if mapIm[frente2[j][1], frente2[j][0]] == 255:
                                 val = self.grid.getVal(frente2[j][0], frente2[j][1])
                                 if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
@@ -288,7 +201,7 @@ class MyAlgorithm(threading.Thread):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
-                    imagen[l][k] = self.grid.getVal(k, l)
+                    #imagen[l][k] = self.grid.getVal(k, l)
                     #if (x/o) == 100:
                     #    out.write((imagen))
                     #    o = o+1
