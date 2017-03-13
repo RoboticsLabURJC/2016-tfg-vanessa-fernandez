@@ -5,7 +5,7 @@ import cv2
 from PyQt5.QtCore import QPoint, QRect, QSize, Qt, QPointF, QRectF, pyqtSignal, QTimer
 from PyQt5.QtGui import (QBrush, QConicalGradient, QLinearGradient, QPainter, QPainterPath, QPalette, QPen, QPixmap, QPolygon, QRadialGradient, QColor, QTransform, QPolygonF, QKeySequence, QIcon)
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QSpinBox, QWidget, QPushButton, QSpacerItem, QSizePolicy, QLCDNumber)
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from parallelIce.pose3dClient import Pose3DClient
 import easyiceconfig as EasyIce
 from gui.threadGUI import ThreadGUI
@@ -75,6 +75,9 @@ class mapaWidget(QWidget):
         yaw = self.pose3d.getYaw()
         pen = QPen(Qt.blue, 2)
         painter.setPen(pen)
+        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        brush.setColor(QtGui.QColor(Qt.blue))
+        painter.setBrush(brush)
         painter.drawEllipse(centerX, centerY, 50/4, 50/4)
 
 
@@ -164,7 +167,6 @@ class porcentajeWidget(QWidget):
         scale = 50
 
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
-        print(final_poses[0], final_poses[1])
 
         i_init = int(-50/4+final_poses.flat[0] + self.map.shape[1]/2)
         i_finish = int(50/4+final_poses.flat[0] + self.map.shape[1]/2)
