@@ -4,8 +4,6 @@ import time
 from datetime import datetime
 import jderobot
 import math
-from Target import Target
-from Parser import Parser
 import cv2
 
 time_cycle = 80
@@ -22,7 +20,7 @@ class MyAlgorithm(threading.Thread):
         self.laser2 = laser2
         self.laser3 = laser3
         self.motors = motors
-        self.grid = np.empty([300, 300], float)
+        #self.grid = np.empty([300, 300], float)
 
         #self.imageRight=None
         #self.imageLeft=None
@@ -32,32 +30,17 @@ class MyAlgorithm(threading.Thread):
         self.cary = 0.0
 
         # Obstacles direction
-        self.obsx = 0.0
-        self.obsy = 0.0
+      #  self.obsx = 0.0
+      #  self.obsy = 0.0
 
         # Average direction
-        self.avgx = 0.0
-        self.avgy = 0.0
-
-        # Current target
-        self.targetx = 0.0
-        self.targety = 0.0
+      #  self.avgx = 0.0
+      #  self.avgy = 0.0
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
         self.lock = threading.Lock()
         threading.Thread.__init__(self, args=self.stop_event)
-
-        # Init targets
-        #parser = Parser('targets.json')
-        #self.targets = parser.getTargets()
-
-    #def getNextTarget(self):
-    #    for target in self.targets:
-    #        if target.isReached() == False:
-    #            return target
-
-    #    return None
 
 
     def getCarDirection(self):
@@ -68,9 +51,6 @@ class MyAlgorithm(threading.Thread):
 
     #def getAverageDirection(self):
     #    return (self.avgx, self.avgy)
-
-    #def getCurrentTarget(self):
-    #    return (self.targetx, self.targety)
 
 
     def parse_laser_data(self,laser_data):
@@ -123,9 +103,6 @@ class MyAlgorithm(threading.Thread):
 
 
     def execute(self):
-        #self.currentTarget = self.getNextTarget()
-        #self.targetx = self.currentTarget.getPose().x
-        #self.targety = self.currentTarget.getPose().y
 
         # TODO
         laser_data1 = self.laser1.getLaserData()
@@ -140,4 +117,4 @@ class MyAlgorithm(threading.Thread):
         #for x in range(self.grid):
         #    for y in range(self.grid):
         #        self.grid[x][y] = 255
-        cv2.imshow("grid", self.grid)        
+       # cv2.imshow("grid", self.grid)        
