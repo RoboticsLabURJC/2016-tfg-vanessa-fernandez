@@ -36,6 +36,7 @@ class MapWidget(QWidget):
         self.winParent=winParent
         self.initUI()
         self.laser = []
+        self.trail = []
         
     
     def initUI(self):
@@ -94,7 +95,7 @@ class MapWidget(QWidget):
         yaw = pose.getYaw()
 
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
-        painter.translate(QPoint(self.width/2+final_poses[0], self.height/2+final_poses[1]))
+        painter.translate(QPoint(final_poses[0], final_poses[1]))
         painter.rotate(-180*yaw/pi)
 
         triangle = QtGui.QPolygon()
@@ -107,11 +108,37 @@ class MapWidget(QWidget):
         painter.drawPolygon(triangle)
 
 
+    def drawCircle(self, painter, centerX, centerY):
+        pen = QPen(Qt.blue, 2)
+        painter.setPen(pen)
+        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        brush.setColor(QtGui.QColor(Qt.blue))
+        painter.setBrush(brush)
+        painter.drawEllipse(centerX, centerY, 50/4, 50/4)
+
+
+    def drawTrail(self, painter):
+        pose = self.winParent.getPose3D()
+        x = pose.getX()
+        y = pose.getY()
+        scale = 50
+
+        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
+
+        # Vacuum's way
+        self.trail.append([final_poses.flat[0], final_poses.flat[1]])
+
+        for i in range(0, len(self.trail)):
+            self.drawCircle(painter, self.trail[i][0], self.trail[i][1])
+
+
     def paintEvent(self, e):
 
         copy = self.pixmap.copy()
         painter = QtGui.QPainter(copy)
 
+        painter.translate(QPoint(self.width/2, self.height/2))
+        self.drawTrail(painter)
         self.drawVacuum(painter)
 
         self.mapWidget.setPixmap(copy)
