@@ -99,9 +99,12 @@ class distanciaWidget(QWidget):
         return RT
 
     def RTCar(self):
-        RTx = self.RTx(pi, 0, 0, 0)
-        RTz = self.RTz(pi/2, 0, 0, 0)
-        return RTx*RTz
+        #RTx = self.RTx(pi, 0, 0, 0)
+        #RTz = self.RTz(pi/2, 0, 0, 0)
+        #return RTx*RTz
+        yaw = self.pose3d.getYaw()
+        RTz = self.RTz(yaw, 0, 0, 0)
+        return RTz
 
 
     def distancePoint2Rect(self, ax, ay, bx, by, cx, cy):
@@ -129,20 +132,20 @@ class distanciaWidget(QWidget):
         return distance
 
 
-    def distanceCar2Car(self, pointCarLeft, pointCarRight, xFront, xRear, yLeft, yRight):
-        distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xFront, yLeft)
+    def distanceCar2Car(self, pointCarLeft, pointCarRight, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight):
+        distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointFrontLeft.flat[0], pointFrontLeft.flat[1])
 
-        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xFront, yRight) < distance):
-            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xFront, yRight)
-        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yLeft) < distance):
-            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yLeft)
-        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yRight) < distance):
-            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yRight)
+        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointFrontRight.flat[0], pointFrontRight.flat[1]) < distance):
+            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointFrontRight.flat[0], pointFrontRight.flat[1])
+        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearLeft.flat[0], pointRearLeft.flat[1]) < distance):
+            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearLeft.flat[0], pointRearLeft.flat[1])
+        if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1]) < distance):
+            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1])
 
-        print("PUNTO DELANTE IZQUIERDA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xFront, yLeft))
-        print("PUNTO DELANTE DERECHA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xFront, yRight))
-        print("PUNTO DETRAS IZQUIERDA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yLeft))
-        print("PUNTO DETRAS DERECHA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], xRear, yRight))
+        print("PUNTO DELANTE IZQUIERDA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointFrontLeft.flat[0], pointFrontLeft.flat[1]))
+        print("PUNTO DELANTE DERECHA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointFrontRight.flat[0], pointFrontRight.flat[1]))
+        print("PUNTO DETRAS IZQUIERDA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearLeft.flat[0], pointRearLeft.flat[1]))
+        print("PUNTO DETRAS DERECHA",self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1]))
         print(distance)
 
         return distance
@@ -163,34 +166,19 @@ class distanciaWidget(QWidget):
         yLeft = self.pose3d.getY() + carSize[1]/2
         yRight = self.pose3d.getY() - carSize[1]/2
 
+        # Car's rotation
+        pointFrontLeft = self.RTCar() * np.matrix([[xFront], [yLeft], [1], [1]])
+        pointFrontRight = self.RTCar() * np.matrix([[xFront], [yRight], [1], [1]])
+        pointRearLeft = self.RTCar() * np.matrix([[xRear], [yLeft], [1], [1]])
+        pointRearRight = self.RTCar() * np.matrix([[xRear], [yRight], [1], [1]])
 
 
-        print("frontal", self.distanceCar2Car(pointCarFrontal_left, pointCarFrontal_right, xFront, xRear, yLeft, yRight))
-        print("trasera", self.distanceCar2Car(pointCarRear_left, pointCarRear_right, xFront, xRear, yLeft, yRight))
+        print("frontal", self.distanceCar2Car(pointCarFrontal_left, pointCarFrontal_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight))
+        print("trasera", self.distanceCar2Car(pointCarRear_left, pointCarRear_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight))
         
-        # Falta meter matrices de rotaciones
-#        orig_poses_Front_Left = np.matrix([[xFront], [yLeft], [1], [1]])
-#        poses_Front_Left = self.RTCar() * orig_poses_Front_Left
+        self.distFrontFinal = self.distanceCar2Car(pointCarFrontal_left, pointCarFrontal_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
+        self.distRearFinal = self.distanceCar2Car(pointCarRear_left, pointCarRear_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
 
-#        orig_poses_Front_Right = np.matrix([[xFront], [yRight], [1], [1]])
-#        poses_Front_Right = self.RTCar() * orig_poses_Front_Right
-
-#        orig_poses_Rear_Left = np.matrix([[xRear], [yLeft], [1], [1]])
-#        poses_Rear_Left = self.RTCar() * orig_poses_Front_Left
-
-#        orig_poses_Rear_Right = np.matrix([[xRear], [yRight], [1], [1]])
-#        poses_Rear_Right = self.RTCar() * orig_poses_Rear_Right
-
-        #y = self.pose3d.getY()
-
-        #distanceFrontal = [abs(positionCarFrontal[0]-xFront), abs(positionCarFrontal[1]-y)]
-        #self.distFrontFinal = pow(pow(distanceFrontal[0],2) + pow(distanceFrontal[1],2),0.5)
-#        distFrontFinal = self.distanceCar2Car(poses_Front_Left[0], poses_Front_Right[0], poses_Front_Left[1], poses_Front_Right[1], pointCarFrontal_left, pointCarFrontal_right)
-#        self.distFrontFinal = distFrontFinal.flat[0]
-        
-        #distanceRear = [abs(positionCarRear[0]-xRear), abs(positionCarRear[1]-y)]
-        #self.distRearFinal = pow(pow(distanceRear[0],2) + pow(distanceRear[1],2),0.5)
-#        self.distRearFinal = self.distanceCar2Car(poses_Rear_Left[0], poses_Rear_Right[0], poses_Rear_Left[1], poses_Rear_Right[1], pointCarRear_left, pointCarRear_right)
 
 #        y = self.pose3d.getY()
       
