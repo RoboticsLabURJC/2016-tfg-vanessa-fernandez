@@ -136,7 +136,7 @@ class distanciaWidget(QWidget):
         if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearLeft.flat[0], pointRearLeft.flat[1]) < distance):
             distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearLeft.flat[0], pointRearLeft.flat[1])
         if (self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1]) < distance):
-            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1])s
+            distance = self.distancePoint2Segment(pointCarLeft[0], pointCarLeft[1], pointCarRight[0], pointCarRight[1], pointRearRight.flat[0], pointRearRight.flat[1])
 
         return distance
 
