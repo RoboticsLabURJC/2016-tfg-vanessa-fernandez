@@ -17,6 +17,8 @@ class MyAlgorithm(threading.Thread):
         self.vel = vel
         self.posPenalties = []
         self.valPenalties = []
+        self.posObstaclesBorder = []
+        self.posRoute = []
         sensor.getPathSig.connect(self.generatePath)
 
         self.stop_event = threading.Event()
@@ -82,6 +84,15 @@ class MyAlgorithm(threading.Thread):
         return nodos
 
 
+    def incorporatePosObstacle(self, pos0, pos1):
+        found = False
+        for i in range(0, len(self.posObstaclesBorder)):
+            if (self.posObstaclesBorder[i][0] == pos0) and (self.posObstaclesBorder[i][1]) == pos1:
+                found = True
+        if (found == False):
+            self.posObstaclesBorder.append([pos0, pos1])
+
+
     def penaltiesObstacles(self, i, j, dest0, dest1):
         found = "false"
         pos = []
@@ -123,7 +134,7 @@ class MyAlgorithm(threading.Thread):
         gridPos = self.grid.getPose()
 
         #TODO
-
+        dest = (103, 119)
         # Position of the robot
         world_robotX = self.sensor.getRobotX()
         world_robotY = self.sensor.getRobotY()
@@ -133,7 +144,6 @@ class MyAlgorithm(threading.Thread):
         fin = "false"
         square = 0
         margin = 20
-        pos_obstacles_border = []
         #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
         #out = cv2.VideoWriter('Penalización.avi', fourcc, 30, (400, 400),False)
 
@@ -167,7 +177,7 @@ class MyAlgorithm(threading.Thread):
                                         self.grid.setVal(frente1[j][0], frente1[j][1], val_init+1.0)
                                         nodos = self.incorporateNode(frente1[j][0], frente1[j][1], nodos)
                             else:
-                                pos_obstacles_border.append([frente1[j][0],frente1[j][1]])
+                                self.incorporatePosObstacle(frente1[j][0], frente1[j][1])
                             imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
                             #if (x/o) == 100:
                             #    out.write((imagen))
@@ -192,15 +202,15 @@ class MyAlgorithm(threading.Thread):
                 nodos.pop(0)
         #out.release()
 
-
+        print(len(self.posObstaclesBorder))
 
         # Obstacles penalties
-        for i in range(0, len(pos_obstacles_border)):
-            for k in range(pos_obstacles_border[i][0]-3, pos_obstacles_border[i][0]+4):
-                for l in range(pos_obstacles_border[i][1]-3, pos_obstacles_border[i][1]+4):
+        for i in range(0, len(self.posObstaclesBorder)):
+            for k in range(self.posObstaclesBorder[i][0]-3, self.posObstaclesBorder[i][0]+4):
+                for l in range(self.posObstaclesBorder[i][1]-3, self.posObstaclesBorder[i][1]+4):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
-                            self.penaltiesObstacles(k, l, pos_obstacles_border[i][0], pos_obstacles_border[i][1])
+                            self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1])
                     #imagen[l][k] = self.grid.getVal(k, l)
                     #if (x/o) == 100:
                     #    out.write((imagen))
@@ -209,13 +219,13 @@ class MyAlgorithm(threading.Thread):
         #out.release()
 
 
-
         # Find the path
         pixelCentral = [posRobot[0], posRobot[1]]
         valMin = self.grid.getVal(posRobot[0], posRobot[1])
         posMin = pixelCentral
         self.grid.setPathVal(posRobot[0], posRobot[1], valMin)
         found = "false"
+        y = 0
         while (found == "false"):
             FoundNeighbour = "false"
             for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
@@ -235,9 +245,12 @@ class MyAlgorithm(threading.Thread):
                         elif (val < valMinNeighbour):
                             valMinNeighbour = val
                             posMinNeighbour = [i, j]
-                        print("posactual",i, j, "posMin", posMin,"dest", dest, "posnei", posMinNeighbour)
-                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
+                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posnei", posMinNeighbour)
+                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
             self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
+            y = y + 1
+            if (y%3 == 0):
+                self.posRoute.append([posMinNeighbour[0], posMinNeighbour[1]])
             pixelCentral = posMinNeighbour
             if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
                 found = "true"
@@ -259,7 +272,12 @@ class MyAlgorithm(threading.Thread):
         posRobotX = self.sensor.getRobotX()
         posRobotY = self.sensor.getRobotY()
         orientationRobot = self.sensor.getRobotTheta()
-        print (posRobotX, posRobotY, orientationRobot)
+
+        print(posRobotX, posRobotY, orientationRobot)
+        
+        for i in range(0, len(self.posRoute)):
+           print(self.posRoute[i])
+           print(self.grid.gridToWorld(self.posRoute[i][0], self.posRoute[i][1]))
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
         #self.vel.setV(10)
