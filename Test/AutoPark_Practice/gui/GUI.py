@@ -20,7 +20,7 @@
 from gui.widgets.teleopWidget import TeleopWidget
 from gui.widgets.mapWidget import MapWidget
 from gui.widgets.mapWidget import MapWidget1
-#from gui.widgets.mapWidget1 import MapWidget1
+from gui.widgets.mapWidget import LogoWidget
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from gui.form import Ui_MainWindow
@@ -35,25 +35,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.teleop=TeleopWidget(self)
         self.map=MapWidget(self)
         self.map1=MapWidget1(self)
+        self.logo = LogoWidget(self)
         self.tlLayout.addWidget(self.teleop)
         self.teleop.setVisible(True)
         self.mapLayout.addWidget(self.map)
         self.map1Layout.addWidget(self.map1)
+        self.logoLayout.addWidget(self.logo)
         self.map.setVisible(True)
         self.map1.setVisible(True)
+        self.logo.setVisible(True)
 
         self.pushButton.clicked.connect(self.playClicked)
         self.pushButton.setCheckable(True)
         self.updGUI.connect(self.updateGUI)
-        #self.camera1=CameraWidget(self)
 
         self.stopButton.clicked.connect(self.stopClicked)
 
     def updateGUI(self):
-        #self.camera1.updateImage()
-        (cx, cy) = self.algorithm.getCarDirection()
-        #(ox, oy) = self.algorithm.getObstaclesDirection()
-        #(ax, ay) = self.algorithm.getAverageDirection()
         laserdata1 = self.laser1.getLaserData()
         laserdata2 = self.laser2.getLaserData()
         laserdata3 = self.laser3.getLaserData()
@@ -65,7 +63,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.map.setLaserValues(3,laserdata3)
         self.map.update()
         self.map1.update()
-
 
     def getPose3D(self):
         return self.pose3d
