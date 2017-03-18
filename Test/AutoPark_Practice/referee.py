@@ -1,9 +1,11 @@
 import sys, math
 from math import pi as pi
 import numpy as np
+import cv2
 from PyQt5.QtCore import QPoint, QRect, QSize, Qt, QPointF, QRectF, pyqtSignal, QTimer
 from PyQt5.QtGui import (QBrush, QConicalGradient, QLinearGradient, QPainter, QPainterPath, QPalette, QPen, QPixmap, QPolygon, QRadialGradient, QColor, QTransform, QPolygonF, QKeySequence, QIcon)
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QSpinBox, QWidget, QPushButton, QSpacerItem, QSizePolicy, QLCDNumber )
+from PyQt5 import QtGui, QtCore
 from parallelIce.pose3dClient import Pose3DClient
 import easyiceconfig as EasyIce
 from gui.threadGUI import ThreadGUI
@@ -20,11 +22,13 @@ class MainWindow(QWidget):
         self.calidad = calidadWidget(self)
         self.distancia = distanciaWidget(self, pose3d)
         self.nota = notaWidget(self,pose3d)
+        self.logo = logoWidget(self)
         layout.addWidget(self.quesito,1,0)
         layout.addWidget(self.tiempo,0,0)
         layout.addWidget(self.distancia,0,2)
         layout.addWidget(self.calidad,1,2)
         layout.addWidget(self.nota,0,1)
+        layout.addWidget(self.logo,2,2)
     
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
@@ -39,7 +43,21 @@ class MainWindow(QWidget):
         self.distancia.updateG()
         self.nota.updateG()
 
-
+class logoWidget(QWidget):
+    def __init__(self, winParent):
+        super(logoWidget, self).__init__()
+        self.winParent=winParent
+        self.logo = cv2.imread("resources/logo_jderobot1.png",cv2.IMREAD_UNCHANGED)
+        self.logo = cv2.resize(self.logo, (100, 100))
+        image = QtGui.QImage(self.logo.data, self.logo.shape[1], self.logo.shape[0],  QtGui.QImage.Format_ARGB32);
+        self.pixmap = QtGui.QPixmap.fromImage(image)
+        self.height = self.pixmap.height()
+        self.width = self.pixmap.width()
+        self.mapWidget = QLabel(self)
+        self.mapWidget.setPixmap(self.pixmap)
+        self.mapWidget.resize(self.width, self.height)
+        self.setMinimumSize(100,100)
+        
 class calidadWidget(QWidget):
     def __init__(self,winParent):    
         super(calidadWidget, self).__init__()
