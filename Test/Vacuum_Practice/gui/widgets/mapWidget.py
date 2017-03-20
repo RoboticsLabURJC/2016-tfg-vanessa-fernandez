@@ -27,6 +27,7 @@ import math
 from math import pi as pi
 import cv2
 
+
 class MapWidget(QWidget):
 
     stopSIG=pyqtSignal()
@@ -41,7 +42,6 @@ class MapWidget(QWidget):
     
     def initUI(self):
         self.map = cv2.imread("resources/images/mapgrannyannie.png", cv2.IMREAD_GRAYSCALE)
-        print (self.map.shape)
         self.map = cv2.resize(self.map, (500, 500))
         image = QtGui.QImage(self.map.data, self.map.shape[1], self.map.shape[0], self.map.shape[1], QtGui.QImage.Format_Indexed8);
         self.pixmap = QtGui.QPixmap.fromImage(image)
@@ -143,4 +143,29 @@ class MapWidget(QWidget):
 
         self.mapWidget.setPixmap(copy)
         painter.end()
+        
+        
+class LogoWidget(QWidget):
+    stopSIG=pyqtSignal()
+    
+    def __init__(self,winParent):    
+        super(LogoWidget, self).__init__()
+        self.winParent=winParent
+        self.initUI()
+        
+    
+    def initUI(self):
+        self.logo = cv2.imread("resources/logo_jderobot1.png", cv2.IMREAD_UNCHANGED)
+        self.logo = cv2.resize(self.logo, (100, 100))
+        image = QtGui.QImage(self.logo.data, self.logo.shape[1], self.logo.shape[0], QtGui.QImage.Format_ARGB32);
+        self.pixmap = QtGui.QPixmap.fromImage(image)
+        self.height = self.pixmap.height()
+        self.width = self.pixmap.width()
+        self.logoWidget = QLabel(self)
+        self.logoWidget.setPixmap(self.pixmap)
+        self.logoWidget.resize(self.width, self.height)
+
+        self.resize(300,300)
+        self.setMinimumSize(100,100)
+
 
