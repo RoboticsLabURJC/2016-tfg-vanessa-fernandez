@@ -22,15 +22,17 @@ class MainWindow(QWidget):
         self.porcentaje = porcentajeWidget(self, pose3d)
         self.mapa = mapaWidget(self, pose3d)
         #self.nota = notaWidget(self,pose3d)
+        self.logo = logoWidget(self)
         layout.addWidget(self.tiempo,0,0)
         layout.addWidget(self.porcentaje,0,2)
-        layout.addWidget(self.mapa,1,2)
+        layout.addWidget(self.mapa,1,0)
         #layout.addWidget(self.nota,0,1)
+        layout.addWidget(self.logo,2,2)
     
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
         
-        self.setFixedSize(740,640);
+        self.setFixedSize(840,640);
 
         self.setLayout(layout)
         self.updGUI.connect(self.update)
@@ -40,6 +42,21 @@ class MainWindow(QWidget):
         self.mapa.updateG()
         #self.nota.updateG()
 
+class logoWidget(QWidget):
+    def __init__(self, winParent):
+        super(logoWidget, self).__init__()
+        self.winParent=winParent
+        self.logo = cv2.imread("resources/logo_jderobot1.png", cv2.IMREAD_UNCHANGED)
+        self.logo = cv2.resize(self.logo, (100, 100))
+        image = QtGui.QImage(self.logo.data, self.logo.shape[1], self.logo.shape[0], QtGui.QImage.Format_ARGB32);
+        self.pixmap = QtGui.QPixmap.fromImage(image)
+        self.height = self.pixmap.height()
+        self.width = self.pixmap.width()
+        self.mapWidget = QLabel(self)
+        self.mapWidget.setPixmap(self.pixmap)
+        self.mapWidget.resize(self.width, self.height)
+        self.setMinimumSize(100,100)
+  
 
 class mapaWidget(QWidget):
     def __init__(self,winParent, pose3d):    
@@ -55,7 +72,7 @@ class mapaWidget(QWidget):
         self.mapWidget.setPixmap(self.pixmap)
         self.mapWidget.resize(self.width, self.height)
 
-        self.resize(300,300)
+        self.resize(100,100)
         self.setMinimumSize(500,500)
 
         self.pose3d = pose3d
@@ -127,7 +144,21 @@ class porcentajeWidget(QWidget):
 
         vLayout.addWidget(self.Porcentaje, 0)
 
+        #self.setLayout(vLayout)
+
+        self.bar = QProgressBar()
+        self.bar.setValue(self.porcentajeCasa)
+        st = "QProgressBar::chunk {background-color: #ff0000;}\n QProgressBar {border: 1px solid grey;border-radius: 2px;text-align: center;background: #eeeeee;}"
+        self.bar.setStyleSheet(st)
+        self.bar.setTextVisible(False)
+        vLayout.addWidget(self.Porcentaje, 0)
+        vLayout.addWidget(self.bar, 0)
+
+        vSpacer = QSpacerItem(30, 80, QSizePolicy.Ignored, QSizePolicy.Ignored)
+        vLayout.addItem(vSpacer)
+
         self.setLayout(vLayout)
+
 
 
     def RTx(self, angle, tx, ty, tz):
@@ -184,6 +215,7 @@ class porcentajeWidget(QWidget):
     def updateG(self):
         self.porcentajeRecorrido()
         self.Porcentaje.setText("Superficie recorrida: " + str(round(self.porcentajeCasa, 3)) + ' %')
+        self.bar.setValue(self.porcentajeCasa)
         self.update()
    
         
