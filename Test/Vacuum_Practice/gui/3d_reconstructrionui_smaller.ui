@@ -42,8 +42,18 @@
           </property>
          </layout>
         </item>
+        <item>
+         <layout class="QVBoxLayout" name="logoLayout">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </item>
        </layout>
-      </item>
+      </item>  
       <item>
        <widget class="QPushButton" name="stopButton">
         <property name="font">
