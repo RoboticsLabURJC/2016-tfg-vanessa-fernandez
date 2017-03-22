@@ -135,6 +135,8 @@ class distanciaWidget(QWidget):
         return math.sqrt(pow((x2-x1),2) + pow((y2-y1),2))
 
     def distancePoint2Segment(self, ax, ay, bx, by, cx, cy):
+        # Segment: A[ax,ay] ; B[bx,by]
+        # Point: C[cx, cy]
         # Calculate U parameter
         u = self.parameterU(ax, ay, bx, by, cx, cy)
         if u < 0:
@@ -161,26 +163,35 @@ class distanciaWidget(QWidget):
 
     def distances(self):
         carSize = [5.75, 2.5]
+
+        positionSideWalk_start = [-25, 3.25]
+        positionSideWalk_final = [35, 3.25]
+
+        # Origin poses
         pointCarFrontal_left = [14 - carSize[0]/2, 3+carSize[1]/2]
         pointCarFrontal_right = [14 - carSize[0]/2, 3-carSize[1]/2]
         pointCarRear_left = [0.5 + carSize[0]/2, 3+carSize[1]/2]
         pointCarRear_right = [0.5 + carSize[0]/2, 3-carSize[1]/2]
-        positionSideWalk_start = [-25, 3.25]
-        positionSideWalk_final = [35, 3.25]
 
+        # Pose 3D
         xFront = self.pose3d.getX() + carSize[0]/2
         xRear = self.pose3d.getX() - carSize[0]/2
         yLeft = self.pose3d.getY() + carSize[1]/2
         yRight = self.pose3d.getY() - carSize[1]/2
 
-        # Car's rotation
+        # Final poses (Car's rotation)
         pointFrontLeft = self.RTCar() * np.matrix([[xFront], [yLeft], [1], [1]])
         pointFrontRight = self.RTCar() * np.matrix([[xFront], [yRight], [1], [1]])
         pointRearLeft = self.RTCar() * np.matrix([[xRear], [yLeft], [1], [1]])
         pointRearRight = self.RTCar() * np.matrix([[xRear], [yRight], [1], [1]])
         
+        # Distance car -> parked front car
         self.distFrontFinal = self.distanceCar2Car(pointCarFrontal_left, pointCarFrontal_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
+
+        # Distance car -> parked rear car
         self.distRearFinal = self.distanceCar2Car(pointCarRear_left, pointCarRear_right, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
+
+        # Distance car -> sidewalk
         self.distanceSidewalk = self.distanceCar2Car(positionSideWalk_start, positionSideWalk_final, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
 
 
