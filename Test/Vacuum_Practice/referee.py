@@ -18,15 +18,15 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__(parent)
         
         layout = QGridLayout()
-        self.tiempo = tiempoWidget(self)
+        self.tiempoDigital = tiempoDigitalWidget(self)
+        self.tiempoAnalog = tiempoAnalogWidget(self)
         self.porcentaje = porcentajeWidget(self, pose3d)
         self.mapa = mapaWidget(self, pose3d)
-        #self.nota = notaWidget(self,pose3d)
         self.logo = logoWidget(self)
-        layout.addWidget(self.tiempo,0,0)
-        layout.addWidget(self.porcentaje,0,2)
+        layout.addWidget(self.tiempoDigital,0,2)
+        layout.addWidget(self.porcentaje,0,0)
         layout.addWidget(self.mapa,1,0)
-        #layout.addWidget(self.nota,0,1)
+        layout.addWidget(self.tiempoAnalog,1,2)
         layout.addWidget(self.logo,2,2)
     
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
@@ -40,7 +40,8 @@ class MainWindow(QWidget):
     def update(self):
         self.porcentaje.updateG()
         self.mapa.updateG()
-        #self.nota.updateG()
+        self.tiempoAnalog.updateG()
+
 
 class logoWidget(QWidget):
     def __init__(self, winParent):
@@ -217,66 +218,15 @@ class porcentajeWidget(QWidget):
         self.Porcentaje.setText("Superficie recorrida: " + str(round(self.porcentajeCasa, 3)) + ' %')
         self.bar.setValue(self.porcentajeCasa)
         self.update()
-   
-        
-'''class notaWidget(QWidget):
-    def __init__(self,winParent,pose3d):    
-        super(notaWidget, self).__init__()
-        self.winParent=winParent
-        self.pose3d = pose3d
 
-        hLayout = QHBoxLayout()
-        
-        if self.testTime():
-            print ('seconds = 0')
-    
-        #notaTime = self.testTime() * 0.025
-        #notaPorc = self.testPorcentaje() * 0.025
-        nota = self.testPorcentaje()
-        
-        notaLabel = QLabel('Nota final: ' + str(nota))
-        hLayout.addWidget(notaLabel, 0) 
-        self.setLayout(hLayout)
 
-        
-    def testTime(self):
-        time = tiempoWidget(self)
-        seconds = time.seconds
-        myTime = False
-        while seconds > 0:
-            print(seconds)
-            seconds -= 1
-        if seconds == 0:
-            myTime = True
-        return myTime
-    
-    def testPorcentaje(self):
-        porcentaje = porcentajeWidget(self,pose3d)
-        pCasa = porcentaje.porcentajeCasa
-        if pCasa >= 90:
-            notaPorc = 10
-        elif pCasa < 90 and pCasa >= 75:
-            notaPorc = 8
-        elif pCasa < 75 and pCasa >= 60:
-            notaPorc = 6
-        elif pCasa < 60 and pCasa >= 50:
-            notaPorc = 5
-        else:
-            notaPorc = 0
-        return notaPorc
-
-    def updateG(self):
-        self.update() 
-    '''
-             
-
-class tiempoWidget(QWidget):
+class tiempoDigitalWidget(QWidget):
 
     time = pyqtSignal()
     def __init__(self,winParent):    
-        super(tiempoWidget, self).__init__()
+        super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 50
+        self.seconds = 130
         self.pose3d = pose3d
         self.show = False
 
@@ -343,6 +293,87 @@ class tiempoWidget(QWidget):
             notaPorc = 0
         return notaPorc
 
+
+class tiempoAnalogWidget(QWidget):
+
+    time = pyqtSignal()
+    def __init__(self,winParent):    
+        super(tiempoAnalogWidget, self).__init__()
+        self.winParent=winParent
+        self.rectangle = QRectF(0.0, 0.0, 300.0, 300.0)
+        self.angle = -pi/2
+        self.angleMinutes = -pi/2
+        self.seconds = 130
+        self.contador = 0
+        self.minutes = 0
+
+        timer = QTimer(self)
+        timer.start(1000)
+        timer.timeout.connect(self.contadorTime)
+
+    def drawWhiteZones(self, painter):
+        self.setStyle(painter, QColor(255,255,255),QColor(255,255,255),1)
+        startAngle = 0 * 16
+        spanAngle = 360 * 16
+        painter.drawPie(self.rectangle, startAngle, spanAngle)
+
+    def drawCLockLines(self, painter):
+        radius = 130
+        angle = -pi/2
+        for i in range (0, 60):
+            origx = self.rectangle.width() / 2 + (radius-1) * math.cos(angle)
+            origy = self.rectangle.height() / 2 + (radius-1) * math.sin(angle)
+            finx = 6 * math.cos(angle) + origx
+            finy = 6 * math.sin(angle) + origy
+            self.setStyle(painter, Qt.black,Qt.black,3)
+            painter.drawLine(QPoint(origx,origy), QPoint(finx,finy))
+            angle = angle + (6*pi/180)
+        
+
+    def drawArrows(self, painter):
+        radius = 130
+        origx = self.rectangle.width() / 2
+        origy = self.rectangle.height() / 2
+        finx = radius * math.cos(self.angle) + origx
+        finy = radius * math.sin(self.angle) + origy
+        finMinutesx = radius/2 * math.cos(self.angleMinutes) + origx
+        finMinutesy = radius/2 * math.sin(self.angleMinutes) + origy 
+        self.setStyle(painter, Qt.black,Qt.black,3)
+        painter.drawLine(QPoint(origx,origy), QPoint(finx,finy))
+        painter.drawLine(QPoint(origx,origy), QPoint(finMinutesx,finMinutesy))
+        painter.drawEllipse(145,145, 10, 10)
+
+    def contadorTime(self):
+        if self.contador < self.seconds:
+            self.contador += 1
+            self.angle = self.angle + (6*pi/180)
+        if self.contador%60 == 0:
+            self.minutes += 1
+            self.angleMinutes = self.angleMinutes + (6*pi/180)
+
+    def resetPen(self, painter):
+        pen = QPen(Qt.black, 1)
+        brush = QBrush()
+        painter.setPen(pen)
+        painter.setBrush(brush)
+
+    def setStyle(self, painter, fillColor, penColor, stroke):
+        brush = QBrush()
+        pen = QPen(penColor, stroke)
+        brush.setColor(fillColor)
+        brush.setStyle(Qt.SolidPattern)
+        painter.setBrush(brush)
+        painter.setPen(pen)
+        painter.setRenderHint(QPainter.Antialiasing)
+      
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        self.drawWhiteZones(painter)
+        self.drawArrows(painter)
+        self.drawCLockLines(painter)
+
+    def updateG(self):
+        self.update()
 
 
 
