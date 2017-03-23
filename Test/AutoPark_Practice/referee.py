@@ -234,12 +234,7 @@ class distanciaWidget(QWidget):
             self.distRearFinal = distRearFinal_2
         
         # Distance car -> sidewalk
-        if (pointFrontLeft[1] >= positionSideWalk_start[1]) or (pointFrontRight[1] >= positionSideWalk_start[1]):
-            self.distanceSidewalk = 0
-        elif (pointRearLeft[1] >= positionSideWalk_start[1]) or (pointRearRight[1] >= positionSideWalk_start[1]):
-            self.distanceSidewalk = 0
-        else:
-            self.distanceSidewalk = self.distanceCar2Car(positionSideWalk_start, positionSideWalk_final, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
+        self.distanceSidewalk = self.distanceCar2Car(positionSideWalk_start, positionSideWalk_final, pointFrontLeft, pointFrontRight, pointRearLeft, pointRearRight)
 
 
     def updateG(self):
