@@ -15,10 +15,9 @@ class MyAlgorithm(threading.Thread):
         self.sensor = sensor
         self.grid = grid
         self.vel = vel
-        self.posPenalties = []
-        self.valPenalties = []
         self.posObstaclesBorder = []
         self.posRoute = []
+        self.rejilla = np.zeros((400, 400),np.uint8)
         sensor.getPathSig.connect(self.generatePath)
 
         self.stop_event = threading.Event()
@@ -94,28 +93,15 @@ class MyAlgorithm(threading.Thread):
 
 
     def penaltiesObstacles(self, i, j, dest0, dest1):
-        found = "false"
-        pos = []
+        # Penaltie's Obstacles
         if ((((i == (dest0-1)) or (i == (dest0+1))) and (dest1-1 <= j <= dest1+1)) or (((j == (dest1-1)) or (j == (dest1+1))) and (i == dest0))):
             penaltie = 25.0
         elif ((((i == (dest0-2)) or (i == (dest0+2)) and (dest1-2 <= j <= dest1+2)) or (((j == (dest1-2)) or (j == (dest1+2))) and (dest0-1 <= i <= dest0+1)))):
             penaltie = 15.0
         elif ((((i == (dest0-3)) or (i == (dest0+3)) and (dest1-3 <= j <= dest1+3)) or (((j == (dest1-3)) or (j == (dest1+3))) and (dest0-2 <= i <= dest0+2)))):
             penaltie = 10.0
-
-        for l in range(0, len(self.posPenalties)):
-           if (self.posPenalties[l] == [i, j]):
-                found = "true"
-                pos.append(l)
-        if (found == "false"):
-            self.grid.setVal(i, j, (self.grid.getVal(i, j)+penaltie))
-            self.posPenalties.append([i, j])
-            self.valPenalties.append(penaltie)
-        else:
-            if (penaltie > self.valPenalties[pos[0]]):
-                self.grid.setVal(i, j, (self.grid.getVal(i, j)-self.valPenalties[pos[0]]+penaltie))
-                self.valPenalties[pos[0]] = penaltie
-
+        if (penaltie > self.rejilla[j][i]):
+            self.rejilla[j][i] = penaltie
 
 
     """ Write in this method the code necessary for looking for the shorter
@@ -202,7 +188,6 @@ class MyAlgorithm(threading.Thread):
                 nodos.pop(0)
         #out.release()
 
-        print(len(self.posObstaclesBorder))
 
         # Obstacles penalties
         for i in range(0, len(self.posObstaclesBorder)):
@@ -217,6 +202,8 @@ class MyAlgorithm(threading.Thread):
                     #    o = o+1
             #x=x+1
         #out.release()
+
+        self.grid.grid = self.rejilla+self.grid.grid
 
 
         # Find the path
@@ -257,8 +244,9 @@ class MyAlgorithm(threading.Thread):
                 self.grid.setPathFinded()
 
 
-        #Represent the Gradient Field in a window using cv2.imshow
+        # Represent the Gradient Field in a window using cv2.imshow
         self.grid.showGrid()
+
 
     """ Write in this mehtod the code necessary for going to the desired place,
         once you have generated the shorter path.
@@ -276,8 +264,11 @@ class MyAlgorithm(threading.Thread):
         print(posRobotX, posRobotY, orientationRobot)
         
         for i in range(0, len(self.posRoute)):
-           print(self.posRoute[i])
-           print(self.grid.gridToWorld(self.posRoute[i][0], self.posRoute[i][1]))
+           newTarget = self.grid.gridToWorld(self.posRoute[i][0], self.posRoute[i][1])
+           if (newTarget[0] == posRobotX) or (newTarget[1] == posRobotY):
+               self.vel.setV(4)
+           else:
+               self.vel.setV(10)
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
         #self.vel.setV(10)
