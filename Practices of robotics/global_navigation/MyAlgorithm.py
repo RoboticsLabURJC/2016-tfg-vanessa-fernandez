@@ -11,14 +11,39 @@ time_cycle = 80
 
 class MyAlgorithm(threading.Thread):
 
+    class pid(object):
+        def __init__(self, kp, kd, ki):
+            # Constant of PID control
+            self.kp = kp
+            self.kd = kd
+            self.ki = ki
+            self.error = 0
+            self.acumulate_error = 0
+
+        def calculateU(self, e):
+            proportional = self.kp * e
+            derivate = self.kd * (e - self.error)
+            self.acumulate_error = self.acumulate_error + e
+            integral = self.ki*(self.acumulate_error)
+            u =  -(proportional) -(derivate) -(integral)
+            self.error = e
+            return u
+
+
     def __init__(self, grid, sensor, vel):
         self.sensor = sensor
         self.grid = grid
         self.vel = vel
         self.posObstaclesBorder = []
-        self.posRoute = []
+        self.targets = []
         self.rejilla = np.zeros((400, 400),np.uint8)
         sensor.getPathSig.connect(self.generatePath)
+
+        self.minError = 1
+
+        # Constructor PID
+        self.pidX = self.pid(0.655,0.000112,0.00029)
+        self.pidY = self.pid(0.655,0.000112,0.00029)
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -237,11 +262,14 @@ class MyAlgorithm(threading.Thread):
             self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
             y = y + 1
             if (y%3 == 0):
-                self.posRoute.append([posMinNeighbour[0], posMinNeighbour[1]])
+                self.targets.append([posMinNeighbour[0], posMinNeighbour[1]])
             pixelCentral = posMinNeighbour
             if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
                 found = "true"
                 self.grid.setPathFinded()
+
+        if (self.targets[len(self.targets)-1][0] != dest[0]) or (self.targets[len(self.targets)-1][1] != dest[1]):
+            self.targets.append([dest[0], dest[1]])
 
 
         # Represent the Gradient Field in a window using cv2.imshow
@@ -261,14 +289,48 @@ class MyAlgorithm(threading.Thread):
         posRobotY = self.sensor.getRobotY()
         orientationRobot = self.sensor.getRobotTheta()
 
-        print(posRobotX, posRobotY, orientationRobot)
+        print("robot",posRobotX, posRobotY, orientationRobot)
         
-        for i in range(0, len(self.posRoute)):
-           newTarget = self.grid.gridToWorld(self.posRoute[i][0], self.posRoute[i][1])
-           if (newTarget[0] == posRobotX) or (newTarget[1] == posRobotY):
-               self.vel.setV(4)
-           else:
-               self.vel.setV(10)
+
+        if self.targets != []:
+           newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
+           print("target", newTarget)
+
+           # Calculating the error (position of target minus position of taxi)
+           errorx = newTarget[0] - posRobotX
+           errory = newTarget[1] - posRobotY
+
+
+           # Controlador PID
+           controladorX = self.pidX.calculateU(errorx)
+           controladorY = self.pidY.calculateU(errory)
+
+           print("error", errorx, errory)
+           print(controladorX, controladorY)
+           angle = math.atan(abs(errory/errorx))
+
+           # Correct position
+
+          # if abs(errorx) > self.minError:
+          #     self.vel.setW(-controladorX)
+         # if abs(errory) > self.minError:
+          #     self.vel.setW(controladorY)
+           print(angle)
+           self.vel.setW(-angle*5.75)
+           
+           if abs(errorx) > self.minError or abs(errory) > self.minError:
+               self.vel.setV(25)
+
+           # If the margin is minimum, then we have got the target
+           if (abs(controladorX) <= self.minError) and (abs(controladorY) <= self.minError):
+                # We have got the target.
+               self.targets.pop(0)
+               # The acumulate error is zero
+               self.pidX.acumulate_error = 0
+               self.pidY.acumulate_error = 0
+
+        else:
+            self.vel.setV(0)
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
         #self.vel.setV(10)
