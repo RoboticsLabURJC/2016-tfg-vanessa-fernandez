@@ -11,25 +11,6 @@ time_cycle = 80
 
 class MyAlgorithm(threading.Thread):
 
-    class pid(object):
-        def __init__(self, kp, kd, ki):
-            # Constant of PID control
-            self.kp = kp
-            self.kd = kd
-            self.ki = ki
-            self.error = 0
-            self.acumulate_error = 0
-
-        def calculateU(self, e):
-            proportional = self.kp * e
-            derivate = self.kd * (e - self.error)
-            self.acumulate_error = self.acumulate_error + e
-            integral = self.ki*(self.acumulate_error)
-            u =  -(proportional) -(derivate) -(integral)
-            self.error = e
-            return u
-
-
     def __init__(self, grid, sensor, vel):
         self.sensor = sensor
         self.grid = grid
@@ -38,12 +19,6 @@ class MyAlgorithm(threading.Thread):
         self.targets = []
         self.rejilla = np.zeros((400, 400),np.uint8)
         sensor.getPathSig.connect(self.generatePath)
-
-        self.minError = 1
-
-        # Constructor PID
-        self.pidX = self.pid(0.655,0.000112,0.00029)
-        self.pidY = self.pid(0.655,0.000112,0.00029)
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -127,6 +102,18 @@ class MyAlgorithm(threading.Thread):
             penaltie = 10.0
         if (penaltie > self.rejilla[j][i]):
             self.rejilla[j][i] = penaltie
+
+    def absolutas2relativas(self, x, y, rx, ry, rt):
+        # Convert to relatives
+        dx = x - rx
+        dy = y - ry
+
+        # Rotate with current angle
+        x = dx*math.cos(-rt) - dy*math.sin(-rt)
+        y = dx*math.sin(-rt) + dy*math.cos(-rt)
+
+        return x,y
+
 
 
     """ Write in this method the code necessary for looking for the shorter
@@ -282,8 +269,12 @@ class MyAlgorithm(threading.Thread):
     def execute(self):
         # Add your code here
         print("GOING TO DESTINATION")
-        # dest is the selected destination    
-        dest = self.grid.getDestiny()
+
+        #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
+        #self.vel.setV(10)
+        #self.vel.setW(5)
+        #self.vel.sendVelocities()
+
         # Position of the robot
         posRobotX = self.sensor.getRobotX()
         posRobotY = self.sensor.getRobotY()
@@ -296,43 +287,33 @@ class MyAlgorithm(threading.Thread):
            newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
            print("target", newTarget)
 
+           # Convert self.targetx y self.targety to relative coordinates
+           targetx,targety = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
+
            # Calculating the error (position of target minus position of taxi)
-           errorx = newTarget[0] - posRobotX
-           errory = newTarget[1] - posRobotY
+           errorx = targetx - posRobotX
+           errory = targety - posRobotY
 
-
-           # Controlador PID
-           controladorX = self.pidX.calculateU(errorx)
-           controladorY = self.pidY.calculateU(errory)
-
+           print("target", targetx, targety)
            print("error", errorx, errory)
-           print(controladorX, controladorY)
-           angle = math.atan(abs(errory/errorx))
+           angle = math.atan(abs(errorx/errory))
 
            # Correct position
 
-          # if abs(errorx) > self.minError:
-          #     self.vel.setW(-controladorX)
-         # if abs(errory) > self.minError:
-          #     self.vel.setW(controladorY)
            print(angle)
-           self.vel.setW(-angle*5.75)
-           
-           if abs(errorx) > self.minError or abs(errory) > self.minError:
-               self.vel.setV(25)
+           if (abs(errorx) > 1) or (abs(errory) > 1):
+               self.vel.setW(-angle*5.75)
+               speed = pow(pow(errorx,2) + pow(errory,2),0.5)
+           else:
+               speed = 25
+           self.vel.setV(speed)
 
            # If the margin is minimum, then we have got the target
-           if (abs(controladorX) <= self.minError) and (abs(controladorY) <= self.minError):
+           if (abs(posRobotX)<(abs(targetx)+1) and abs(posRobotX)>(abs(targetx)-1)) and (abs(posRobotY)<(abs(targety)+1) and abs(posRobotY)>(abs(targety)-1)):
                 # We have got the target.
                self.targets.pop(0)
-               # The acumulate error is zero
-               self.pidX.acumulate_error = 0
-               self.pidY.acumulate_error = 0
+               print("target conseguido")
 
         else:
             self.vel.setV(0)
 
-        #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
-        #self.vel.setV(10)
-        #self.vel.setW(5)
-        #self.vel.sendVelocities()
