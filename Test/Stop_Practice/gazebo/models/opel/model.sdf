@@ -1,8 +1,12 @@
 <?xml version='1.0'?>
 <sdf version="1.4">
 <model name="roto">
- <pose>0 0 0.5 0 0 0</pose>
+  <pose>0 0 0.5 0 0 0</pose>
     <link name="link">
+        <gravity>1</gravity>
+        <inertial>
+            <mass>500</mass>
+        </inertial>
     <collision name="collision">
         <geometry>
           <mesh>
@@ -19,21 +23,10 @@
       </visual>
     </link>
     <plugin name="miniCarMotors" filename="libminiCarMotors.so"/>
-
-
-	<link name='camera'>
-        <pose>0.250000 -0.50000 1.100000 0.000000 -0.000000 0.000000</pose>
-        <inertial>
-          <mass>0.500000</mass>
-          <inertia>
-            <ixx>1.000000</ixx>
-            <ixy>0.000000</ixy>
-            <ixz>0.000000</ixz>
-            <iyy>1.000000</iyy>
-            <iyz>0.000000</iyz>
-            <izz>1.000000</izz>
-        </inertia>
-      </inertial>
+    
+    <link name='camera'>
+        <pose>0.30000 -0.5000 1.05 0.000000 0.000000 0.000000</pose>
+        
         <sensor name='cam_f1_left' type='camera'>
           <pose>0.000000 0.000000 0.000000  0.00000 0.00000 -1.57000</pose>
           <update_rate>20.000000</update_rate>
@@ -53,9 +46,9 @@
       </sensor>
         <visual name='visual'>
           <geometry>
-	<sphere>
-        <radius>.01</radius>
-	</sphere>
+<sphere>
+                          <radius>.01</radius>
+</sphere>
         </geometry>
       </visual>
         <collision name='collision'>
@@ -88,15 +81,30 @@
         <kinematic>0</kinematic>
         <gravity>1</gravity>
     </link>
-
-	<joint type="revolute" name="camera">
+    
+    <include>
+      <uri>model://kinect</uri>
+      <pose>0.30000 -1.7000 0.5 0.000000 0.000000 -1.57</pose>
+    </include>
+    
+    <plugin name="pose3d" filename="libpose3dF1.so"/>
+    
+    <joint type="revolute" name="camera">
         <pose>0 0 0 0 0 0</pose>
         <child>camera</child>
         <parent>link</parent>
         <axis>
           <xyz>0 0 0</xyz>
       </axis>
-
+    </joint>
+    
+    <joint type="revolute" name="kinect">
+        <pose>0 0 0 0 0 0</pose>
+        <child>kinect::link</child>
+        <parent>link</parent>
+        <axis>
+          <xyz>0 0 0</xyz>
+      </axis>
     </joint>
   </model>
 </sdf>
