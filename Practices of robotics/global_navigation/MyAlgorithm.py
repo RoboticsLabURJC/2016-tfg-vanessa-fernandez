@@ -92,15 +92,15 @@ class MyAlgorithm(threading.Thread):
             self.posObstaclesBorder.append([pos0, pos1])
 
 
-    def penaltiesObstacles(self, i, j, dest0, dest1):
+    def penaltiesObstacles(self, i, j, dest0, dest1, destino):
         # Penaltie's Obstacles
         if ((((i == (dest0-1)) or (i == (dest0+1))) and (dest1-1 <= j <= dest1+1)) or (((j == (dest1-1)) or (j == (dest1+1))) and (i == dest0))):
-            penaltie = 25.0
+            penaltie = 50.0
         elif ((((i == (dest0-2)) or (i == (dest0+2)) and (dest1-2 <= j <= dest1+2)) or (((j == (dest1-2)) or (j == (dest1+2))) and (dest0-1 <= i <= dest0+1)))):
-            penaltie = 15.0
+            penaltie = 30.0
         elif ((((i == (dest0-3)) or (i == (dest0+3)) and (dest1-3 <= j <= dest1+3)) or (((j == (dest1-3)) or (j == (dest1+3))) and (dest0-2 <= i <= dest0+2)))):
-            penaltie = 10.0
-        if (penaltie > self.rejilla[j][i]):
+            penaltie = 20.0
+        if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
             self.rejilla[j][i] = penaltie
 
     def absolutas2relativas(self, x, y, rx, ry, rt):
@@ -132,7 +132,7 @@ class MyAlgorithm(threading.Thread):
         gridPos = self.grid.getPose()
 
         #TODO
-        dest = (103, 119)
+
         # Position of the robot
         world_robotX = self.sensor.getRobotX()
         world_robotY = self.sensor.getRobotY()
@@ -140,10 +140,9 @@ class MyAlgorithm(threading.Thread):
 
         # We need some variables in the loop while
         fin = "false"
-        square = 0
         margin = 20
-        #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        #out = cv2.VideoWriter('Penalización.avi', fourcc, 30, (400, 400),False)
+        fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+        out = cv2.VideoWriter('Expansion_Penalizacion.avi', fourcc, 30, (400, 400),False)
 
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
@@ -177,9 +176,9 @@ class MyAlgorithm(threading.Thread):
                             else:
                                 self.incorporatePosObstacle(frente1[j][0], frente1[j][1])
                             imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
-                            #if (x/o) == 100:
-                            #    out.write((imagen))
-                            #    o = o + 1
+                            if (x/o) == 100:
+                                out.write((imagen))
+                                o = o + 1
                     for j in range(0, len(frente2)):
                         if (frente2[j][1] >= 0) and (frente2[j][1] <400) and (frente2[j][0] >= 0) and (frente2[j][0] < 400):
                             if mapIm[frente2[j][1], frente2[j][0]] == 255:
@@ -189,12 +188,12 @@ class MyAlgorithm(threading.Thread):
                                         self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
                                         nodos = self.incorporateNode(frente2[j][0], frente2[j][1], nodos)
                             imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
-                            #if (x/o) == 100:
-                            #    out.write((imagen))
-                            #    o = o + 1
+                            if (x/o) == 100:
+                                out.write((imagen))
+                                o = o + 1
                 # Cases of the margins
                 fin = self.findStopExpansion(dest, posRobot, margin, nodo[i][0], nodo[i][1], fin)
-                #x = x + 1
+                x = x + 1
             if (nodos != []):
                 nodo = nodos[0]
                 nodos.pop(0)
@@ -207,13 +206,13 @@ class MyAlgorithm(threading.Thread):
                 for l in range(self.posObstaclesBorder[i][1]-3, self.posObstaclesBorder[i][1]+4):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
-                            self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1])
-                    #imagen[l][k] = self.grid.getVal(k, l)
-                    #if (x/o) == 100:
-                    #    out.write((imagen))
-                    #    o = o+1
-            #x=x+1
-        #out.release()
+                            self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1], dest)
+                    imagen[l][k] = self.grid.getVal(k, l)
+                    if (x/o) == 100:
+                        out.write((imagen))
+                        o = o+1
+            x=x+1
+        out.release()
 
         self.grid.grid = self.rejilla+self.grid.grid
 
@@ -226,32 +225,24 @@ class MyAlgorithm(threading.Thread):
         found = "false"
         y = 0
         while (found == "false"):
-            FoundNeighbour = "false"
             for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
                 for j in range(pixelCentral[1]-1, pixelCentral[1]+2):
-                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400)):
-                        if (FoundNeighbour == "false"):
-                            valMinNeighbour = self.grid.getVal(i, j)
-                            posMinNeighbour = [i, j]
-                            FoundNeighbour = "true"
+                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400) and (mapIm[j][i] !=0)):
                         val = self.grid.getVal(i, j)
                         if ((val <= valMin) and (val >=  0.0)):
                             if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
                                 valMin = val
                                 posMin = [i, j]
-                                valMinNeighbour = valMin
-                                posMinNeighbour = posMin
-                        elif (val < valMinNeighbour):
-                            valMinNeighbour = val
-                            posMinNeighbour = [i, j]
-                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posnei", posMinNeighbour)
-                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]), "val neig", valMinNeighbour)
-            self.grid.setPathVal(posMinNeighbour[0], posMinNeighbour[1], valMinNeighbour)
+
+                        print("posactual",i, j, "posMin", posMin,"dest", dest)
+                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
+
+            self.grid.setPathVal(posMin[0], posMin[1], valMin)
             y = y + 1
             if (y%3 == 0):
-                self.targets.append([posMinNeighbour[0], posMinNeighbour[1]])
-            pixelCentral = posMinNeighbour
-            if ((valMinNeighbour == 0.0) and (posMinNeighbour[0] == dest[0]) and (posMinNeighbour[1] == dest[1])):
+                self.targets.append([posMin[0], posMin[1]])
+            pixelCentral = posMin
+            if ((valMin == 0.0) and (posMin[0] == dest[0]) and (posMin[1] == dest[1])):
                 found = "true"
                 self.grid.setPathFinded()
 
@@ -261,6 +252,10 @@ class MyAlgorithm(threading.Thread):
 
         # Represent the Gradient Field in a window using cv2.imshow
         self.grid.showGrid()
+
+
+       # for i in range(0, len(self.targets)):
+       #     print(self.grid.gridToWorld(self.targets[i][0], self.targets[i][1]))
 
 
     """ Write in this mehtod the code necessary for going to the desired place,
@@ -285,27 +280,29 @@ class MyAlgorithm(threading.Thread):
 
         if self.targets != []:
            newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
-           print("target", newTarget)
 
            # Convert self.targetx y self.targety to relative coordinates
            targetx,targety = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
 
            # Calculating the error (position of target minus position of taxi)
-           errorx = targetx - posRobotX
-           errory = targety - posRobotY
+     #      errorx = targetx - posRobotX
+     #      errory = targety - posRobotY
 
            print("target", targetx, targety)
-           print("error", errorx, errory)
-           angle = math.atan(abs(errorx/errory))
+     #      print("error", errorx, errory)
+           angle = math.atan(abs(targety/targetx))
 
            # Correct position
 
-           print(angle)
-           if (abs(errorx) > 1) or (abs(errory) > 1):
-               self.vel.setW(-angle*5.75)
-               speed = pow(pow(errorx,2) + pow(errory,2),0.5)
+           print("angle",angle)
+          
+           if (abs(targetx) > 1) or (abs(targety) > 1):
+               self.vel.setW(-angle*5)
+               speed = pow(pow(targetx,2) + pow(targety,2),0.5)
+               
            else:
                speed = 25
+               self.vel.setW(0)
            self.vel.setV(speed)
 
            # If the margin is minimum, then we have got the target
