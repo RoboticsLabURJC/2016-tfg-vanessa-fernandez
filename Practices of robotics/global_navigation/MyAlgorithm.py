@@ -94,6 +94,7 @@ class MyAlgorithm(threading.Thread):
 
     def penaltiesObstacles(self, i, j, dest0, dest1, destino):
         # Penaltie's Obstacles
+        penaltie =  0
         if ((((i == (dest0-1)) or (i == (dest0+1))) and (dest1-1 <= j <= dest1+1)) or (((j == (dest1-1)) or (j == (dest1+1))) and (i == dest0))):
             penaltie = 50.0
         elif ((((i == (dest0-2)) or (i == (dest0+2)) and (dest1-2 <= j <= dest1+2)) or (((j == (dest1-2)) or (j == (dest1+2))) and (dest0-1 <= i <= dest0+1)))):
@@ -141,8 +142,8 @@ class MyAlgorithm(threading.Thread):
         # We need some variables in the loop while
         fin = "false"
         margin = 20
-        fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        out = cv2.VideoWriter('Expansion_Penalizacion.avi', fourcc, 30, (400, 400),False)
+        #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
+        #out = cv2.VideoWriter('Expansion_Penalizacion.avi', fourcc, 30, (400, 400),False)
 
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
@@ -175,10 +176,10 @@ class MyAlgorithm(threading.Thread):
                                         nodos = self.incorporateNode(frente1[j][0], frente1[j][1], nodos)
                             else:
                                 self.incorporatePosObstacle(frente1[j][0], frente1[j][1])
-                            imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
-                            if (x/o) == 100:
-                                out.write((imagen))
-                                o = o + 1
+                            #imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
+                            #if (x/o) == 100:
+                            #    out.write((imagen))
+                            #    o = o + 1
                     for j in range(0, len(frente2)):
                         if (frente2[j][1] >= 0) and (frente2[j][1] <400) and (frente2[j][0] >= 0) and (frente2[j][0] < 400):
                             if mapIm[frente2[j][1], frente2[j][0]] == 255:
@@ -187,13 +188,13 @@ class MyAlgorithm(threading.Thread):
                                     if frente2[j][0] != dest[0] or frente2[j][1] != dest[1]:
                                         self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
                                         nodos = self.incorporateNode(frente2[j][0], frente2[j][1], nodos)
-                            imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
-                            if (x/o) == 100:
-                                out.write((imagen))
-                                o = o + 1
+                            #imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
+                            #if (x/o) == 100:
+                            #    out.write((imagen))
+                            #    o = o + 1
                 # Cases of the margins
                 fin = self.findStopExpansion(dest, posRobot, margin, nodo[i][0], nodo[i][1], fin)
-                x = x + 1
+                #x = x + 1
             if (nodos != []):
                 nodo = nodos[0]
                 nodos.pop(0)
@@ -207,12 +208,12 @@ class MyAlgorithm(threading.Thread):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1], dest)
-                    imagen[l][k] = self.grid.getVal(k, l)
-                    if (x/o) == 100:
-                        out.write((imagen))
-                        o = o+1
-            x=x+1
-        out.release()
+                    #imagen[l][k] = self.grid.getVal(k, l)
+                    #if (x/o) == 100:
+                    #    out.write((imagen))
+                    #    o = o+1
+            #x=x+1
+        #out.release()
 
         self.grid.grid = self.rejilla+self.grid.grid
 
@@ -234,8 +235,8 @@ class MyAlgorithm(threading.Thread):
                                 valMin = val
                                 posMin = [i, j]
 
-                        print("posactual",i, j, "posMin", posMin,"dest", dest)
-                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
+                        #print("posactual",i, j, "posMin", posMin,"dest", dest)
+                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
 
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
             y = y + 1
@@ -254,8 +255,8 @@ class MyAlgorithm(threading.Thread):
         self.grid.showGrid()
 
 
-       # for i in range(0, len(self.targets)):
-       #     print(self.grid.gridToWorld(self.targets[i][0], self.targets[i][1]))
+        for i in range(0, len(self.targets)):
+            print(self.grid.gridToWorld(self.targets[i][0], self.targets[i][1]))
 
 
     """ Write in this mehtod the code necessary for going to the desired place,
@@ -281,35 +282,40 @@ class MyAlgorithm(threading.Thread):
         if self.targets != []:
            newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
 
-           # Convert self.targetx y self.targety to relative coordinates
-           targetx,targety = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
+           # Convert newTarget[0] y newTarget[1] to relative coordinates
+           directionx,directiony = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
 
            # Calculating the error (position of target minus position of taxi)
      #      errorx = targetx - posRobotX
      #      errory = targety - posRobotY
 
-           print("target", targetx, targety)
-     #      print("error", errorx, errory)
-           angle = math.atan(abs(targety/targetx))
+           print("target", directionx, directiony)
+           angle = math.atan((directionx/directiony))
 
            # Correct position
 
            print("angle",angle)
           
-           if (abs(targetx) > 1) or (abs(targety) > 1):
-               self.vel.setW(-angle*5)
-               speed = pow(pow(targetx,2) + pow(targety,2),0.5)
+           if (abs(directionx) > 1) or (abs(directiony) > 1):
+               #self.vel.setW(-angle*5)
+               self.vel.setW(-angle)
+               speed = pow(pow(directionx,2) + pow(directiony,2),0.5)
                
            else:
                speed = 25
                self.vel.setW(0)
+           print('speed', speed)
            self.vel.setV(speed)
 
+
+           print("new Target", newTarget)
+
            # If the margin is minimum, then we have got the target
-           if (abs(posRobotX)<(abs(targetx)+1) and abs(posRobotX)>(abs(targetx)-1)) and (abs(posRobotY)<(abs(targety)+1) and abs(posRobotY)>(abs(targety)-1)):
+           #if (abs(posRobotX)<(abs(directionx)+1) and abs(posRobotX)>(abs(directionx)-1)) or (abs(posRobotY)<(abs(directiony)+1) and abs(posRobotY)>(abs(directiony)-1)):
+           if (abs(posRobotX)<(abs(newTarget[0])+1) and abs(posRobotX)>(abs(newTarget[0])-1)) and (abs(posRobotY)<(abs(newTarget[1])+1) and abs(posRobotY)>(abs(newTarget[1])-1)):
                 # We have got the target.
                self.targets.pop(0)
-               print("target conseguido")
+               print("CONSEGUIDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
         else:
             self.vel.setV(0)
