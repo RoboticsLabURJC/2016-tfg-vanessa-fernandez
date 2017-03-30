@@ -26,6 +26,30 @@ class MyAlgorithm(threading.Thread):
         threading.Thread.__init__(self, args=self.stop_event)
 
 
+    def setRightImageFiltered(self, image):
+        self.lock.acquire()
+        self.imageRight=image
+        self.lock.release()
+
+
+    def setLeftImageFiltered(self, image):
+        self.lock.acquire()
+        self.imageLeft=image
+        self.lock.release()
+
+    def getRightImageFiltered(self):
+        self.lock.acquire()
+        tempImage=self.imageRight
+        self.lock.release()
+        return tempImage
+
+    def getLeftImageFiltered(self):
+        self.lock.acquire()
+        tempImage=self.imageLeft
+        self.lock.release()
+        return tempImage
+
+
     def run (self):
 
         while (not self.kill_event.is_set()):
@@ -58,4 +82,6 @@ class MyAlgorithm(threading.Thread):
 
     def execute(self):
 
-        # TODO    
+        print ('Execute')
+        # TODO
+
