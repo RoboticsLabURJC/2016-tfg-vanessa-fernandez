@@ -3,7 +3,7 @@
 	<world name='GrannyAnnie'>
     	<include>
     	     <uri>model://turtlebotJde2cam</uri>
-    	  	 <pose>0 0 0 0 0 0</pose>
+    	  	 <pose>-1 1.5 0 0 0 0</pose>
     	</include>
     	<include>
     	     <uri>model://house_int</uri>
