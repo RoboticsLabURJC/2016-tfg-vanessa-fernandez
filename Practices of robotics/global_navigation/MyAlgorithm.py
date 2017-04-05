@@ -243,7 +243,7 @@ class MyAlgorithm(threading.Thread):
                     if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400) and (mapIm[j][i] !=0)):
                         val = self.grid.getVal(i, j)
                         posFound = self.checkPositionPath(posPath, i, j)
-                        if (foundNeighbour == "false"):
+                        if (foundNeighbour == "false" and posFound == "false"):
                             foundNeighbour = "true"
                             valNeighbour = val
                         if posFound == "false":
@@ -251,14 +251,13 @@ class MyAlgorithm(threading.Thread):
                                 if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
                                     valMin = val
                                     posMin = [i, j]
-                            elif val < valNeighbour:
+                            elif val <= valNeighbour:
                                 valMin = val
                                 valNeighbour = val
                                 posMin = [i, j]
 
-                        print("posactual",i, j, "posMin", posMin,"dest", dest)
-                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
-
+                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posicion central", pixelCentral)
+                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
             pixelCentral = posMin
             posPath.append(posMin)
