@@ -104,6 +104,15 @@ class MyAlgorithm(threading.Thread):
         if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
             self.rejilla[j][i] = penaltie
 
+
+    def checkPositionPath(self, arrayPath, i, j):
+        found = "false"
+        for x in range(0, len(arrayPath)):
+            if (arrayPath[x][0] == i) and (arrayPath[x][1] == j):
+                found = "true"
+
+        return found
+
     def absolutas2relativas(self, x, y, rx, ry, rt):
         # Convert to relatives
         dx = x - rx
@@ -218,45 +227,49 @@ class MyAlgorithm(threading.Thread):
         self.grid.grid = self.rejilla+self.grid.grid
 
 
+
         # Find the path
         pixelCentral = [posRobot[0], posRobot[1]]
         valMin = self.grid.getVal(posRobot[0], posRobot[1])
         posMin = pixelCentral
         self.grid.setPathVal(posRobot[0], posRobot[1], valMin)
         found = "false"
-        y = 0
+        posPath= []
+
         while (found == "false"):
+            foundNeighbour = "false"
             for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
                 for j in range(pixelCentral[1]-1, pixelCentral[1]+2):
                     if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400) and (mapIm[j][i] !=0)):
                         val = self.grid.getVal(i, j)
-                        if ((val <= valMin) and (val >=  0.0)):
-                            if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
+                        posFound = self.checkPositionPath(posPath, i, j)
+                        if (foundNeighbour == "false"):
+                            foundNeighbour = "true"
+                            valNeighbour = val
+                        if posFound == "false":
+                            if ((val < valMin) and (val >=  0.0)):
+                                if (((val == 0.0) and (i == dest[0]) and (j == dest[1])) or (val > 0.0)):
+                                    valMin = val
+                                    posMin = [i, j]
+                            elif val < valNeighbour:
                                 valMin = val
+                                valNeighbour = val
                                 posMin = [i, j]
 
-                        #print("posactual",i, j, "posMin", posMin,"dest", dest)
-                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
+                        print("posactual",i, j, "posMin", posMin,"dest", dest)
+                        print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
 
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
-            y = y + 1
-            if (y%3 == 0):
-                self.targets.append([posMin[0], posMin[1]])
             pixelCentral = posMin
+            posPath.append(posMin)
             if ((valMin == 0.0) and (posMin[0] == dest[0]) and (posMin[1] == dest[1])):
                 found = "true"
                 self.grid.setPathFinded()
-
-        if (self.targets[len(self.targets)-1][0] != dest[0]) or (self.targets[len(self.targets)-1][1] != dest[1]):
-            self.targets.append([dest[0], dest[1]])
 
 
         # Represent the Gradient Field in a window using cv2.imshow
         self.grid.showGrid()
 
-
-        for i in range(0, len(self.targets)):
-            print(self.grid.gridToWorld(self.targets[i][0], self.targets[i][1]))
 
 
     """ Write in this mehtod the code necessary for going to the desired place,
@@ -277,46 +290,44 @@ class MyAlgorithm(threading.Thread):
         orientationRobot = self.sensor.getRobotTheta()
 
         print("robot",posRobotX, posRobotY, orientationRobot)
+
+        posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
         
 
-        if self.targets != []:
-           newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
+#        if self.targets != []:
+#           newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
 
            # Convert newTarget[0] y newTarget[1] to relative coordinates
-           directionx,directiony = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
+#           directionx,directiony = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
 
-           # Calculating the error (position of target minus position of taxi)
-     #      errorx = targetx - posRobotX
-     #      errory = targety - posRobotY
-
-           print("target", directionx, directiony)
-           angle = math.atan((directionx/directiony))
+#           print("target", directionx, directiony)
+#           angle = math.atan((directionx/directiony))
 
            # Correct position
 
-           print("angle",angle)
+#           print("angle",angle)
           
-           if (abs(directionx) > 1) or (abs(directiony) > 1):
+#           if (abs(directionx) > 1) or (abs(directiony) > 1):
                #self.vel.setW(-angle*5)
-               self.vel.setW(-angle)
-               speed = pow(pow(directionx,2) + pow(directiony,2),0.5)
-               
-           else:
-               speed = 25
-               self.vel.setW(0)
-           print('speed', speed)
-           self.vel.setV(speed)
+#               self.vel.setW(-angle)
+#               speed = pow(pow(directionx,2) + pow(directiony,2),0.5)
+#               
+#           else:
+#               speed = 25
+#               self.vel.setW(0)
+#           print('speed', speed)
+#           self.vel.setV(speed)
 
 
-           print("new Target", newTarget)
+#           print("new Target", newTarget)
 
            # If the margin is minimum, then we have got the target
            #if (abs(posRobotX)<(abs(directionx)+1) and abs(posRobotX)>(abs(directionx)-1)) or (abs(posRobotY)<(abs(directiony)+1) and abs(posRobotY)>(abs(directiony)-1)):
-           if (abs(posRobotX)<(abs(newTarget[0])+1) and abs(posRobotX)>(abs(newTarget[0])-1)) and (abs(posRobotY)<(abs(newTarget[1])+1) and abs(posRobotY)>(abs(newTarget[1])-1)):
+#           if (abs(posRobotX)<(abs(newTarget[0])+1) and abs(posRobotX)>(abs(newTarget[0])-1)) and (abs(posRobotY)<(abs(newTarget[1])+1) and abs(posRobotY)>(abs(newTarget[1])-1)):
                 # We have got the target.
-               self.targets.pop(0)
-               print("CONSEGUIDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+#               self.targets.pop(0)
+#               print("CONSEGUIDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
-        else:
-            self.vel.setV(0)
+#        else:
+#            self.vel.setV(0)
 
