@@ -272,6 +272,8 @@ class MyAlgorithm(threading.Thread):
                                 valNeighbour = val
                                 posMin = [i, j]
 
+                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posicion central", pixelCentral)
+                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
             pixelCentral = posMin
             posPath.append(posMin)
@@ -319,7 +321,7 @@ class MyAlgorithm(threading.Thread):
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
 
-            # Convert newTarget[0] y newTarget[1] to relative coordinates
+            # Convert target[0] y target[1] to relative coordinates
             directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
 
             print("direction", directionx, directiony)
@@ -328,9 +330,16 @@ class MyAlgorithm(threading.Thread):
 
             # Correct position
             if (abs(directionx) > 1) or (abs(directiony) > 1):
-                #self.vel.setW(-angle*5)
-                self.vel.setW(-angle)
-                speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
+                if abs(angle) > 0.8:
+                    self.vel.setW(-angle*4.5)
+                else:
+                    self.vel.setW(-angle)
+                if abs(angle) >= 0.5:
+                    speed = 2*pow(pow(directionx,2) + pow(directiony,2),0.5)
+                elif abs(angle) > 0.3 and abs(angle) < 0.5:
+                    speed = 5*pow(pow(directionx,2) + pow(directiony,2),0.5)           
+                else:
+                    speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
             else:
                 speed = 25
                 self.vel.setW(0)
