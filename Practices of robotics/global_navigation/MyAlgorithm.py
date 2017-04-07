@@ -113,6 +113,22 @@ class MyAlgorithm(threading.Thread):
 
         return found
 
+    def getTargetWorld(self, posRobot):
+        found = False
+        for i in range(posRobot[0]-3, posRobot[0]+4):
+            for j in range(posRobot[1]-3, posRobot[1]+4):
+                if ((((i==(posRobot[0]-3)) or (i==(posRobot[0]+3)) and (posRobot[1]-3<=j<=posRobot[1]+3)) or (((j==(posRobot[1]-3)) or (j==(posRobot[1]+3))) and (posRobot[0]-2<=i<=posRobot[0]+2)))):
+                    val = self.grid.getVal(i, j)
+                    if (found == False):
+                        found = True
+                        valMin = val
+                        target = [i, j]
+                    else:
+                        if(val < valMin):
+                            target = [i, j]
+                            valMin = val
+        return target
+
     def absolutas2relativas(self, x, y, rx, ry, rt):
         # Convert to relatives
         dx = x - rx
@@ -256,8 +272,6 @@ class MyAlgorithm(threading.Thread):
                                 valNeighbour = val
                                 posMin = [i, j]
 
-                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posicion central", pixelCentral)
-                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
             pixelCentral = posMin
             posPath.append(posMin)
@@ -288,45 +302,38 @@ class MyAlgorithm(threading.Thread):
         posRobotY = self.sensor.getRobotY()
         orientationRobot = self.sensor.getRobotTheta()
 
+        # Destination
+        dest = self.grid.getDestiny()
+        destWorld = self.grid.gridToWorld(dest[0], dest[1])
+
         print("robot",posRobotX, posRobotY, orientationRobot)
+        print(dest, destWorld)
 
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
-        
-
-#        if self.targets != []:
-#           newTarget = self.grid.gridToWorld(self.targets[0][0], self.targets[0][1])
-
-           # Convert newTarget[0] y newTarget[1] to relative coordinates
-#           directionx,directiony = self.absolutas2relativas(newTarget[0],newTarget[1],posRobotX,posRobotY,orientationRobot)
-
-#           print("target", directionx, directiony)
-#           angle = math.atan((directionx/directiony))
-
-           # Correct position
-
-#           print("angle",angle)
-          
-#           if (abs(directionx) > 1) or (abs(directiony) > 1):
-               #self.vel.setW(-angle*5)
-#               self.vel.setW(-angle)
-#               speed = pow(pow(directionx,2) + pow(directiony,2),0.5)
-#               
-#           else:
-#               speed = 25
-#               self.vel.setW(0)
-#           print('speed', speed)
-#           self.vel.setV(speed)
 
 
-#           print("new Target", newTarget)
+        if (abs(posRobotX)<(abs(destWorld[0])+3) and abs(posRobotX)>(abs(destWorld[0])-3)) and (abs(posRobotY)<(abs(destWorld[1])+3) and abs(posRobotY)>(abs(destWorld[1])-3)):
+            self.vel.setV(0)
+            print("DESTINATION")
+        else:
+            targetImage = self.getTargetWorld(posRobotImage)
+            target = self.grid.gridToWorld(targetImage[0], targetImage[1])
 
-           # If the margin is minimum, then we have got the target
-           #if (abs(posRobotX)<(abs(directionx)+1) and abs(posRobotX)>(abs(directionx)-1)) or (abs(posRobotY)<(abs(directiony)+1) and abs(posRobotY)>(abs(directiony)-1)):
-#           if (abs(posRobotX)<(abs(newTarget[0])+1) and abs(posRobotX)>(abs(newTarget[0])-1)) and (abs(posRobotY)<(abs(newTarget[1])+1) and abs(posRobotY)>(abs(newTarget[1])-1)):
-                # We have got the target.
-#               self.targets.pop(0)
-#               print("CONSEGUIDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+            # Convert newTarget[0] y newTarget[1] to relative coordinates
+            directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
 
-#        else:
-#            self.vel.setV(0)
+            print("direction", directionx, directiony)
+            angle = math.atan((directionx/directiony))
+            print("angle",angle)
+
+            # Correct position
+            if (abs(directionx) > 1) or (abs(directiony) > 1):
+                #self.vel.setW(-angle*5)
+                self.vel.setW(-angle)
+                speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
+            else:
+                speed = 25
+                self.vel.setW(0)
+            print('speed', speed)
+            self.vel.setV(speed)
 
