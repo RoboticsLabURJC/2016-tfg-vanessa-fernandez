@@ -178,20 +178,20 @@ class distanciaWidget(QWidget):
         carSize = [5.75, 2.5]
         
         #Poses sidewalk
-        positionSideWalk_start = [-25, 4.25]
-        positionSideWalk_final = [35, 4.25]
+        positionSideWalk_start = [-25, -4.25]
+        positionSideWalk_final = [35, -4.25]
         
         # Poses parked cars (origin poses)
         # Frontal car
-        pointCarFrontal_RearLeft = [14 - carSize[0]/2, 3+carSize[1]/2]
-        pointCarFrontal_RearRight = [14 - carSize[0]/2, 3-carSize[1]/2]
-        pointCarFrontal_FrontLeft = [14 + carSize[0]/2, 3+carSize[1]/2]
-        pointCarFrontal_FrontRight = [14 + carSize[0]/2, 3-carSize[1]/2]
+        pointCarFrontal_RearLeft = [14 - carSize[0]/2, -3+carSize[1]/2]
+        pointCarFrontal_RearRight = [14 - carSize[0]/2, -3-carSize[1]/2]
+        pointCarFrontal_FrontLeft = [14 + carSize[0]/2, -3+carSize[1]/2]
+        pointCarFrontal_FrontRight = [14 + carSize[0]/2, -3-carSize[1]/2]
         # Rear Car
-        pointCarRear_FrontLeft = [0.5 + carSize[0]/2, 3+carSize[1]/2]
-        pointCarRear_FrontRight = [0.5 + carSize[0]/2, 3-carSize[1]/2]
-        pointCarRear_RearLeft = [0.5 - carSize[0]/2, 3+carSize[1]/2]
-        pointCarRear_RearRight = [0.5 - carSize[0]/2, 3-carSize[1]/2]
+        pointCarRear_FrontLeft = [0.5 + carSize[0]/2, -3+carSize[1]/2]
+        pointCarRear_FrontRight = [0.5 + carSize[0]/2, -3-carSize[1]/2]
+        pointCarRear_RearLeft = [0.5 - carSize[0]/2, -3+carSize[1]/2]
+        pointCarRear_RearRight = [0.5 - carSize[0]/2, -3-carSize[1]/2]
 
         
         # Pose 3D (origin poses)
