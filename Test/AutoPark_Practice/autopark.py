@@ -35,20 +35,15 @@ from MyAlgorithm import MyAlgorithm
 
 if __name__ == "__main__":
     ic = EasyIce.initialize(sys.argv)
-    #cameraL = CameraClient(ic, "Autopark.CameraLeft", True)
-    #cameraR = CameraClient(ic, "Autopark.CameraRight", True)
     motors = Motors (ic, "Autopark.Motors")
     pose3d = Pose3DClient(ic, "Autopark.Pose3D", True)
     laser1 = LaserClient(ic, "Autopark.Laser1", True)
     laser2 = LaserClient(ic, "Autopark.Laser2", True)
     laser3 = LaserClient(ic, "Autopark.Laser3", True)
-    #algorithm=MyAlgorithm(cameraL, cameraR, pose3d, laser, motors)
     algorithm=MyAlgorithm(pose3d, laser1, laser2, laser3, motors)
 
     app = QApplication(sys.argv)
     myGUI = MainWindow()
-    #myGUI.setCameraL(cameraL)
-    #myGUI.setCameraR(cameraR)
     myGUI.setMotors(motors)
     myGUI.setPose3D(pose3d)
     myGUI.setLaser1(laser1)
