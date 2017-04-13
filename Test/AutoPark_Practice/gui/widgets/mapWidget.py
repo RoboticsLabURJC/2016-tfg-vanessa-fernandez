@@ -136,7 +136,7 @@ class MapWidget(QWidget):
             RT = self.RTz(pi, -2.79, 0, 0)
         else:
             #Rotación en Z / Traslación en Y
-            RT = self.RTz(pi/2, 0, 1.5, 0)
+            RT = self.RTz(-pi/2, 0, -1.5, 0)
         return RT    
     
     
@@ -303,19 +303,19 @@ class MapWidget1(QWidget):
         carsize = 30
 
         # Obstacle 1
-        orig_poses1 = np.matrix([[-13.5], [3], [1], [1]]) * self.scale
+        orig_poses1 = np.matrix([[-13.5], [-3], [1], [1]]) * self.scale
         final_poses1 = self.RTCar() * orig_poses1
         painter.fillRect(-carsize/2+final_poses1.flat[0], -carsize+final_poses1.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 2
-        orig_poses2 = np.matrix([[-7], [3], [1], [1]]) * self.scale
+        orig_poses2 = np.matrix([[-7], [-3], [1], [1]]) * self.scale
         final_poses2 = self.RTCar() * orig_poses2
         painter.fillRect(-carsize/2+final_poses2.flat[0], -carsize+final_poses2.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 3
-        orig_poses3 = np.matrix([[0.5], [3], [1], [1]]) * self.scale
+        orig_poses3 = np.matrix([[0.5], [-3], [1], [1]]) * self.scale
         final_poses3 = self.RTCar() * orig_poses3
         painter.fillRect(-carsize/2+final_poses3.flat[0], -carsize+final_poses3.flat[1], carsize, 2*carsize, Qt.black)
         # Obstacle 4
-        orig_poses4 = np.matrix([[14], [3], [1], [1]]) * self.scale
+        orig_poses4 = np.matrix([[14], [-3], [1], [1]]) * self.scale
         final_poses4 = self.RTCar() * orig_poses4
         painter.fillRect(-carsize/2+final_poses4.flat[0], -carsize+final_poses4.flat[1], carsize, 2*carsize, Qt.black)
         
@@ -326,14 +326,14 @@ class MapWidget1(QWidget):
         # Sidewalk 2
         orig_poses6 = np.matrix([[5], [-9], [1], [1]]) * self.scale
         final_poses6 = self.RTCar() * orig_poses6
-        painter.fillRect(-2*carsize+final_poses6.flat[0], -6*carsize+final_poses6.flat[1], 6.75*carsize, 16*carsize, Qt.black)
+        painter.fillRect(-1.8*carsize+final_poses6.flat[0], -6*carsize+final_poses6.flat[1], 6.75*carsize, 16*carsize, Qt.black)
 
 
     def drawIdeal(self, painter):
         carsize = 30
 
         # Ideal position
-        orig_poses = np.matrix([[7.25], [3], [1], [1]]) * self.scale
+        orig_poses = np.matrix([[7.25], [-3], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
         painter.drawLine(-carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1], carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1])
         painter.drawLine(carsize/2+final_poses.flat[0], -carsize+final_poses.flat[1], carsize/2+final_poses.flat[0], carsize+final_poses.flat[1])
