@@ -110,12 +110,16 @@ class MyAlgorithm(threading.Thread):
         global lin, stop, stop_button, stop, refPt, refMov
 
 
-
+        # Captamos la imagen de la camara y la pasamos a escala de grises.
         frame1 = self.camera.getImage()
         gray_frame1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+        # La imagen que tenemos al mostrar ROI SELECTION es de tamaño {360, 640], por eso tenemos que 
+        # quedarnos con parte de la imagen captada por la camara
         gray_frame1 = gray_frame1[60:420, 0:640]
+        # Suma de la imagen en escala de grises con la imagen de ceros
         img = cv2.add(gray_frame1, lin)
         cv2.imshow('ROI SELECTION', img)
+        # Llamamos a la funcion click_and_crop cuando se captura un evento de raton
         cv2.setMouseCallback('ROI SELECTION', self.click_and_crop)
 
 
@@ -125,8 +129,11 @@ class MyAlgorithm(threading.Thread):
             gray_frame = gray_frame[60:420, 0:640]
             img_tru = cv2.add(gray_frame, lin)
             cv2.imshow('ROI SELECTION', img_tru)
+            # Miramos si se pulsa Enter en el teclado
             key = cv2.waitKey(1) & 0xFF
             if key == 13:
+                # Si ya hemos marcado la zona de interes, entonces destruimos la ventana con la imagen ROI SELECTION, de no ser asi continuamos con el codigo
+                # Ponemos el boton de stop a false, ya que no lo hemos pulsado
                 if len(refPt) == 2:
                     cv2.destroyWindow('ROI SELECTION')
                     stop_button = False
@@ -134,34 +141,46 @@ class MyAlgorithm(threading.Thread):
                 else:
                     continue
 
+        # Cogemos la ultima imagen capturada con la camara y cogemos solamente una imagen de tamaño (360, 640)
         frame_final = self.camera.getImage()
         frame_final_cut = frame_final[60:420, 0:640]
+        # la funcion cv2.medianBlur() toma la mediana de todos los pixeles bajo el area del kernel y el elemento central 
+        # se sustituye por este valor mediana. Esto es muy eficaz contra el ruido de sal y pimienta en las imagenes. 
         frame_final_cut = cv2.medianBlur(frame_final_cut, 3)
         frame_final_cut_gray = cv2.cvtColor(frame_final_cut, cv2.COLOR_BGR2GRAY)
+        # La funcion cv2.goodFeaturesToTrack encuentra bordes en la imagen de entrada y los marca en los bordes del mapa de salida usando el algoritmo de Canny. 
         p0 = cv2.goodFeaturesToTrack(frame_final_cut_gray, 100, 0.01, 10, None, None, 7)
         index = 0
         for i in (p0):
+            # Si la posicion de algun punto del borde esta fuera del rectangulo de interes, entonces borramos una fila (axis=0) desde la posicion index
             if (i[0][0] < refPt[0][0]) or (i[0][0] > refPt[1][0]) or (i[0][1] < refPt[0][1]) or (i[0][1] > refPt[1][1]):
                 p0 = np.delete(p0, index, axis=0)
             else:
+                # Si no hemos tenido que borrar, entonces sumamos 1 a index
                 index = index + 1
         
 
         while (stop_button == False):
 
+            # Si el boton de stop no ha sido pulsado, capturamos una imagen de la camara, nos quedamos con parte de la imagen (360, 640),
+            # eliminamos ruido sal y pimienta, y pasamos la imagen a escala de grises
             frame_final2 = self.camera.getImage()
             frame_final_cut2 = frame_final2[60:420, 0:640]
             frame_final_cut2 = cv2.medianBlur(frame_final_cut2, 3)
             frame_final_cut2_gray = cv2.cvtColor(frame_final_cut2, cv2.COLOR_BGR2GRAY)
-
+            # La funcion cv2.calcOpticalFlowPyrLK calcula un flujo óptico para un conjunto de características escasas utilizando el metodo iterativo Lucas-Kanade con piramides.
             p1, st, err = cv2.calcOpticalFlowPyrLK(frame_final_cut_gray, frame_final_cut2_gray, p0, None,
                                                    None, None,
                                                    (30, 30), 2,
                                                    (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
+            # Seleccionamos el punto bueno
             good_p1 = p1[st==1]
+            # Devuelve el maximo valor del eje 0
             maxAll = np.amax(good_p1, axis = 0)
+            # Devuelve el mininimo valor del eje 0
             minAll = np.amin(good_p1, axis = 0)
+            # Cogemos cada una de las coordenadas de los arrays anteriores
             maxX = maxAll[0]#[0]
             maxY = maxAll[1]#[1]
             minX = minAll[0]#[0]
@@ -174,6 +193,7 @@ class MyAlgorithm(threading.Thread):
                 maxY = maxY + 50
                 minY = minY-50
             """
+            # Dibujamos los vectores de movimiento, y un circulo en el comienzo del vector y otro circulo al final
             for i,(f2,f1) in enumerate(zip(p1,p0)):
                 a, b = f2.ravel()
                 c, d = f1.ravel()
@@ -181,8 +201,10 @@ class MyAlgorithm(threading.Thread):
                 cv2.circle(frame_final_cut2, (c, d), 5, (255, 0, 0), -1)
                 cv2.line(frame_final_cut2, (a, b), (c, d), (0,0,255), 2)
 
+            # En la ultima imagen capturada por la camara dibuja un rectangulo desde el minimo hasta el maximo de donde se produce movimiento
             cv2.rectangle(frame_final_cut2, (np.int0(minX), np.int0(minY)), (np.int0(maxX), np.int0(maxY)), (0,255,0), 2)
 
+            # Mostramos una ventana con un boton para parar de calcular el flujo optico. Si, pulsamos en la ventana, se vuelve a cargar la ventana de ROI SELECTION
             cv2.imshow("DOUBLE-CLICK STOP BUTTON", stop)
             cv2.setMouseCallback("DOUBLE-CLICK STOP BUTTON", self.stop_screen)
             if frame_final_cut2 is not None:
@@ -191,6 +213,7 @@ class MyAlgorithm(threading.Thread):
             frame_final_cut_gray = np.copy(frame_final_cut2_gray)
 
 
+            # La funcion cv2.goodFeaturesToTrack encuentra bordes en la imagen de entrada y los marca en los bordes del mapa de salida usando el algoritmo de Canny. 
             p0 = cv2.goodFeaturesToTrack(frame_final_cut_gray, 100, 0.01, 10, None, None, 7)
             index2 = 0
             for p in (p0):
@@ -209,7 +232,7 @@ class MyAlgorithm(threading.Thread):
                     else:
                         index3 = index3 + 1
 
-
+        # Destruimos la ventana del boton de stop, y ponenemos las variables con el valor de inicio
         cv2.destroyWindow("DOUBLE-CLICK STOP BUTTON")
         refPt = []
         refMov = []
