@@ -14,8 +14,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see http://www.gnu.org/licenses/.
 #  Authors :
-#       Irene Lope Rodríguez<irene.lope236@gmail.com>
-#       Vanessa Fernández Matínez<vanessa_1895@msn.com>
+#       Irene Lope Rodriguez<irene.lope236@gmail.com>
+#       Vanessa Fernandez Martinez<vanessa_1895@msn.com>
 
 
 #import resources_rc
@@ -129,13 +129,13 @@ class MapWidget(QWidget):
     
     def RTLaser(self, num):
         if num == 1:
-            #Rotación en Z / Traslación en X
+            #Rotacion en Z / Traslacion en X
             RT = self.RTz(0, 2.79, 0, 0)
         elif num == 2:
-            #Rotación en Z / Traslación en X
+            #Rotacion en Z / Traslacion en X
             RT = self.RTz(pi, -2.79, 0, 0)
         else:
-            #Rotación en Z / Traslación en Y
+            #Rotacion en Z / Traslacion en Y
             RT = self.RTz(pi/2, 0, 1.5, 0)
         return RT    
     
