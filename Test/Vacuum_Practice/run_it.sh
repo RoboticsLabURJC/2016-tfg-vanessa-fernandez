@@ -11,10 +11,10 @@ sleep 10 # up to 20 for circuit.world
 
 [ "$1" = "GUI" ] && gzclient &
 
-python3 vacuum.py --Ice.Config=vacuum.cfg &
+python2 vacuum.py --Ice.Config=vacuum.cfg &
 
-python3 referee.py --Ice.Config=vacuum.cfg
+python2 referee.py --Ice.Config=vacuum.cfg
 
 killall gzserver
-killall python3
+killall python2
 [ "$1" = "GUI" ] && killall gzclient
