@@ -9,16 +9,21 @@
       		<uri>model://sun</uri>
     	</include>
     	<include>
-      		<uri>model://pistaSimple</uri>
-			<pose>-160 17 0 0 0 0</pose>
+      		<uri>model://ground_plane</uri>
     	</include>
+    	<road name="my_road">
+      		<width>3</width>
+			<point>-50 0 0.02</point>
+			<point>50 0 0.02</point>
+    	</road>
+
     	<include>
       		<uri>model://f1</uri>
-      		<pose>1 0 0 0 0 0</pose>
+      		<pose>5 1 0 0 0 -1.57</pose>
     	</include>
     	<include>
       		<uri>model://f1_dummy</uri>
-      		<pose>1 -10 0 0 0 0</pose>
+      		<pose>-10 1 0.2 0 0 -1.57</pose>
     	</include>
   	</world>
 </sdf>
