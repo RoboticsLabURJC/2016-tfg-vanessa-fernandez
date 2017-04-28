@@ -96,11 +96,11 @@ class MyAlgorithm(threading.Thread):
         # Penaltie's Obstacles
         penaltie =  0
         if ((((i == (dest0-1)) or (i == (dest0+1))) and (dest1-1 <= j <= dest1+1)) or (((j == (dest1-1)) or (j == (dest1+1))) and (i == dest0))):
-            penaltie = 50.0
+            penaltie = 100.0
         elif ((((i == (dest0-2)) or (i == (dest0+2)) and (dest1-2 <= j <= dest1+2)) or (((j == (dest1-2)) or (j == (dest1+2))) and (dest0-1 <= i <= dest0+1)))):
-            penaltie = 30.0
+            penaltie = 70.0
         elif ((((i == (dest0-3)) or (i == (dest0+3)) and (dest1-3 <= j <= dest1+3)) or (((j == (dest1-3)) or (j == (dest1+3))) and (dest0-2 <= i <= dest0+2)))):
-            penaltie = 20.0
+            penaltie = 50.0
         if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
             self.rejilla[j][i] = penaltie
 
@@ -329,17 +329,34 @@ class MyAlgorithm(threading.Thread):
             print("angle",angle)
 
             # Correct position
+           # if (abs(directionx) > 1) or (abs(directiony) > 1):
+           #     if abs(angle) > 0.8:
+           #         self.vel.setW(-angle*4.5)
+           #     else:
+           #         self.vel.setW(-angle)
+           #     if abs(angle) >= 0.5:
+           #         speed = 2*pow(pow(directionx,2) + pow(directiony,2),0.5)
+           #     elif abs(angle) > 0.3 and abs(angle) < 0.5:
+           #         speed = 5*pow(pow(directionx,2) + pow(directiony,2),0.5)           
+           #     else:
+           #         speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
+           # else:
+           #     speed = 25
+           #     self.vel.setW(0)
+
             if (abs(directionx) > 1) or (abs(directiony) > 1):
                 if abs(angle) > 0.8:
                     self.vel.setW(-angle*4.5)
                 else:
                     self.vel.setW(-angle)
-                if abs(angle) >= 0.5:
-                    speed = 2*pow(pow(directionx,2) + pow(directiony,2),0.5)
+                if abs(angle) >= 0.7:
+                    speed = 6
+                elif abs(angle) > 0.5 and abs(angle) <= 0.7:
+                    speed = 25
                 elif abs(angle) > 0.3 and abs(angle) < 0.5:
-                    speed = 5*pow(pow(directionx,2) + pow(directiony,2),0.5)           
+                    speed = 30          
                 else:
-                    speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
+                    speed = 50               
             else:
                 speed = 25
                 self.vel.setW(0)
