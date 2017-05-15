@@ -22,6 +22,26 @@ target_link_libraries(opelMotors
     JderobotInterfaces
 )
 
+add_library(opelPose3D SHARED pose3d.cc)
+target_link_libraries(opelPose3D
+	${GAZEBO_libraries} 
+	${ZeroCIce_LIBRARIES} 
+
+    ${easyiceconfig_LIBRARIES}
+    colorspacesmm
+    JderobotInterfaces
+)
+
+add_library(camera_dumpopel SHARED camera_dump.cc)
+target_link_libraries(camera_dumpopel
+	${GAZEBO_libraries} 
+	${ZeroCIce_LIBRARIES} 
+
+    ${easyiceconfig_LIBRARIES}
+    colorspacesmm
+    JderobotInterfaces
+)
+
 INSTALL (TARGETS opelMotors DESTINATION share/jderobot/gazebo/plugins/opel/ COMPONENT core)
 FILE(GLOB_RECURSE CFG_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cfg)
 INSTALL (FILES ${CFG_FILES} DESTINATION share/jderobot/gazebo/plugins/opel/ COMPONENT core)
