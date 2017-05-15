@@ -75,11 +75,12 @@ class MyAlgorithm(threading.Thread):
 
         print ('Execute')
         # TODO
-        self.motors.sendW(1.3)
+        self.motors.sendW(0.5)
         self.motors.sendV(self.radiusInitial*self.constant)
-        self.constant += 0.022
+        self.constant += 0.012
         print(self.constant)
         print(self.constant*self.radiusInitial)
         # www.sr.echu.es/sbweb/fisica/celeste/espiral/espiral.html
         # proyectodescartes.org/descartescms/blog/itemlist/tag/espirales
+        # http://www2.famaf.unc.edu.ar/rev_edu/documents/vol_23/prop_11_La_espiral_de_Arquimedes.pdf
         
