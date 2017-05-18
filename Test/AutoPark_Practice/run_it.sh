@@ -15,6 +15,8 @@ sleep 5 # up to 20 for circuit.world
 
 python2 autopark.py --Ice.Config=autopark.cfg &
 
+python2 omplapp.py --Ice.Config=autopark.cfg &
+
 python2 referee.py --Ice.Config=autopark.cfg
 
 killall gzserver
