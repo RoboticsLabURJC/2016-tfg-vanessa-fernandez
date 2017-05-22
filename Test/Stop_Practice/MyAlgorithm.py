@@ -4,8 +4,6 @@ import time
 from datetime import datetime
 import jderobot
 import math
-#from Target import Target
-#from Parser import Parser
 import cv2
 
 time_cycle = 80
@@ -94,8 +92,30 @@ class MyAlgorithm(threading.Thread):
 
     def execute(self):
         
-
         # TODO
         print ('execute')
         
+        # GETTING THE IMAGES
+        input_image = self.camera.getImage()
+
+        # RGB model change to HSV
+        image_HSV = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
+
+        # Converting the original image into grayscale
+        image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY) 
+
+        # Thresholding the grayscale image to get better results
+        retval, threshold = cv2.threshold(image_gray, 128, 255, cv2.THRESH_BINARY)
+
+        _, contours, h = cv2.findContours(threshold,1,2)
+
+        for cnt in contours:
+            # Approximates a polygonal curve(s) with the specified precision.
+            approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
+            print len(approx)
+            if len(approx) == 8:
+               # Octagon
+               cv2.drawContours(input_image,[cnt],0,(0,255,0),-1)
+               cv2.drawContours(threshold,[cnt],0,(0,255,0),-1)
         
+        cv2.imshow('img', threshold)
