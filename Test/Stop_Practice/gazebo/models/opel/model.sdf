@@ -25,7 +25,7 @@
     <plugin name="miniCarMotors" filename="libminiCarMotors.so"/>
     
     <link name='camera'>
-        <pose>0.30000 -0.5000 1.05 0.000000 0.000000 0.000000</pose>
+        <pose>0.00000 -2.000 0.90 0.000000 0.000000 0.000000</pose>
         
         <sensor name='cam_f1_left' type='camera'>
           <pose>0.000000 0.000000 0.000000  0.00000 0.00000 -1.57000</pose>
