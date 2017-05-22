@@ -35,17 +35,15 @@ from MyAlgorithm import MyAlgorithm
 
 if __name__ == "__main__":
     ic = EasyIce.initialize(sys.argv)
-    cameraL = CameraClient(ic, "Stop.CameraLeft", True)
-    cameraR = CameraClient(ic, "Stop.CameraRight", True)
-    motors = Motors (ic, "Stop.Motors")
+    motors = Motors(ic, "Stop.Motors")
     pose3d = Pose3DClient(ic, "Stop.Pose3D", True)
-    algorithm=MyAlgorithm(cameraL, cameraR, pose3d, motors)
+    camera = CameraClient(ic, "Stop.Camera", True)
+    algorithm=MyAlgorithm(pose3d, camera, motors)
 
     app = QApplication(sys.argv)
     myGUI = MainWindow()
-    myGUI.setCameraL(cameraL)
-    myGUI.setCameraR(cameraR)
     myGUI.setMotors(motors)
+    myGUI.setCamera(camera)
     myGUI.setPose3D(pose3d)
     myGUI.setAlgorithm(algorithm)
     myGUI.show()
