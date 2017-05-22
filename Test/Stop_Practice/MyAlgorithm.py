@@ -11,9 +11,8 @@ time_cycle = 80
 
 class MyAlgorithm(threading.Thread):
 
-    def __init__(self, cameraL, cameraR, pose3d, motors):
-        self.cameraL = cameraL
-        self.cameraR = cameraR
+    def __init__(self, pose3d, camera, motors):
+        self.camera = camera
         self.pose3d = pose3d
         self.motors = motors
 
