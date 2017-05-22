@@ -60,17 +60,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setPose3D(self,pose3d):
         self.pose3d=pose3d
 
-    def getCameraL(self):
-        return self.cameraL
+    def getCamera(self):
+        return self.camera
 
-    def setCameraL(self,camera):
-        self.cameraL=camera
+    def setCamera(self,camera):
+        self.camera=camera
 
-    def getCameraR(self):
-        return self.cameraR
+#    def getCameraR(self):
+#        return self.cameraR
 
-    def setCameraR(self,camera):
-        self.cameraR=camera
+#    def setCameraR(self,camera):
+#        self.cameraR=camera
 
     def getMotors(self):
         return self.motors
