@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+  
+    <scene>
+      <grid>false</grid>
+    </scene>
+  
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    
+    <!-- A f1 -->
+    <include>
+        <uri>model://f1</uri>
+        <pose>40 70 8 0 0 0</pose>
+    </include>
+    
+    <!-- A road -->
+    <model name="road">
+      <static>true</static>
+      <link name="body">
+        <pose>0 -4 -1.25 0 0 0</pose>
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>model://carretera_1.dae</uri></mesh>
+          </geometry>   
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>file://carretera_1.dae</uri></mesh>
+          </geometry>
+        </visual> 
+      </link> 
+    </model>
+
+  </world>
+</sdf>
