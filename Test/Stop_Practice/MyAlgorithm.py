@@ -102,7 +102,6 @@ class MyAlgorithm(threading.Thread):
         image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY) 
 
         # Thresholding the grayscale image to get better results
-        #retval, threshold = cv2.threshold(image_gray, 128, 255, cv2.THRESH_BINARY)
         retval, threshold = cv2.threshold(image_gray, 30, 50, cv2.THRESH_BINARY_INV)
 
         # Close, morphology element
