@@ -113,7 +113,7 @@ class MyAlgorithm(threading.Thread):
         canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
         cv2.imshow("canny", canny_output)
 
-        image2, contours, h = cv2.findContours(canny_output,1,2)
+        image2, contours, h = cv2.findContours(canny_output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         for cnt in contours:
             # Approximates a polygonal curve(s) with the specified precision.
