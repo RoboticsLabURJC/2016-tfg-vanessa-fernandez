@@ -6,6 +6,7 @@ import jderobot
 import math
 import cv2
 
+from matplotlib import pyplot as plt
 time_cycle = 80
         
 
@@ -94,7 +95,7 @@ class MyAlgorithm(threading.Thread):
         
         # TODO
         print ('execute')
-        
+       
         # GETTING THE IMAGES
         input_image = self.camera.getImage()
 
@@ -112,7 +113,7 @@ class MyAlgorithm(threading.Thread):
         canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
         cv2.imshow("canny", canny_output)
 
-        _, contours, h = cv2.findContours(canny_output,1,2)
+        image2, contours, h = cv2.findContours(canny_output,1,2)
 
         for cnt in contours:
             # Approximates a polygonal curve(s) with the specified precision.
@@ -122,5 +123,7 @@ class MyAlgorithm(threading.Thread):
                cv2.drawContours(input_image,[cnt],0,(0,255,0),-1)
                cv2.drawContours(image_filtered,[cnt],0,(255,255,255),-1)
                print("Found signal")
+
         
         cv2.imshow('img', image_filtered)
+
