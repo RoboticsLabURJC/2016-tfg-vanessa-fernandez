@@ -99,6 +99,10 @@ class MyAlgorithm(threading.Thread):
         # GETTING THE IMAGES
         input_image = self.camera.getImage()
 
+        #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
+        #self.motors.setV(10)
+        #self.motors.setW(5)
+
         # Converting the original image into grayscale
         image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY) 
 
@@ -113,7 +117,7 @@ class MyAlgorithm(threading.Thread):
         canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
         cv2.imshow("canny", canny_output)
 
-        image2, contours, h = cv2.findContours(canny_output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        image2, contours, hierachy = cv2.findContours(canny_output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         for cnt in contours:
             # Approximates a polygonal curve(s) with the specified precision.
@@ -122,8 +126,14 @@ class MyAlgorithm(threading.Thread):
                # Octagon
                cv2.drawContours(input_image,[cnt],0,(0,255,0),-1)
                cv2.drawContours(image_filtered,[cnt],0,(255,255,255),-1)
+               x, y, w, h= cv2.boundingRect(cnt)
+               cv2.rectangle(input_image, (x, y), (x+w,y+h), (0,0, 255) ,2)
                print("Found signal")
+               if h >= 40 and w >= 40:
+                   self.motors.sendV(0)
 
-        
+        if len(contours) == 0:
+            self.motors.sendV(25)
+
         cv2.imshow('img', image_filtered)
 
