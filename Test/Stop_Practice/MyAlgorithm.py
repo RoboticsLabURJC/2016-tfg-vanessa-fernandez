@@ -108,7 +108,11 @@ class MyAlgorithm(threading.Thread):
         kernel = np.ones((8,8), np.uint8)
         image_filtered = cv2.morphologyEx(threshold, cv2.MORPH_CLOSE, kernel)
 
-        _, contours, h = cv2.findContours(image_filtered,1,2)
+        # Detect edges using canny
+        canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
+        cv2.imshow("canny", canny_output)
+
+        _, contours, h = cv2.findContours(canny_output,1,2)
 
         for cnt in contours:
             # Approximates a polygonal curve(s) with the specified precision.
