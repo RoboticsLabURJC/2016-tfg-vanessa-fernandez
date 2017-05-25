@@ -71,6 +71,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setMotors(self,motors):
         self.motors=motors
 
+    def getBumper(self):
+        return self.bumper
+
+    def setBumper(self,bumper):
+        self.bumper=bumper
+
     def playClicked(self):
         if self.pushButton.isChecked():
             self.pushButton.setText('RUNNING')
