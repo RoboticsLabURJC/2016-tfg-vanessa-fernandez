@@ -5,6 +5,7 @@ from gui.threadGUI import ThreadGUI
 from parallelIce.motors import Motors
 from parallelIce.pose3dClient import Pose3DClient
 from parallelIce.laserClient import LaserClient
+from parallelIce.bumperClient import BumperClient
 import easyiceconfig as EasyIce
 from MyAlgorithm import MyAlgorithm
 
@@ -15,13 +16,15 @@ if __name__ == "__main__":
     motors = Motors (ic, "Vacuum.Motors")
     pose3d = Pose3DClient(ic, "Vacuum.Pose3D", True)
     laser = LaserClient(ic, "Vacuum.Laser", True)
-    algorithm=MyAlgorithm(pose3d, motors,laser)
+    bumper = BumperClient(ic, "Vacuum.Bumper", True)
+    algorithm=MyAlgorithm(pose3d, motors,laser, bumper)
 
     app = QApplication(sys.argv)
     myGUI = MainWindow()
     myGUI.setMotors(motors)
     myGUI.setPose3D(pose3d)
     myGUI.setLaser(laser)
+    myGUI.setBumper(bumper)
     myGUI.setAlgorithm(algorithm)
     myGUI.show()
 
