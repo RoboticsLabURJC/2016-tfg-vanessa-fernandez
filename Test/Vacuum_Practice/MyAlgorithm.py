@@ -97,12 +97,13 @@ class MyAlgorithm(threading.Thread):
         else:
             while self.angle == 0:
                 angle = abs(self.yaw - self.pose3d.getYaw())
-                if angle != pi/6:
+                if angle <= (pi/6-0.02) or angle >= (pi/6+0.02):
                     self.motors.sendW(pi/6)
                     self.motors.sendV(0)
                     print("entrando")
                 else:
                     self.angle = pi/6
+            self.angle = 0iit
             self.motors.sendV(2)
             
 
