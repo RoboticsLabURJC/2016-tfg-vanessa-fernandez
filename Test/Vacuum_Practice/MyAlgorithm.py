@@ -95,16 +95,16 @@ class MyAlgorithm(threading.Thread):
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
-            while self.angle == 0:
+            while self.angle == 0 and crash == 1:
                 angle = abs(self.yaw - self.pose3d.getYaw())
-                if angle <= (pi/6-0.02) or angle >= (pi/6+0.02):
-                    self.motors.sendW(pi/6)
+                if angle <= (pi/4-0.08) or angle >= (pi/4+0.08):
+                    self.motors.sendW(pi/4)
                     self.motors.sendV(0)
-                    print("entrando")
                 else:
-                    self.angle = pi/6
+                    self.angle = pi/4
             self.angle = 0
             self.motors.sendV(2)
+            self.motors.sendW(0)
             
 
         # www.sr.echu.es/sbweb/fisica/celeste/espiral/espiral.html
