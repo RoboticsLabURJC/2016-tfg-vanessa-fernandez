@@ -348,11 +348,13 @@ class MyAlgorithm(threading.Thread):
             if directiony > 0:
                 self.vel.setW(angle*14.5)
             elif abs(angle) >= 0.7:
-                self.vel.setW(-angle*14.5)
+                self.vel.setW(-angle*24.5)
             elif abs(angle) > 0.5 and abs(angle) <=  0.7:
-                self.vel.setW(-angle*12.5)
+                #self.vel.setW(-angle*12.5)
+                self.vel.setW(-angle*24.5)
             else:
-                self.vel.setW(-angle*6.5)
+                #self.vel.setW(-angle*6.5)
+                self.vel.setW(-angle*28.5)
 
             if abs(angle) >= 0.65:
                 speed = 0
