@@ -103,7 +103,7 @@ class MyAlgorithm(threading.Thread):
                     print("entrando")
                 else:
                     self.angle = pi/6
-            self.angle = 0iit
+            self.angle = 0
             self.motors.sendV(2)
             
 
