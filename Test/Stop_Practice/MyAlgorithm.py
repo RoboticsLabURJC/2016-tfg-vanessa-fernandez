@@ -111,8 +111,6 @@ class MyAlgorithm(threading.Thread):
         #image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
 
         # Values of red
-        #value_min_HSV = np.array([0, 71, 0])
-        #value_max_HSV = np.array([179, 232, 63])
         value_min_HSV = np.array([0, 71, 0])
         value_max_HSV = np.array([179, 232, 63])
 
