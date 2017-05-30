@@ -6,6 +6,7 @@ import jderobot
 import math
 import cv2
 from math import pi as pi
+import random
 
 time_cycle = 80
         
@@ -21,7 +22,7 @@ class MyAlgorithm(threading.Thread):
         self.radiusInitial = 0.1
         self.constant = 0.01
         self.numCrash = 0
-        self.angle = 0
+        self.turn = False
         self.yaw = 0
 
 
@@ -95,15 +96,19 @@ class MyAlgorithm(threading.Thread):
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
-            while self.angle == 0 and crash == 1:
+            numAngle = random.random() * pi
+            print("angle random", numAngle)
+            while self.turn == False and crash == 1:
                 angle = abs(self.yaw - self.pose3d.getYaw())
-                if angle <= (pi/4-0.08) or angle >= (pi/4+0.08):
-                    self.motors.sendW(pi/4)
+                print("giro hecho ",angle)
+                if angle <= (numAngle-0.1) or angle >= (numAngle+0.1):
+                    print("ENTRAAAANDOOOOOOOO!!")
+                    self.motors.sendW(numAngle)
                     self.motors.sendV(0)
                 else:
-                    self.angle = pi/4
-            self.angle = 0
-            self.motors.sendV(2)
+                    self.turn = True
+            self.turn = False
+            self.motors.sendV(0.5)
             self.motors.sendW(0)
             
 
