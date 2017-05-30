@@ -128,8 +128,7 @@ class MyAlgorithm(threading.Thread):
         # Matching with template image
         # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
         match = cv2.matchTemplate(image_filtered,self.template,cv2.TM_CCOEFF_NORMED)
-        cv2.imshow("matching", match)
-        threshold = 0.82
+        threshold = 0.8
         loc = np.where(match >= threshold)
         # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
         for pt in zip(*loc[::-1]):
