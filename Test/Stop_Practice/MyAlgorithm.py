@@ -103,15 +103,26 @@ class MyAlgorithm(threading.Thread):
         #self.motors.setV(10)
         #self.motors.setW(5)
 
+        # RGB model change to HSV
+        hsv_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
+
         # Converting the original image into grayscale
-        image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY) 
+        #image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
+
+        # Values of red
+        value_min_HSV = np.array([0, 71, 0])
+        value_max_HSV = np.array([179, 232, 63])
 
         # Thresholding the grayscale image to get better results
-        retval, threshold = cv2.threshold(image_gray, 30, 50, cv2.THRESH_BINARY_INV)
+        #retval, threshold = cv2.threshold(image_gray, 30, 50, cv2.THRESH_BINARY_INV)
+
+        # Filtering image
+        image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
+        cv2.imshow("filtered", image_filtered)
 
         # Close, morphology element
-        kernel = np.ones((8,8), np.uint8)
-        image_filtered = cv2.morphologyEx(threshold, cv2.MORPH_CLOSE, kernel)
+        #kernel = np.ones((8,8), np.uint8)
+        #image_filtered = cv2.morphologyEx(threshold, cv2.MORPH_CLOSE, kernel)
 
         # Detect edges using canny
         canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
