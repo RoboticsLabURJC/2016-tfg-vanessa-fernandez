@@ -108,15 +108,9 @@ class MyAlgorithm(threading.Thread):
         # RGB model change to HSV
         hsv_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
 
-        # Converting the original image into grayscale
-        #image_gray = cv2.cvtColor(input_image, cv2.COLOR_BGR2GRAY)
-
         # Values of red
         value_min_HSV = np.array([0, 71, 0])
         value_max_HSV = np.array([179, 232, 63])
-
-        # Thresholding the grayscale image to get better results
-        #retval, threshold = cv2.threshold(image_gray, 30, 50, cv2.THRESH_BINARY_INV)
 
         # Filtering image
         image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
@@ -128,19 +122,15 @@ class MyAlgorithm(threading.Thread):
 
         detection = False
 
-        # Detect edges using canny
-        #canny_output = cv2.Canny(image_filtered, 100, 100 * 2)
-        #cv2.imshow("canny", canny_output)
-
-        #image2, contours, hierachy = cv2.findContours(canny_output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
         # Template's size
         h, w = self.template.shape
 
-        res = cv2.matchTemplate(image_filtered,self.template,cv2.TM_CCOEFF_NORMED)
-        print(res)
+        # Matching with template image
+        # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
+        match = cv2.matchTemplate(image_filtered,self.template,cv2.TM_CCOEFF_NORMED)
         threshold = 0.8
-        loc = np.where( res >= threshold)
+        loc = np.where(match >= threshold)
+        # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
         for pt in zip(*loc[::-1]):
             cv2.rectangle(input_image, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
             cv2.rectangle(image_filtered, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
@@ -148,24 +138,9 @@ class MyAlgorithm(threading.Thread):
             print("Found signal")
             self.motors.sendV(0)
 
-        #for cnt in contours:
-            # Approximates a polygonal curve(s) with the specified precision.
-        #    approx = cv2.approxPolyDP(cnt,0.01*cv2.arcLength(cnt,True),True)
-        #    if len(approx) == 8:
-               # Octagon
-        #       cv2.drawContours(input_image,[cnt],0,(0,255,0),-1)
-        #       cv2.drawContours(image_filtered,[cnt],0,(255,255,255),-1)
-        #       x, y, w, h= cv2.boundingRect(cnt)
-        #       cv2.rectangle(input_image, (x, y), (x+w,y+h), (0,0, 255) ,2)
-        #       print("Found signal")
-        #       if h >= 40 and w >= 40:
-        #           self.motors.sendV(0)
-
-        #if len(contours) == 0:
-        #    self.motors.sendV(25)
 
         if detection == False:
-            self.motors.sendV(25)
+            self.motors.sendV(50)
 
         cv2.imshow('img', image_filtered)
 
