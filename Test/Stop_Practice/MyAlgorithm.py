@@ -19,6 +19,7 @@ class MyAlgorithm(threading.Thread):
 
         #self.imageRight=None
         self.image=None
+        # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
 
         # Car direction
@@ -133,9 +134,11 @@ class MyAlgorithm(threading.Thread):
 
         #image2, contours, hierachy = cv2.findContours(canny_output, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        w, h = self.template.shape[::-1]
+        # Template's size
+        h, w = self.template.shape
 
         res = cv2.matchTemplate(image_filtered,self.template,cv2.TM_CCOEFF_NORMED)
+        print(res)
         threshold = 0.8
         loc = np.where( res >= threshold)
         for pt in zip(*loc[::-1]):
