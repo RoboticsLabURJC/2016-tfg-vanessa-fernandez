@@ -1250,7 +1250,7 @@
         <collision name='Wall_32_Collision_0'>
           <geometry>
             <box>
-              <size>0.199231 0.2 2.5</size>
+              <size>1.20 0.2 2.5</size>
             </box>
           </geometry>
           <pose>-0.599775 0 1.25 0 -0 0</pose>
