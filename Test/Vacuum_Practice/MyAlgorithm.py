@@ -109,6 +109,7 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 numAngle = random.random() * pi/2
+                signo = random.randint(0, 1)
                 print("angle random", numAngle)
                 while self.turn == False:
                     angle = abs(self.yaw - self.pose3d.getYaw())
@@ -116,7 +117,10 @@ class MyAlgorithm(threading.Thread):
                     print("giro hecho ",angle)
                     if angle <= (numAngle-0.2) or angle >= (numAngle+0.2):
                         print("ENTRAAAANDOOOOOOOO!!")
-                        self.motors.sendW(0.2)
+                        if signo == 1:
+                            self.motors.sendW(0.2)
+                        else:
+                            self.motors.sendW(-0.2)
                         self.motors.sendV(0)
                     else:
                         self.turn = True
