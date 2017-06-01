@@ -107,10 +107,11 @@ class MyAlgorithm(threading.Thread):
             if crash == 1:
                 self.motors.sendW(0)
                 self.motors.sendV(0)
-                time.sleep(2)
+                time.sleep(1)
                 self.motors.sendV(-0.2)
                 time.sleep(1)
-                numAngle = random.random() * pi/2
+                #numAngle = random.random() * pi/2
+                numAngle = random.uniform(pi/4, pi)
                 signo = random.randint(0, 1)
                 print("angle random", numAngle)
                 while self.turn == False:
