@@ -83,19 +83,29 @@ class MyAlgorithm(threading.Thread):
         # TODO
 
         # Devuelve 1 si choca y 0 si no choca
-        crash = self.bumper.getBumperData().state
+        for i in range(0,100):
+       	    crash = self.bumper.getBumperData().state
+            if crash == 1:
+                break
 
         if crash == 1:
             self.numCrash = 1
 
         print(self.numCrash)
         self.yaw = self.pose3d.getYaw()
+        print("yaw inicio", self.yaw)
 
         if self.numCrash == 0:
             self.motors.sendW(0.5)
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
+            if crash == 1:
+                self.motors.sendW(0)
+                self.motors.sendV(0)
+                time.sleep(1)
+                self.motors.sendV(-0.2)
+                time.sleep(1)
             numAngle = random.random() * pi
             print("angle random", numAngle)
             while self.turn == False and crash == 1:
@@ -103,13 +113,15 @@ class MyAlgorithm(threading.Thread):
                 print("giro hecho ",angle)
                 if angle <= (numAngle-0.1) or angle >= (numAngle+0.1):
                     print("ENTRAAAANDOOOOOOOO!!")
-                    self.motors.sendW(numAngle)
+                    self.motors.sendW(0.2)
                     self.motors.sendV(0)
                 else:
                     self.turn = True
+            self.motors.sendW(0)
+            time.sleep(3)
             self.turn = False
             self.motors.sendV(0.5)
-            self.motors.sendW(0)
+
             
 
         # www.sr.echu.es/sbweb/fisica/celeste/espiral/espiral.html
