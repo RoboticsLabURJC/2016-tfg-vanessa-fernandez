@@ -2,11 +2,11 @@
 <sdf version='1.4'>
 	<world name='GrannyAnnie'>
     	<include>
-    	     <uri>model://turtlebotJde2cam</uri>
+    	     <uri>model://roomba</uri>
     	  	 <pose>-1 1.5 0 0 0 0</pose>
     	</include>
     	<include>
-    	     <uri>model://house_int</uri>
+    	     <uri>model://house_int2</uri>
     	  	 <pose>0 0 0 0 0 0</pose>
     	</include>
     	
