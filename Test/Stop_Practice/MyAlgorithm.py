@@ -119,29 +119,45 @@ class MyAlgorithm(threading.Thread):
         # Close, morphology element
         kernel = np.ones((11,11), np.uint8)
         image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
-
-        detection = False
+        cv2.imshow('cierre', image_filtered)
 
         # Template's size
         h, w = self.template.shape
 
-        # Matching with template image
-        # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
-        match = cv2.matchTemplate(image_filtered,self.template,cv2.TM_CCOEFF_NORMED)
-        cv2.imshow("matching", match)
-        threshold = 0.8
-        loc = np.where(match >= threshold)
-        # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
-        for pt in zip(*loc[::-1]):
-            cv2.rectangle(input_image, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
-            cv2.rectangle(image_filtered, pt, (pt[0] + w, pt[1] + h), (255,0,0), 2)
-            detection = True
-            print("Found signal")
-            self.motors.sendV(0)
+        detection = False
+            
+        # Detection of object contour
+        img2, contours, hierarchy = cv2.findContours(image_filtered, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if (len(contours) != 0):
+            # Approximates a polygonal curve(s) with the specified precision.
+            cnt = cv2.approxPolyDP(contours[0], 3, True)
+            
+            # It is a straight rectangle, it doesn't consider the rotation of the object. So area of the bounding rectangle won't be minimum.
+            # Let (x,y) be the top-left coordinate of the rectangle and (w,h) be its width and height. 
+            x, y, bw, bh = cv2.boundingRect(cnt)
+            
+            img_rect = cv2.rectangle(image_filtered, (x, y), (x+bw,y+bh), (0,0,0) ,0)
+            img_bounding = img_rect[(y-4):(y+bh+4), (x-4):(x+bw+4)]
+            img_res = cv2.resize(img_bounding, (w, h), interpolation=cv2.INTER_CUBIC)
+            cv2.imshow('bounding',img_bounding)
+            cv2.imshow('res',img_res)
+            cv2.imshow('template',self.template)
+            
+
+            # Matching with template image
+            # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
+            match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
+            cv2.imshow("matching", match)
+            threshold = 0.6
+            loc = np.where(match >= threshold)
+            # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
+            for pt in zip(*loc[::-1]):
+                cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
+                detection = True
+                print("Found signal")
+                self.motors.sendV(0)
 
 
         if detection == False:
-            self.motors.sendV(50)
-
-        cv2.imshow('img', image_filtered)
+            self.motors.sendV(20)
 
