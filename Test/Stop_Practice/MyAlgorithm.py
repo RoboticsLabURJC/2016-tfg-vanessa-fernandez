@@ -136,19 +136,22 @@ class MyAlgorithm(threading.Thread):
             # Let (x,y) be the top-left coordinate of the rectangle and (w,h) be its width and height. 
             x, y, bw, bh = cv2.boundingRect(cnt)
             
+            # Draw the box
             img_rect = cv2.rectangle(image_filtered, (x, y), (x+bw,y+bh), (0,0,0) ,0)
+            # Cut an image
             img_bounding = img_rect[(y-4):(y+bh+4), (x-4):(x+bw+4)]
+            # Resize an image
             img_res = cv2.resize(img_bounding, (w, h), interpolation=cv2.INTER_CUBIC)
-            cv2.imshow('bounding',img_bounding)
-            cv2.imshow('res',img_res)
-            cv2.imshow('template',self.template)
+            #cv2.imshow('bounding',img_bounding)
+            #cv2.imshow('res',img_res)
+            #cv2.imshow('template',self.template)
             
 
             # Matching with template image
             # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
             match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
             cv2.imshow("matching", match)
-            threshold = 0.6
+            threshold = 0.5
             loc = np.where(match >= threshold)
             # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
             for pt in zip(*loc[::-1]):
