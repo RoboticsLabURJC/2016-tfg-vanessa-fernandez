@@ -22,15 +22,6 @@ class MyAlgorithm(threading.Thread):
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
 
-        # Car direction
-        self.carx = 0.0
-        self.cary = 0.0
-
-        # Obstacles direction
-        self.obsx = 0.0
-        self.obsy = 0.0
-
-
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
         self.lock = threading.Lock()
@@ -47,23 +38,6 @@ class MyAlgorithm(threading.Thread):
         tempImage=self.image
         self.lock.release()
         return tempImage
-
-    def parse_laser_data(self,laser_data):
-        laser = []
-        for i in range(laser_data.numLaser):
-            dist = laser_data.distanceData[i]/1000.0
-            angle = math.radians(i)
-            laser += [(dist, angle)]
-        return laser
-    
-    def laser_vector(self,laser_array):
-        laser_vectorized = []
-        for d,a in laser_array:
-            x = d * math.cos(a) * -1
-            y = d * math.sin(a) * -1 
-            v = (x, y)
-            laser_vectorized += [v]
-        return laser_vectorized
 
     def run (self):
         while (not self.kill_event.is_set()):
@@ -151,7 +125,7 @@ class MyAlgorithm(threading.Thread):
             # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
             match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
             cv2.imshow("matching", match)
-            threshold = 0.5
+            threshold = 0.4
             loc = np.where(match >= threshold)
             # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
             for pt in zip(*loc[::-1]):
