@@ -125,14 +125,16 @@ class MyAlgorithm(threading.Thread):
             # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
             match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
             cv2.imshow("matching", match)
-            threshold = 0.4
+            threshold = 0.3
             loc = np.where(match >= threshold)
             # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
             for pt in zip(*loc[::-1]):
                 cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
                 detection = True
                 print("Found signal")
-                self.motors.sendV(0)
+                #self.motors.sendV(0)
+                if bw >= 42 or bh >= 42:
+                    self.motors.sendV(0)
 
 
         if detection == False:
