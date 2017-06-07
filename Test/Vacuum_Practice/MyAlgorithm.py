@@ -83,11 +83,13 @@ class MyAlgorithm(threading.Thread):
         # TODO
 
         # Devuelve 1 si choca y 0 si no choca
-        #crash = self.bumper.getBumperData().state
+        # crash = self.bumper.getBumperData().state
 
         for i in range(0, 350):
             crash = self.bumper.getBumperData().state
             if crash == 1:
+                self.motors.sendW(0)
+                self.motors.sendV(0)
                 break
 
         if crash == 1:
@@ -95,10 +97,8 @@ class MyAlgorithm(threading.Thread):
 
         print(crash)
         self.yaw = self.pose3d.getYaw()
-        print("yaw inicio", self.yaw)
-        if -pi < self.yaw < -pi/2:
-            self.yaw = self.yaw + 2*pi
-
+        #print("yaw inicio", self.yaw)
+        
         if self.numCrash == 0:
             self.motors.sendW(0.5)
             self.motors.sendV(self.radiusInitial*self.constant)
@@ -111,23 +111,29 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 #numAngle = random.random() * pi/2
-                numAngle = random.uniform(pi/4, pi)
-                #numAngle = pi/2
-                #numAngle = random.uniform(pi/3, pi)
+                #numAngle = random.uniform(pi/4, pi)
+                numAngle = random.uniform(pi/3, pi)
                 signo = random.randint(0, 1)
-                print("angle random", numAngle)
+                #print("angle random", numAngle)
                 while self.turn == False:
                     poseNow = self.pose3d.getYaw()
-                    print('now antes', poseNow)
-                    if -pi < poseNow < -pi/2:
-                        poseNow = poseNow + 2*pi
-                    #angle = abs(self.yaw - self.pose3d.getYaw())
+                                            
+                    if self.yaw == 2*pi:
+                        self.yaw = 0
+                    if poseNow == 2*pi:
+                        poseNow = 0
+                    
+                    if (-pi < self.yaw < -pi/2) or (-pi < poseNow < -pi/2):
+                        if (-pi < self.yaw < -pi/2) and ((pi/2 <= poseNow <= pi) or (0 <= poseNow <= pi/2)) :
+                            self.yaw = self.yaw + 2*pi
+                        elif (-pi < poseNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
+                            poseNow = poseNow + 2*pi
+                            
                     angle = abs(self.yaw - poseNow)
-                    print("yaw angle", self.yaw, poseNow)
-                    print("angle random", numAngle)
-                    print("giro hecho ",angle)
+                    #print("yaw angle", self.yaw, poseNow, signo)
+                    #print("angle random", numAngle)
+                    #print("giro hecho ",angle)
                     if angle <= (numAngle-0.2) or angle >= (numAngle+0.2):
-                        print("ENTRAAAANDOOOOOOOO!!")
                         if signo == 1:
                             self.motors.sendW(0.2)
                         else:
