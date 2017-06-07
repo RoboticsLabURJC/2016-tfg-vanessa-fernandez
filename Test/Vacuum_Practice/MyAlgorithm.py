@@ -111,9 +111,9 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 #numAngle = random.random() * pi/2
-                #numAngle = random.uniform(pi/4, pi)
+                numAngle = random.uniform(pi/4, pi)
                 #numAngle = pi/2
-                numAngle = random.uniform(pi/3, pi)
+                #numAngle = random.uniform(pi/3, pi)
                 signo = random.randint(0, 1)
                 print("angle random", numAngle)
                 while self.turn == False:
