@@ -85,7 +85,7 @@ class MyAlgorithm(threading.Thread):
         # Devuelve 1 si choca y 0 si no choca
         #crash = self.bumper.getBumperData().state
 
-        for i in range(0, 100):
+        for i in range(0, 350):
             crash = self.bumper.getBumperData().state
             if crash == 1:
                 break
@@ -93,7 +93,7 @@ class MyAlgorithm(threading.Thread):
         if crash == 1:
             self.numCrash = 1
 
-        print(self.numCrash)
+        print(crash)
         self.yaw = self.pose3d.getYaw()
         print("yaw inicio", self.yaw)
         if -pi < self.yaw < -pi/2:
@@ -111,7 +111,9 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 #numAngle = random.random() * pi/2
-                numAngle = random.uniform(pi/4, pi)
+                #numAngle = random.uniform(pi/4, pi)
+                #numAngle = pi/2
+                numAngle = random.uniform(pi/3, pi)
                 signo = random.randint(0, 1)
                 print("angle random", numAngle)
                 while self.turn == False:
@@ -134,7 +136,7 @@ class MyAlgorithm(threading.Thread):
                     else:
                         self.turn = True
             self.motors.sendW(0)
-            time.sleep(3)
+            time.sleep(1)
             self.turn = False
             self.motors.sendV(0.5)
 
