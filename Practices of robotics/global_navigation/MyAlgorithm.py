@@ -95,12 +95,10 @@ class MyAlgorithm(threading.Thread):
     def penaltiesObstacles(self, i, j, dest0, dest1, destino):
         # Penaltie's Obstacles
         penaltie =  0
-        if ((((i == (dest0-1)) or (i == (dest0+1))) and (dest1-1 <= j <= dest1+1)) or (((j == (dest1-1)) or (j == (dest1+1))) and (i == dest0))):
-            penaltie = 100.0
-        elif ((((i == (dest0-2)) or (i == (dest0+2)) and (dest1-2 <= j <= dest1+2)) or (((j == (dest1-2)) or (j == (dest1+2))) and (dest0-1 <= i <= dest0+1)))):
-            penaltie = 70.0
-        elif ((((i == (dest0-3)) or (i == (dest0+3)) and (dest1-3 <= j <= dest1+3)) or (((j == (dest1-3)) or (j == (dest1+3))) and (dest0-2 <= i <= dest0+2)))):
-            penaltie = 50.0
+        penaltieMax = 130
+        for c in range(1, 5):
+            if ((((i == (dest0-c)) or (i == (dest0+c)) and (dest1-c <= j <= dest1+c)) or (((j == (dest1-c)) or (j == (dest1+c))) and (dest0-c-1 <= i <= dest0+c-1)))):
+                penaltie = penaltieMax - c * 10
         if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
             self.rejilla[j][i] = penaltie
 
@@ -115,16 +113,18 @@ class MyAlgorithm(threading.Thread):
 
     def getTargetWorld(self, posRobot):
         found = False
-        for i in range(posRobot[0]-3, posRobot[0]+4):
-            for j in range(posRobot[1]-3, posRobot[1]+4):
-                if ((((i==(posRobot[0]-3)) or (i==(posRobot[0]+3)) and (posRobot[1]-3<=j<=posRobot[1]+3)) or (((j==(posRobot[1]-3)) or (j==(posRobot[1]+3))) and (posRobot[0]-2<=i<=posRobot[0]+2)))):
+        mapIm = self.grid.getMap()
+        valMin = 2000000000000
+        for i in range(posRobot[0]-8, posRobot[0]+9):
+            for j in range(posRobot[1]-8, posRobot[1]+9):
+                if ((((i==(posRobot[0]-8)) or (i==(posRobot[0]+8)) and (posRobot[1]-8<=j<=posRobot[1]+8)) or (((j==(posRobot[1]-8)) or (j==(posRobot[1]+8))) and (posRobot[0]-7<=i<=posRobot[0]+7)))):
                     val = self.grid.getVal(i, j)
-                    if (found == False):
+                    if (found == False and mapIm[j, i] == 255):
                         found = True
                         valMin = val
                         target = [i, j]
                     else:
-                        if(val < valMin):
+                        if(val < valMin and mapIm[j, i] == 255):
                             target = [i, j]
                             valMin = val
         return target
@@ -228,8 +228,8 @@ class MyAlgorithm(threading.Thread):
 
         # Obstacles penalties
         for i in range(0, len(self.posObstaclesBorder)):
-            for k in range(self.posObstaclesBorder[i][0]-3, self.posObstaclesBorder[i][0]+4):
-                for l in range(self.posObstaclesBorder[i][1]-3, self.posObstaclesBorder[i][1]+4):
+            for k in range(self.posObstaclesBorder[i][0]-4, self.posObstaclesBorder[i][0]+5):
+                for l in range(self.posObstaclesBorder[i][1]-4, self.posObstaclesBorder[i][1]+5):
                     if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1], dest)
@@ -316,6 +316,7 @@ class MyAlgorithm(threading.Thread):
 
         if (abs(posRobotX)<(abs(destWorld[0])+3) and abs(posRobotX)>(abs(destWorld[0])-3)) and (abs(posRobotY)<(abs(destWorld[1])+3) and abs(posRobotY)>(abs(destWorld[1])-3)):
             self.vel.setV(0)
+            self.vel.setW(0)
             print("DESTINATION")
         else:
             targetImage = self.getTargetWorld(posRobotImage)
@@ -345,7 +346,7 @@ class MyAlgorithm(threading.Thread):
            #     self.vel.setW(0)
 
 
-            if directiony > 0 and directionx < 0:
+            if directiony > 0:
                 self.vel.setW(angle*14.5)
             elif abs(angle) >= 0.7:
                 self.vel.setW(-angle*24.5)
@@ -354,7 +355,7 @@ class MyAlgorithm(threading.Thread):
                 self.vel.setW(-angle*24.5)
             else:
                 #self.vel.setW(-angle*6.5)
-                self.vel.setW(-angle*28.5)
+                self.vel.setW(-angle*31.5)
 
             if abs(angle) >= 0.65:
                 speed = 0
@@ -366,7 +367,7 @@ class MyAlgorithm(threading.Thread):
                 speed = 100
 
 
-            if directiony > 0 and directionx < 0:
+            if directiony > 0:
                 speed = 0
       
             print('speed', speed)
