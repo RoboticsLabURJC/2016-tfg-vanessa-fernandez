@@ -321,6 +321,7 @@ class MyAlgorithm(threading.Thread):
         else:
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
+            self.grid.settpoint(targetImage[0], targetImage[1])
 
             # Convert target[0] y target[1] to relative coordinates
             directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
@@ -330,29 +331,13 @@ class MyAlgorithm(threading.Thread):
             print("angle",angle)
 
             # Correct position
-           # if (abs(directionx) > 1) or (abs(directiony) > 1):
-           #     if abs(angle) > 0.8:
-           #         self.vel.setW(-angle*4.5)
-           #     else:
-           #         self.vel.setW(-angle)
-           #     if abs(angle) >= 0.5:
-           #         speed = 2*pow(pow(directionx,2) + pow(directiony,2),0.5)
-           #     elif abs(angle) > 0.3 and abs(angle) < 0.5:
-           #         speed = 5*pow(pow(directionx,2) + pow(directiony,2),0.5)           
-           #     else:
-           #         speed = 7*pow(pow(directionx,2) + pow(directiony,2),0.5)               
-           # else:
-           #     speed = 25
-           #     self.vel.setW(0)
-
-
             if directiony > 0:
-                self.vel.setW(angle*14.5)
+                self.vel.setW(angle*24.5)
             elif abs(angle) >= 0.7:
-                self.vel.setW(-angle*24.5)
+                self.vel.setW(-angle*35.5)
             elif abs(angle) > 0.5 and abs(angle) <=  0.7:
                 #self.vel.setW(-angle*12.5)
-                self.vel.setW(-angle*24.5)
+                self.vel.setW(-angle*30.5)
             else:
                 #self.vel.setW(-angle*6.5)
                 self.vel.setW(-angle*31.5)
@@ -360,9 +345,9 @@ class MyAlgorithm(threading.Thread):
             if abs(angle) >= 0.65:
                 speed = 0
             elif abs(angle) > 0.5 and abs(angle) <= 0.65:
-                speed = 7
+                speed = 3
             elif abs(angle) > 0.3 and abs(angle) <= 0.5:
-                speed = 13
+                speed = 8
             else:
                 speed = 100
 
