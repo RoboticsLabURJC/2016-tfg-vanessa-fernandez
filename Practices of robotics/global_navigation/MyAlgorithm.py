@@ -95,10 +95,10 @@ class MyAlgorithm(threading.Thread):
     def penaltiesObstacles(self, i, j, dest0, dest1, destino):
         # Penaltie's Obstacles
         penaltie =  0
-        penaltieMax = 130
+        penaltieMax = 180
         for c in range(1, 5):
             if ((((i == (dest0-c)) or (i == (dest0+c)) and (dest1-c <= j <= dest1+c)) or (((j == (dest1-c)) or (j == (dest1+c))) and (dest0-c-1 <= i <= dest0+c-1)))):
-                penaltie = penaltieMax - c * 10
+                penaltie = penaltieMax - c * 6
         if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
             self.rejilla[j][i] = penaltie
 
@@ -115,9 +115,11 @@ class MyAlgorithm(threading.Thread):
         found = False
         mapIm = self.grid.getMap()
         valMin = 2000000000000
-        for i in range(posRobot[0]-8, posRobot[0]+9):
-            for j in range(posRobot[1]-8, posRobot[1]+9):
-                if ((((i==(posRobot[0]-8)) or (i==(posRobot[0]+8)) and (posRobot[1]-8<=j<=posRobot[1]+8)) or (((j==(posRobot[1]-8)) or (j==(posRobot[1]+8))) and (posRobot[0]-7<=i<=posRobot[0]+7)))):
+        # Radio
+        r = 5
+        for i in range(posRobot[0]-r, posRobot[0]+r+1):
+            for j in range(posRobot[1]-r, posRobot[1]+r+1):
+                if ((((i==(posRobot[0]-r)) or(i==(posRobot[0]+r)) and (posRobot[1]-r<=j<=posRobot[1]+r)) or (((j==(posRobot[1]-r)) or (j==(posRobot[1]+r))) and (posRobot[0]-r-1<=i<=posRobot[0]+r-1)))):
                     val = self.grid.getVal(i, j)
                     if (found == False and mapIm[j, i] == 255):
                         found = True
@@ -322,6 +324,12 @@ class MyAlgorithm(threading.Thread):
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
             self.grid.settpoint(targetImage[0], targetImage[1])
+            
+            print("TARGET", target)
+            
+            # Interpolacion
+            #targetx = (target[0] + destWorld[0])/2
+            #targety = (target[1] + destWorld[1])/2
 
             # Convert target[0] y target[1] to relative coordinates
             directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
@@ -334,20 +342,18 @@ class MyAlgorithm(threading.Thread):
             if directiony > 0:
                 self.vel.setW(angle*24.5)
             elif abs(angle) >= 0.7:
-                self.vel.setW(-angle*35.5)
+                self.vel.setW(-angle*120)
             elif abs(angle) > 0.5 and abs(angle) <=  0.7:
-                #self.vel.setW(-angle*12.5)
-                self.vel.setW(-angle*30.5)
+                self.vel.setW(-angle*82.5)
             else:
-                #self.vel.setW(-angle*6.5)
-                self.vel.setW(-angle*31.5)
+                self.vel.setW(-angle*51.5)
 
             if abs(angle) >= 0.65:
-                speed = 0
+                speed = 0.03
             elif abs(angle) > 0.5 and abs(angle) <= 0.65:
-                speed = 3
-            elif abs(angle) > 0.3 and abs(angle) <= 0.5:
-                speed = 8
+                speed = 1
+            elif abs(angle) > 0.2 and abs(angle) <= 0.5:
+                speed = 2
             else:
                 speed = 100
 
