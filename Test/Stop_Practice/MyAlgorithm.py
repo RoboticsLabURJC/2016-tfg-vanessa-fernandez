@@ -115,38 +115,36 @@ class MyAlgorithm(threading.Thread):
             img_rect = cv2.rectangle(image_filtered, (x, y), (x+bw,y+bh), (0,0,0) ,0)
             # Cut an image
             img_bounding = img_rect[(y-4):(y+bh+4), (x-4):(x+bw+4)]
-            # Resize an image
-            img_res = cv2.resize(img_bounding, (w, h), interpolation=cv2.INTER_CUBIC)
-            #cv2.imshow('bounding',img_bounding)
-            #cv2.imshow('res',img_res)
-            #cv2.imshow('template',self.template)
             
+            if img_bounding != []:
+                # Resize an image
+                img_res = cv2.resize(img_bounding, (w, h), interpolation=cv2.INTER_CUBIC)
 
-            # Matching with template image
-            # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
-            match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
-            cv2.imshow("matching", match)
-            threshold = 0.3
-            loc = np.where(match >= threshold)
-            # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
-            for pt in zip(*loc[::-1]):
-                cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
-                detection = True
-                print("Found signal")
-                print(bw, bh)
-                if bw <= 10 or bh <= 10:
-                    self.motors.sendV(15)
-                elif (bw > 10 and bw <= 20) or (bh > 10 and bh <= 20):
-                    self.motors.sendV(12)
-                #if bw >= 40 or bh >= 40:
-                elif (bw > 20 and bw <= 30) or (bh > 20 and bh <= 30):
-                    self.motors.sendV(7)
-                elif (bw > 30 and bw <= 40) or (bh > 30 and bh <= 40):
-                    self.motors.sendV(5)
-                elif bw > 40 or bh > 40:
-                    self.motors.sendV(0)
-                    self.stop = True
-                #    self.motors.sendV(0)
+                # Matching with template image
+                # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
+                match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
+                cv2.imshow("matching", match)
+                threshold = 0.3
+                loc = np.where(match >= threshold)
+                
+                # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
+                for pt in zip(*loc[::-1]):
+                    cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
+                    detection = True
+                    print("Found signal")
+                    
+                    if self.stop == False:
+                        if bw <= 10 or bh <= 10:
+                            self.motors.sendV(15)
+                        elif (bw > 10 and bw <= 20) or (bh > 10 and bh <= 20):
+                            self.motors.sendV(12)
+                        elif (bw > 20 and bw <= 30) or (bh > 20 and bh <= 30):
+                            self.motors.sendV(7)
+                        elif (bw > 30 and bw <= 40) or (bh > 30 and bh <= 40):
+                            self.motors.sendV(5)
+                        elif bw > 40 or bh > 40:
+                            self.motors.sendV(0)
+                            self.stop = True
 
 
         if detection == False and self.stop == False:
