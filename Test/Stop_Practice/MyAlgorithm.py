@@ -21,6 +21,7 @@ class MyAlgorithm(threading.Thread):
         self.image=None
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
+        self.stop = False
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -143,10 +144,11 @@ class MyAlgorithm(threading.Thread):
                 elif (bw > 30 and bw <= 40) or (bh > 30 and bh <= 40):
                     self.motors.sendV(5)
                 elif bw > 40 or bh > 40:
-                    self.motors.sendV(0) 
+                    self.motors.sendV(0)
+                    self.stop = True
                 #    self.motors.sendV(0)
 
 
-        if detection == False:
+        if detection == False and self.stop == False:
             self.motors.sendV(20)
 
