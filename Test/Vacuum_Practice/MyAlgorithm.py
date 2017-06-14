@@ -18,7 +18,7 @@ class MyAlgorithm(threading.Thread):
         self.motors = motors
         self.laser = laser
         self.bumper = bumper
-        self.grid = np.empty([300,300],float)
+
         self.radiusInitial = 0.1
         self.constant = 0.01
         self.numCrash = 0
