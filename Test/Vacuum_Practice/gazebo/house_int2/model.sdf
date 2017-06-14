@@ -720,7 +720,7 @@
         <collision name='Wall_20_Collision_3'>
           <geometry>
             <box>
-              <size>2.102 0.2 0.3</size>
+              <size>2.102 0.2 0.7</size>
             </box>
           </geometry>
           <pose>-1.49735 0 0.35 0 -0 0</pose>
