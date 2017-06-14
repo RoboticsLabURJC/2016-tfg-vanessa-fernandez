@@ -132,9 +132,19 @@ class MyAlgorithm(threading.Thread):
                 cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
                 detection = True
                 print("Found signal")
-                #self.motors.sendV(0)
-                if bw >= 42 or bh >= 42:
-                    self.motors.sendV(0)
+                print(bw, bh)
+                if bw <= 10 or bh <= 10:
+                    self.motors.sendV(15)
+                elif (bw > 10 and bw <= 20) or (bh > 10 and bh <= 20):
+                    self.motors.sendV(12)
+                #if bw >= 40 or bh >= 40:
+                elif (bw > 20 and bw <= 30) or (bh > 20 and bh <= 30):
+                    self.motors.sendV(7)
+                elif (bw > 30 and bw <= 40) or (bh > 30 and bh <= 40):
+                    self.motors.sendV(5)
+                elif bw > 40 or bh > 40:
+                    self.motors.sendV(0) 
+                #    self.motors.sendV(0)
 
 
         if detection == False:
