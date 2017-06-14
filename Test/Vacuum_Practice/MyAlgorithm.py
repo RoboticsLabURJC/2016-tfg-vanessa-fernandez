@@ -82,10 +82,8 @@ class MyAlgorithm(threading.Thread):
         print ('Execute')
         # TODO
 
-        # Devuelve 1 si choca y 0 si no choca
-        # crash = self.bumper.getBumperData().state
-
         for i in range(0, 350):
+            # Devuelve 1 si choca y 0 si no choca
             crash = self.bumper.getBumperData().state
             if crash == 1:
                 self.motors.sendW(0)
@@ -97,7 +95,6 @@ class MyAlgorithm(threading.Thread):
 
         print(crash)
         self.yaw = self.pose3d.getYaw()
-        #print("yaw inicio", self.yaw)
         
         if self.numCrash == 0:
             self.motors.sendW(0.5)
@@ -110,11 +107,10 @@ class MyAlgorithm(threading.Thread):
                 time.sleep(1)
                 self.motors.sendV(-0.2)
                 time.sleep(1)
-                #numAngle = random.random() * pi/2
-                #numAngle = random.uniform(pi/4, pi)
+                
                 numAngle = random.uniform(pi/3, pi)
                 signo = random.randint(0, 1)
-                #print("angle random", numAngle)
+                
                 while self.turn == False:
                     poseNow = self.pose3d.getYaw()
                                             
@@ -130,15 +126,12 @@ class MyAlgorithm(threading.Thread):
                             poseNow = poseNow + 2*pi
                             
                     angle = abs(self.yaw - poseNow)
-                    #print("yaw angle", self.yaw, poseNow, signo)
-                    #print("angle random", numAngle)
-                    #print("giro hecho ",angle)
                     if angle <= (numAngle-0.2) or angle >= (numAngle+0.2):
+                        self.motors.sendV(0)
                         if signo == 1:
                             self.motors.sendW(0.2)
                         else:
                             self.motors.sendW(-0.2)
-                        self.motors.sendV(0)
                     else:
                         self.turn = True
             self.motors.sendW(0)
@@ -146,9 +139,3 @@ class MyAlgorithm(threading.Thread):
             self.turn = False
             self.motors.sendV(0.5)
 
-            
-
-        # www.sr.echu.es/sbweb/fisica/celeste/espiral/espiral.html
-        # proyectodescartes.org/descartescms/blog/itemlist/tag/espirales
-        # http://www2.famaf.unc.edu.ar/rev_edu/documents/vol_23/prop_11_La_espiral_de_Arquimedes.pdf
-        
