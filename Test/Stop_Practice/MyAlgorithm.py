@@ -12,8 +12,10 @@ time_cycle = 80
 
 class MyAlgorithm(threading.Thread):
 
-    def __init__(self, pose3d, camera, motors):
-        self.camera = camera
+    def __init__(self, pose3d, cameraL, cameraR, cameraC, motors):
+        self.cameraL = cameraL
+        self.cameraR = cameraR
+        self.cameraC = cameraC
         self.pose3d = pose3d
         self.motors = motors
 
@@ -74,7 +76,7 @@ class MyAlgorithm(threading.Thread):
         print ('execute')
        
         # GETTING THE IMAGES
-        input_image = self.camera.getImage()
+        input_image = self.cameraC.getImage()
 
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
         #self.motors.setV(10)
