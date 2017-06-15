@@ -85,7 +85,7 @@ class mapaWidget(QWidget):
         return RT
 
     def RTVacuum(self):
-        RTy = self.RTy(pi, 1, -1, 0)
+        RTy = self.RTy(pi, 0.6, -1, 0)
         return RTy
 
 
@@ -226,7 +226,7 @@ class tiempoDigitalWidget(QWidget):
     def __init__(self,winParent):    
         super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 900
+        self.seconds = 2700
         self.pose3d = pose3d
         self.show = False
 
@@ -303,7 +303,7 @@ class tiempoAnalogWidget(QWidget):
         self.rectangle = QRectF(0.0, 0.0, 300.0, 300.0)
         self.angle = -pi/2
         self.angleMinutes = -pi/2
-        self.seconds = 900
+        self.seconds = 2700
         self.contador = 0
         self.minutes = 0
 
