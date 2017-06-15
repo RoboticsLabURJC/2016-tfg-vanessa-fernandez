@@ -82,7 +82,7 @@ class MapWidget(QWidget):
         return RT
 
     def RTVacuum(self):
-        RTy = self.RTy(pi, 1, -1, 0)
+        RTy = self.RTy(pi, 0.6, -1, 0)
         return RTy
 
 
