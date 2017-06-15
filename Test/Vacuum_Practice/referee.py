@@ -96,7 +96,7 @@ class mapaWidget(QWidget):
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
         brush.setColor(QtGui.QColor(Qt.blue))
         painter.setBrush(brush)
-        painter.drawEllipse(centerX, centerY, 50/4, 50/4)
+        painter.drawEllipse(centerX, centerY, 50/3, 50/3)
 
 
     def drawTrail(self, painter):
@@ -226,7 +226,7 @@ class tiempoDigitalWidget(QWidget):
     def __init__(self,winParent):    
         super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 130
+        self.seconds = 900
         self.pose3d = pose3d
         self.show = False
 
@@ -303,7 +303,7 @@ class tiempoAnalogWidget(QWidget):
         self.rectangle = QRectF(0.0, 0.0, 300.0, 300.0)
         self.angle = -pi/2
         self.angleMinutes = -pi/2
-        self.seconds = 130
+        self.seconds = 900
         self.contador = 0
         self.minutes = 0
 
