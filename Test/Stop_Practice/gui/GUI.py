@@ -54,12 +54,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setPose3D(self,pose3d):
         self.pose3d=pose3d
         
-    def getCamera(self):
-        return self.camera
+    def getCameraC(self):
+        return self.cameraC
 
-    def setCamera(self,camera):
-        self.camera=camera
-    '''
+    def setCameraC(self,camera):
+        self.cameraC=camera
+    
     def getCameraL(self):
         return self.cameraL
 
@@ -71,7 +71,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def setCameraR(self,camera):
         self.cameraR=camera
-    '''
     
     def getMotors(self):
         return self.motors
