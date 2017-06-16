@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version='1.4'>
   <model name='house_int2'>
-    <!--<model name='mesa_comedor'>
+    <model name='mesa_comedor'>
       <static>true</static>
       <link name='mesa_link'>
         <pose>0 0 0 0 -0 0</pose>
@@ -262,7 +262,7 @@
       </link>
       <pose>-2.4 0 0 0 -0 1.57</pose>
       <static>0</static>
-    </model>-->
+    </model>
 
     
     <model name='RoCKIn@Home'>
@@ -1520,7 +1520,7 @@
       <static>1</static>
       <pose>5.4 -3.6 0 0 -0 1.57</pose>
     </model>
-    <!--<model name='silla_1'>
+    <model name='silla_1'>
       <static>true</static>
       <link name='silla_link'>
         <pose>0 0 0 0 -0 0</pose>
@@ -2768,7 +2768,7 @@
       <pose>-2.7 0.4 0 0 -0 3.14</pose>
       <static>0</static>
     </model>-->
-    <!--<model name='mesa_salon'>
+    <model name='mesa_salon'>
       <static>true</static>
       <link name='mesa_link'>
         <pose>0 0 0 0 -0 0</pose>
@@ -3029,7 +3029,7 @@
       </link>
       <pose>-0.8 4.4 0 0 -0 0</pose>
       <static>0</static>
-    </model>-->
+    </model>
     <model name='sofa_x2_salon'>
       <static>true</static>
       <link name='sofa_link'>
