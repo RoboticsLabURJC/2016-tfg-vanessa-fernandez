@@ -112,20 +112,20 @@ class MyAlgorithm(threading.Thread):
                 signo = random.randint(0, 1)
                 
                 while self.turn == False:
-                    poseNow = self.pose3d.getYaw()
+                    yawNow = self.pose3d.getYaw()
                                             
                     if self.yaw == 2*pi:
                         self.yaw = 0
-                    if poseNow == 2*pi:
-                        poseNow = 0
+                    if yawNow == 2*pi:
+                        yawNow = 0
                     
-                    if (-pi < self.yaw < -pi/2) or (-pi < poseNow < -pi/2):
-                        if (-pi < self.yaw < -pi/2) and ((pi/2 <= poseNow <= pi) or (0 <= poseNow <= pi/2)) :
+                    if (-pi < self.yaw < -pi/2) or (-pi < yawNow < -pi/2):
+                        if (-pi < self.yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
                             self.yaw = self.yaw + 2*pi
-                        elif (-pi < poseNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
-                            poseNow = poseNow + 2*pi
+                        elif (-pi < yawNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
+                            yawNow = yawNow + 2*pi
                             
-                    angle = abs(self.yaw - poseNow)
+                    angle = abs(self.yaw - yawNow)
                     if angle <= (numAngle-0.2) or angle >= (numAngle+0.2):
                         self.motors.sendV(0)
                         if signo == 1:
