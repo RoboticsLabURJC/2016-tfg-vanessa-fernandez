@@ -109,44 +109,44 @@ class MyAlgorithm2(threading.Thread):
             time.sleep(1)
             
             while turn == False:
-                poseNow = self.pose3d.getYaw()
-                angle = abs(yaw - poseNow)
-                #if angle <= (pi/2-0.06) or angle >= (pi/2+0.06):
-                if angle <= (pi-0.03) or angle >= (pi+0.03):
+                yawNow = self.pose3d.getYaw()
+                print(yaw, yawNow)
+                angle = abs(yaw - yawNow)
+                if angle <= (pi/2-0.03) or angle >= (pi/2+0.03):
                     self.motors.sendV(0)
                     if self.numCrash % 2 != 0:
                         self.motors.sendW(0.2)
                     else:
                         self.motors.sendW(-0.2)
                 else:
-                    #self.motors.sendW(0)
-                    #time.sleep(2)
-                    #self.motors.sendV(0.15)
-                    #time.sleep(1)
-                    #yaw = self.pose3d.getYaw()
-                    #while turn == False:
-                    #    poseNow = self.pose3d.getYaw()
+                    self.motors.sendW(0)
+                    time.sleep(2)
+                    self.motors.sendV(0.35)
+                    time.sleep(1)
+                    yaw = self.pose3d.getYaw()
+                    while turn == False:
+                        yawNow = self.pose3d.getYaw()
                         
-                    #    if (-pi < yaw < -pi/2) or (-pi < poseNow < -pi/2):
-                    #        if (-pi < yaw < -pi/2) and ((pi/2 <= poseNow <= pi) or (0 <= poseNow <= pi/2)) :
-                    #            yaw = yaw + 2*pi
-                    #        elif (-pi < poseNow < -pi/2) and ((pi/2 <= yaw <= pi) or (0 <= yaw <= pi/2)):
-                    #            poseNow = poseNow + 2*pi
-                    #    
-                    #    angle = abs(yaw - poseNow)
-                    #    if angle <= (pi/2-0.15) or angle >= (pi/2+0.15):
-                    #        self.motors.sendV(0)
-                    #        if self.numCrash % 2 != 0:
-                    #            self.motors.sendW(0.2)
-                    #        else:
-                    #            self.motors.sendW(-0.2)
-                    #    else:
-                    #        turn = True
-                    turn = True
+                        if (-pi < yaw < -pi/2) or (-pi < yawNow < -pi/2):
+                            if (-pi < yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
+                                yaw = yaw + 2*pi
+                            elif (-pi < yawNow < -pi/2) and ((pi/2 <= yaw <= pi) or (0 <= yaw <= pi/2)):
+                                yawNow = yawNow + 2*pi
+                        
+                        angle = abs(yaw - yawNow)
+                        if angle <= (pi/2-0.15) or angle >= (pi/2+0.15):
+                            self.motors.sendV(0)
+                            if self.numCrash % 2 != 0:
+                                self.motors.sendW(0.2)
+                            else:
+                                self.motors.sendW(-0.2)
+                        else:
+                            turn = True
+                    #turn = True
         else:
-            #self.motors.sendW(0.0)
-            #time.sleep(1)
-            self.motors.sendW(0.001)
+            self.motors.sendW(0.0)
+            time.sleep(1)
+            #self.motors.sendW(0.001)
             self.motors.sendV(0.5)
         
         
