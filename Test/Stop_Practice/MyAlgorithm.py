@@ -19,11 +19,15 @@ class MyAlgorithm(threading.Thread):
         self.pose3d = pose3d
         self.motors = motors
 
-        #self.imageRight=None
-        self.image=None
+        self.imageC = None
+        self.imageL = None
+        self.imageR = None
+        
+        self.detection = False
+        self.stop = False
+        
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
-        self.stop = False
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -89,19 +93,19 @@ class MyAlgorithm(threading.Thread):
         value_min_HSV = np.array([131, 71, 0])
         value_max_HSV = np.array([179, 232, 63])
 
-        # Filtering image
+        # Segmentation
         image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-        cv2.imshow("filtered", image_filtered)
+        #cv2.imshow("filtered", image_filtered)
 
         # Close, morphology element
         kernel = np.ones((11,11), np.uint8)
         image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
-        cv2.imshow('cierre', image_filtered)
+        #cv2.imshow('cierre', image_filtered)
 
         # Template's size
         h, w = self.template.shape
 
-        detection = False
+        #detection = False
             
         # Detection of object contour
         img2, contours, hierarchy = cv2.findContours(image_filtered, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -109,46 +113,60 @@ class MyAlgorithm(threading.Thread):
             # Approximates a polygonal curve(s) with the specified precision.
             cnt = cv2.approxPolyDP(contours[0], 3, True)
             
-            # It is a straight rectangle, it doesn't consider the rotation of the object. So area of the bounding rectangle won't be minimum.
+            # It's a straight rectangle, it doesn't consider the rotation of the object. So area of the bounding rectangle won't be minimum.
             # Let (x,y) be the top-left coordinate of the rectangle and (w,h) be its width and height. 
             x, y, bw, bh = cv2.boundingRect(cnt)
             
             # Draw the box
             img_rect = cv2.rectangle(image_filtered, (x, y), (x+bw,y+bh), (0,0,0) ,0)
-            # Cut an image
+            # Cut an image (the signal)
             img_bounding = img_rect[(y-4):(y+bh+4), (x-4):(x+bw+4)]
             
             if img_bounding != []:
                 # Resize an image
                 img_res = cv2.resize(img_bounding, (w, h), interpolation=cv2.INTER_CUBIC)
-
+                            
                 # Matching with template image
                 # match: grayscale image, where each pixel denotes how much does the neighbourhood of that pixel math with template
                 match = cv2.matchTemplate(img_res,self.template,cv2.TM_CCOEFF_NORMED)
-                cv2.imshow("matching", match)
+                #cv2.imshow("matching", match)
                 threshold = 0.3
                 loc = np.where(match >= threshold)
-                
                 # zip: This function returns a list of tuples, where the i-th tuple contains the i-th element from each of the argument sequences or iterables.
                 for pt in zip(*loc[::-1]):
                     cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
-                    detection = True
+                    self.detection = True
                     print("Found signal")
                     
+                if self.detection == True:
+                    print('bw:       ', bw)
+                    print('bh:       ', bh)  
+                    
                     if self.stop == False:
-                        if bw <= 10 or bh <= 10:
+                        if bw >= 10 and bw < 30:
+                            self.motors.sendV(50)
+                            print('VELOCIDAD:     50')
+                        elif bw >= 30 and bw < 45:
+                            self.motors.sendV(30)
+                            print('VELOCIDAD:     30')
+                        elif bw >= 45 and bw < 65:
                             self.motors.sendV(15)
-                        elif (bw > 10 and bw <= 20) or (bh > 10 and bh <= 20):
-                            self.motors.sendV(12)
-                        elif (bw > 20 and bw <= 30) or (bh > 20 and bh <= 30):
-                            self.motors.sendV(7)
-                        elif (bw > 30 and bw <= 40) or (bh > 30 and bh <= 40):
-                            self.motors.sendV(5)
-                        elif bw > 40 or bh > 40:
-                            self.motors.sendV(0)
+                            print('VELOCIDAD:     15')
+                        elif bw >= 65:
                             self.stop = True
-
-
-        if detection == False and self.stop == False:
-            self.motors.sendV(20)
-
+                            self.motors.sendV(0)
+                            print('VELOCIDAD:     0')
+                        else:
+                            self.motors.sendV(70)
+                            print('VELOCIDAD:     70')
+                    else:       
+                        self.motors.sendV(0)
+                        print('VELOCIDAD:     0')
+                    
+                else:
+                    self.motors.sendV(70)
+                    print('VELOCIDAD:     70')
+          
+        print('DETECTION:            ', self.detection)
+        print('STOP:            ', self.stop)
+        
