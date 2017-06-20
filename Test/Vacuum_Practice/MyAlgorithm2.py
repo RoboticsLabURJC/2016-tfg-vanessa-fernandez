@@ -110,7 +110,6 @@ class MyAlgorithm2(threading.Thread):
             
             while turn == False:
                 yawNow = self.pose3d.getYaw()
-                print(yaw, yawNow)
                 angle = abs(yaw - yawNow)
                 if angle <= (pi/2-0.03) or angle >= (pi/2+0.03):
                     self.motors.sendV(0)
