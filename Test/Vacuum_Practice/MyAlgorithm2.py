@@ -111,26 +111,26 @@ class MyAlgorithm2(threading.Thread):
             while turn == False:
                 yawNow = self.pose3d.getYaw()
 
-                if self.numCrash % 2 != 0 and (yawNow <= (pi/2-0.05) or yawNow >= (pi/2+0.05)):
+                if self.numCrash % 2 != 0 and (yawNow <= (pi/2-0.03) or yawNow >= (pi/2+0.03)):
                     self.motors.sendV(0)
                     self.motors.sendW(0.2)
-                elif self.numCrash % 2 == 0 and (yawNow <= (pi/2-0.05) or yawNow >= (pi/2+0.05)):
+                elif self.numCrash % 2 == 0 and (yawNow <= (pi/2-0.03) or yawNow >= (pi/2+0.03)):
                     self.motors.sendV(0)
                     self.motors.sendW(-0.2)
                     
                 else:
                     self.motors.sendW(0)
                     time.sleep(2)
-                    self.motors.sendV(0.45)
+                    self.motors.sendV(0.5)
                     time.sleep(1)
                     yaw = self.pose3d.getYaw()
                     while turn == False:
                         yawNow = self.pose3d.getYaw()
                         
-                        if self.numCrash % 2 != 0 and (yawNow <= (pi-0.05) or yawNow >= (pi+0.05)):
+                        if self.numCrash % 2 != 0 and (yawNow <= (pi-0.03) or yawNow >= (pi+0.03)):
                             self.motors.sendV(0)
                             self.motors.sendW(0.2)
-                        elif self.numCrash % 2 == 0 and (yawNow <= (-0.05) or yawNow >= (+0.05)):
+                        elif self.numCrash % 2 == 0 and (yawNow <= (-0.03) or yawNow >= (+0.03)):
                             self.motors.sendV(0)
                             self.motors.sendW(-0.2)
                         else:
