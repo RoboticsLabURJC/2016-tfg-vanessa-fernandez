@@ -74,6 +74,19 @@ class MyAlgorithm2(threading.Thread):
 
     def kill (self):
         self.kill_event.set()
+        
+    def turn90(self, angle1, angle2, yawNow):
+        turn = True
+        if self.numCrash % 2 != 0 and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
+            self.motors.sendV(0)
+            self.motors.sendW(0.2)
+        elif self.numCrash % 2 == 0 and (yawNow <= (angle2-0.115) or yawNow >= (angle2+0.115)):
+            self.motors.sendV(0)
+            self.motors.sendW(-0.2)
+        else:
+            turn = False
+        return turn
+        
 
     def execute(self):
 
@@ -109,31 +122,20 @@ class MyAlgorithm2(threading.Thread):
             time.sleep(1)
             
             while turn == False:
-                yawNow = self.pose3d.getYaw()
-
-                if self.numCrash % 2 != 0 and (yawNow <= (pi/2-0.115) or yawNow >= (pi/2+0.115)):
-                    self.motors.sendV(0)
-                    self.motors.sendW(0.2)
-                elif self.numCrash % 2 == 0 and (yawNow <= (pi/2-0.115) or yawNow >= (pi/2+0.115)):
-                    self.motors.sendV(0)
-                    self.motors.sendW(-0.2)
-                    
-                else:
+                yawNow = self.pose3d.getYaw()                    
+                giro = self.turn90(pi/2, pi/2, yawNow)
+                
+                if giro == False:
                     self.motors.sendW(0)
                     time.sleep(2)
                     self.motors.sendV(0.38)
                     time.sleep(1)
                     yaw = self.pose3d.getYaw()
+                    
                     while turn == False:
                         yawNow = self.pose3d.getYaw()
-                        
-                        if self.numCrash % 2 != 0 and (yawNow <= (pi-0.115) or yawNow >= (pi+0.115)):
-                            self.motors.sendV(0)
-                            self.motors.sendW(0.2)
-                        elif self.numCrash % 2 == 0 and (yawNow <= (-0.115) or yawNow >= (+0.115)):
-                            self.motors.sendV(0)
-                            self.motors.sendW(-0.2)
-                        else:
+                        giro = self.turn90(pi, 0, yawNow)
+                        if giro == False:
                             turn = True
         else:
             self.motors.sendW(0.0)
