@@ -95,7 +95,7 @@ class MyAlgorithm2(threading.Thread):
         # Map is self.map
         #cv2.imshow('map',self.map)
         
-        # Pose's vacuum
+        # Vacuum's poses
         x = self.pose3d.getX()
         y = self.pose3d.getY()
         yaw = self.pose3d.getYaw()
@@ -128,7 +128,7 @@ class MyAlgorithm2(threading.Thread):
                 if giro == False:
                     self.motors.sendW(0)
                     time.sleep(2)
-                    self.motors.sendV(0.38)
+                    self.motors.sendV(0.32)
                     time.sleep(1)
                     yaw = self.pose3d.getYaw()
                     
