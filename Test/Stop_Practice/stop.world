@@ -13,12 +13,6 @@
     </include>
     
     
-    <!-- Ground -->
-    <include>
-      <uri>model://ground_plane</uri>
-    </include>
-    
-    
     <!-- Stop signs -->
     <include>
       <static>true</static>
@@ -139,17 +133,10 @@
     
     
     <!-- Roads -->
-    <road name="my_road_1">
-      <width>6</width>
-      <point>0 -50 0.02</point>
-      <point>0 50 0.02</point>
-    </road>
-    
-    <road name="my_road_2">
-      <width>6</width>
-      <point>-50 0 0.02</point>
-      <point>50 0 0.02</point>
-    </road>
+    <include>
+      <uri>model://stopW</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
     
   </world>
 </sdf>
