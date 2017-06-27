@@ -174,7 +174,7 @@ class MyAlgorithm(threading.Thread):
         if self.detection == True and self.stop == True:
             # Center image
             img_detection = self.cameraC.getImage()
-            # RGB model change to HSV
+            # RGB model change to GRAY
             img_gray = cv2.cvtColor(img_detection, cv2.COLOR_RGB2GRAY)
             # Segmentation
             img_filtered = cv2.inRange(img_gray, 166, 167)
@@ -185,3 +185,15 @@ class MyAlgorithm(threading.Thread):
             rows = img_gray.shape[0]
             columns = img_gray.shape[1]
             print columns, rows
+            
+            
+            # RGB model change to HSV
+            hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
+
+            # Values
+            value_min_HSV = np.array([0, 0, 165])
+            value_max_HSV = np.array([2, 2, 168])
+
+            # Segmentation
+            image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
+            cv2.imshow("filtered", image_filtered)
