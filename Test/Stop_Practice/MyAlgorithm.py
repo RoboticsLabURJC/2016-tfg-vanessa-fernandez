@@ -161,7 +161,7 @@ class MyAlgorithm(threading.Thread):
                             print('VELOCIDAD:     70')
                     else:       
                         self.motors.sendV(0)
-                        print('VELOCIDAD:     0')
+                        print('VELOCIDAD:     0')                        
                     
                 else:
                     self.motors.sendV(70)
@@ -170,3 +170,18 @@ class MyAlgorithm(threading.Thread):
         print('DETECTION:            ', self.detection)
         print('STOP:            ', self.stop)
         
+        
+        if self.detection == True and self.stop == True:
+            # Center image
+            img_detection = self.cameraC.getImage()
+            # RGB model change to HSV
+            img_gray = cv2.cvtColor(img_detection, cv2.COLOR_RGB2GRAY)
+            # Segmentation
+            img_filtered = cv2.inRange(img_gray, 166, 167)
+            cv2.imshow('img', img_filtered)
+            
+            # Colums and rows
+            # Shape gives us the number of rows and columns of an image
+            rows = img_gray.shape[0]
+            columns = img_gray.shape[1]
+            print columns, rows
