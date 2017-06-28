@@ -316,50 +316,61 @@ class MyAlgorithm(threading.Thread):
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
 
-        if (abs(posRobotX)<(abs(destWorld[0])+3) and abs(posRobotX)>(abs(destWorld[0])-3)) and (abs(posRobotY)<(abs(destWorld[1])+3) and abs(posRobotY)>(abs(destWorld[1])-3)):
+        if (abs(posRobotX)<(abs(destWorld[0])+5) and abs(posRobotX)>(abs(destWorld[0])-5)) and (abs(posRobotY)<(abs(destWorld[1])+5) and abs(posRobotY)>(abs(destWorld[1])-5)):
             self.vel.setV(0)
             self.vel.setW(0)
             print("DESTINATION")
         else:
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
-            self.grid.settpoint(targetImage[0], targetImage[1])
             
             print("TARGET", target)
-            
-            # Interpolacion
-            #targetx = (target[0] + destWorld[0])/2
-            #targety = (target[1] + destWorld[1])/2
 
             # Convert target[0] y target[1] to relative coordinates
             directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
 
             print("direction", directionx, directiony)
-            angle = math.atan((directionx/directiony))
+            #angle = math.atan((directionx/directiony))
+            if directionx == 0:
+                directionx = 0.01
+            angle = math.atan((directiony/directionx))
             print("angle",angle)
 
             # Correct position
-            if directiony > 0:
-                self.vel.setW(angle*24.5)
+           # if directiony > 0:
+                #self.vel.setW(angle*24.5)
+           #     self.vel.setW(angle)
+           # elif abs(angle) >= 0.7:
+            if directionx < 0 and directiony > 0:
+                self.vel.setW(-angle)
+            elif abs(angle) >= 0.9:
+                self.vel.setW(5.5*angle)
             elif abs(angle) >= 0.7:
-                self.vel.setW(-angle*120)
+                #self.vel.setW(-angle*120)
+                #self.vel.setW(-angle*300)
+                self.vel.setW(1.5*angle)
             elif abs(angle) > 0.5 and abs(angle) <=  0.7:
-                self.vel.setW(-angle*82.5)
+                #self.vel.setW(-angle*82.5)
+                #self.vel.setW(-angle*182.5)
+                self.vel.setW(angle)
             else:
-                self.vel.setW(-angle*51.5)
+                #self.vel.setW(-angle*51.5)
+                #self.vel.setW(-angle*81.5)
+                self.vel.setW(angle)
 
             if abs(angle) >= 0.65:
                 speed = 0.03
             elif abs(angle) > 0.5 and abs(angle) <= 0.65:
                 speed = 1
             elif abs(angle) > 0.2 and abs(angle) <= 0.5:
-                speed = 2
+                speed = 1.5
             else:
-                speed = 100
+                #speed = 100
+                speed = 20
 
 
-            if directiony > 0:
-                speed = 0
+            #if directiony > 0:
+            #    speed = 0
       
             print('speed', speed)
             self.vel.setV(speed)
