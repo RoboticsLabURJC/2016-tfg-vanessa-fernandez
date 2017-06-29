@@ -325,9 +325,18 @@ class MyAlgorithm(threading.Thread):
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
             
             print("TARGET", target)
-
+            
+            #targetNextImage = self.getTargetWorld(targetImage)
+            #targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
+            #print("TARGET NEXT", targetNext)
+            
+            # Interpolation
+            #targetx = (target[0] + targetNext[0]) / 2
+            #targety = (target[1] + targetNext[1]) / 2
+            
             # Convert target[0] y target[1] to relative coordinates
             directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
+            #directionx,directiony = self.absolutas2relativas(targetx,targety,posRobotX,posRobotY,orientationRobot)
 
             print("direction", directionx, directiony)
             #angle = math.atan((directionx/directiony))
@@ -341,9 +350,13 @@ class MyAlgorithm(threading.Thread):
                 #self.vel.setW(angle*24.5)
            #     self.vel.setW(angle)
            # elif abs(angle) >= 0.7:
+           
+           
             if directionx < 0 and directiony > 0:
-                self.vel.setW(-angle)
-            elif abs(angle) >= 0.9:
+                #self.vel.setW(-angle)
+                angle = -angle
+            #elif abs(angle) >= 0.9:
+            if abs(angle) >= 0.9:
                 self.vel.setW(5.5*angle)
             elif abs(angle) >= 0.7:
                 #self.vel.setW(-angle*120)
