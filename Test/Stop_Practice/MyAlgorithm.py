@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 import jderobot
 import math
+from math import pi as pi
 import cv2
 
 from matplotlib import pyplot as plt
@@ -37,7 +38,6 @@ class MyAlgorithm(threading.Thread):
 
     def setImageFiltered(self, image):
         self.lock.acquire()
-        #self.imageRight=image
         self.lock.release()
 
     def getImageFiltered(self):
@@ -172,6 +172,25 @@ class MyAlgorithm(threading.Thread):
         
         
         if self.detection == True and self.stop == True:
+            
+            yaw = self.pose3d.getYaw() * 180/pi
+            # Speed
+            v = 30
+            
+            # Gira 90 grados
+            while yaw < -90 :
+                self.motors.sendV(v)              
+                self.motors.sendW(3.5)
+                yaw = self.pose3d.getYaw() * 180/pi
+            self.motors.sendW(0)
+            
+            # Acelera recto
+            while v < 70:  
+                v += 5
+                self.motors.sendV(v)  
+        
+        
+        '''
             # Center image
             img_detection = self.cameraC.getImage()
             # RGB model change to GRAY
@@ -197,3 +216,5 @@ class MyAlgorithm(threading.Thread):
             # Segmentation
             image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
             cv2.imshow("filtered", image_filtered)
+            
+        '''
