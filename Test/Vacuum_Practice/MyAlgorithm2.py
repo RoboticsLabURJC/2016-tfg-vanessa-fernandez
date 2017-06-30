@@ -80,6 +80,17 @@ class MyAlgorithm2(threading.Thread):
     def kill (self):
         self.kill_event.set()
         
+        
+    def checkCrash(self):
+        for i in range(0, 350):
+            # Returns 1 if it collides, and 0 if it doesn't collide
+            crash = self.bumper.getBumperData().state
+            if crash == 1:
+                self.motors.sendW(0)
+                self.motors.sendV(0)
+                break
+        return crash
+        
 #    def turn90(self, angle1, angle2, yawNow):
 #        turn = True
 #        if self.numCrash % 2 != 0 and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
@@ -93,16 +104,13 @@ class MyAlgorithm2(threading.Thread):
 #        return turn
 
     def turn90(self, angle1, angle2, yawNow):
-        print self.yaw
         turn = True
-        if (-0.2 <= self.yaw <= 0.2 or (-pi/2-0.2) <= self.yaw <= (-pi/2+0.2)) and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
+        if (-0.4 <= self.yaw <= 0.4 or (-pi/2-0.4) <= self.yaw <= (-pi/2+0.4)) and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
             self.motors.sendV(0)
             self.motors.sendW(0.2)
-            print "POSITIVO"
-        elif ((pi/2-0.2) <= self.yaw <= (pi/2+0.2) or (-pi+0.2) >= self.yaw or self.yaw >= (pi - 0.2)) and (yawNow <= (angle2-0.115) or yawNow >= (angle2+0.115)):
+        elif ((pi/2-0.4) <= self.yaw <= (pi/2+0.4) or (-pi+0.4) >= self.yaw or self.yaw >= (pi - 0.4)) and (yawNow <= (angle2-0.115) or yawNow >= (angle2+0.115)):
             self.motors.sendV(0)
             self.motors.sendW(-0.2)
-            print "NEGATIVOO"
         else:
             turn = False
         return turn
@@ -120,17 +128,18 @@ class MyAlgorithm2(threading.Thread):
         y = self.pose3d.getY()
         yaw = self.pose3d.getYaw()
         
-        for i in range(0, 350):
-            # Returns 1 if it collides, and 0 if it doesn't collide
-            crash = self.bumper.getBumperData().state
-            if crash == 1:
-                self.motors.sendW(0)
-                self.motors.sendV(0)
-                break
-                
-        print(crash)
+        #for i in range(0, 350):
+        #    # Returns 1 if it collides, and 0 if it doesn't collide
+        #    crash = self.bumper.getBumperData().state
+        #    if crash == 1:
+        #        self.motors.sendW(0)
+        #        self.motors.sendV(0)
+        #        break
         
-        print crash, self.turn, self.crash, self.turnFound
+        # Check crash
+        crash = self.checkCrash()
+        
+        print (crash)
         
         if crash == 1:
             print "CRAAASH"
@@ -164,6 +173,22 @@ class MyAlgorithm2(threading.Thread):
                 self.motors.sendW(0)
                 time.sleep(2)
                 self.motors.sendV(0.32)
+                
+                # Check crash
+                newCrash = self.checkCrash()
+                if newCrash == 1:
+                    self.motors.sendW(0)
+                    self.motors.sendV(0)
+                    time.sleep(1)
+                    self.motors.sendV(-0.1)
+                    if self.horizontal == True:
+                        # No se puede avanzar en horizontal
+                        self.horizontal = False
+                        print "choque horizontal"
+                    else:
+                        self.horizontal = True
+                        print "choque vertical"
+                                        
                 time.sleep(1)
                 self.turnFound = False
                 
@@ -188,6 +213,8 @@ class MyAlgorithm2(threading.Thread):
             self.motors.sendV(0.5)
             self.crash = False
             self.turn == True
+            
+            
 
 
 '''
