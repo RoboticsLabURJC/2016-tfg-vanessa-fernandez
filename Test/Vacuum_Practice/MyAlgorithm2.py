@@ -161,10 +161,7 @@ class MyAlgorithm2(threading.Thread):
             # Yaw
             yawNow = self.pose3d.getYaw()
             # Turn 90
-            if self.horizontal == True:
-                giro = self.turn90(pi/2, pi/2, yawNow)
-            else:
-                giro = self.turn90(pi/2, pi/2, yawNow)
+            giro = self.turn90(pi/2, pi/2, yawNow)
                 
             if giro == False:
                 print "GIRO HECHO"
@@ -172,23 +169,7 @@ class MyAlgorithm2(threading.Thread):
                 # Go backwards
                 self.motors.sendW(0)
                 time.sleep(2)
-                self.motors.sendV(0.32)
-                
-                # Check crash
-                newCrash = self.checkCrash()
-                if newCrash == 1:
-                    self.motors.sendW(0)
-                    self.motors.sendV(0)
-                    time.sleep(1)
-                    self.motors.sendV(-0.1)
-                    if self.horizontal == True:
-                        # No se puede avanzar en horizontal
-                        self.horizontal = False
-                        print "choque horizontal"
-                    else:
-                        self.horizontal = True
-                        print "choque vertical"
-                                        
+                self.motors.sendV(0.32)                                        
                 time.sleep(1)
                 self.turnFound = False
                 
@@ -197,10 +178,7 @@ class MyAlgorithm2(threading.Thread):
             print "SEGUNDO GIRO"
             # Yaw
             yawNow = self.pose3d.getYaw()
-            if self.horizontal == True:
-                giro = self.turn90(pi, 0, yawNow)
-            else:
-                giro = self.turn90(-pi/2, pi/2, yawNow)
+            giro = self.turn90(pi, 0, yawNow)
             
             if giro == False:
                 self.turnFound = True
