@@ -69,9 +69,15 @@ class MyAlgorithm2(threading.Thread):
         scale = 50
 
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
-        #cv2.rectangle(self.grid, (int(final_poses.flat[0]),int(final_poses.flat[1])), (int(final_poses.flat[0]) + 10, int(final_poses.flat[1]) + 10), (0,0,0), 2)
         self.grid[int(final_poses.flat[0])][int(final_poses.flat[1])] = 0
         print final_poses.flat[0], final_poses.flat[1]
+        numX = int(final_poses.flat[0] / scale)
+        numY = int(final_poses.flat[1] / scale)
+        
+        for i in range((numX * scale), (numX*scale + scale)):
+            for j in range((numY * scale), (numY*scale + scale)):
+                self.grid[j][i] = self.grid[j][i] + 10.0
+        
         
     def showGrid(self):
 		maxVal = np.amax(self.grid)
