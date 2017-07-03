@@ -193,14 +193,14 @@ class MyAlgorithm(threading.Thread):
             hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
             
             # Values
-            value_min_HSV = np.array([0, 0, 0])
-            value_max_HSV = np.array([30, 80, 170])
+            value_min_HSV = np.array([0, 5, 0])
+            value_max_HSV = np.array([10, 20, 60])
 
             # Segmentation
             image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
             cv2.imshow("filtered no kernel", image_filtered)
             # Close, morphology element
-            kernel = np.ones((11,11), np.uint8)
+            kernel = np.ones((18,18), np.uint8)
             image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
             
             cv2.imshow("filtered", image_filtered)
