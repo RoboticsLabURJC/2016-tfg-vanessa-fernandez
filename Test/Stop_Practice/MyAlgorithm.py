@@ -184,37 +184,38 @@ class MyAlgorithm(threading.Thread):
                 yaw = self.pose3d.getYaw() * 180/pi
             self.motors.sendW(0)
             
+            
+                    
+            # Center image
+            img_detection = self.cameraC.getImage()
+            
+            # RGB model change to HSV
+            hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
+            
+            # Values
+            value_min_HSV = np.array([0, 0, 0])
+            value_max_HSV = np.array([30, 80, 170])
+
+            # Segmentation
+            image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
+            cv2.imshow("filtered no kernel", image_filtered)
+            # Close, morphology element
+            kernel = np.ones((11,11), np.uint8)
+            image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
+            
+            cv2.imshow("filtered", image_filtered)
+            
+            # Colums and rows
+            # Shape gives us the number of rows and columns of an image
+            rows = img_detection.shape[0]
+            columns = img_detection.shape[1]
+            print columns, rows
+            
+            
+            
             # Acelera recto
             while v < 70:  
                 v += 5
                 self.motors.sendV(v)  
         
         
-        '''
-            # Center image
-            img_detection = self.cameraC.getImage()
-            # RGB model change to GRAY
-            img_gray = cv2.cvtColor(img_detection, cv2.COLOR_RGB2GRAY)
-            # Segmentation
-            img_filtered = cv2.inRange(img_gray, 166, 167)
-            cv2.imshow('img', img_filtered)
-            
-            # Colums and rows
-            # Shape gives us the number of rows and columns of an image
-            rows = img_gray.shape[0]
-            columns = img_gray.shape[1]
-            print columns, rows
-            
-            
-            # RGB model change to HSV
-            hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
-
-            # Values
-            value_min_HSV = np.array([0, 0, 165])
-            value_max_HSV = np.array([2, 2, 168])
-
-            # Segmentation
-            image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-            cv2.imshow("filtered", image_filtered)
-            
-        '''
