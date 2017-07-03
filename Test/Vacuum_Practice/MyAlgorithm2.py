@@ -22,6 +22,8 @@ class MyAlgorithm2(threading.Thread):
         self.map = cv2.imread("resources/images/mapgrannyannie.png", cv2.IMREAD_GRAYSCALE)
         self.map = cv2.resize(self.map, (500, 500))
         
+        self.grid = np.ones([500, 500], float)
+        
         #self.numCrash = 0
         self.yaw = 0
         self.turn = False
@@ -51,6 +53,34 @@ class MyAlgorithm2(threading.Thread):
             v = (x, y)
             laser_vectorized += [v]
         return laser_vectorized
+        
+        
+    def RTy(self, angle, tx, ty, tz):
+        RT = np.matrix([[math.cos(angle), 0, math.sin(angle), tx], [0, 1, 0, ty], [-math.sin(angle), 0, math.cos(angle), tz], [0,0,0,1]])
+        return RT
+
+    def RTVacuum(self):
+        RTy = self.RTy(pi, 5.6, 4, 0)
+        return RTy
+        
+    def changeValuesGrid(self):
+        x = self.pose3d.getX()
+        y = self.pose3d.getY()
+        scale = 50
+
+        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
+        #cv2.rectangle(self.grid, (int(final_poses.flat[0]),int(final_poses.flat[1])), (int(final_poses.flat[0]) + 10, int(final_poses.flat[1]) + 10), (0,0,0), 2)
+        self.grid[int(final_poses.flat[0])][int(final_poses.flat[1])] = 0
+        print final_poses.flat[0], final_poses.flat[1]
+        
+    def showGrid(self):
+		maxVal = np.amax(self.grid)
+		if maxVal != 0:
+			nCopy = np.dot(self.grid, (1/maxVal))
+		else:
+			 nCopy = self.grid
+		cv2.imshow("Grid ", nCopy)
+		
 
     def run (self):
         while (not self.kill_event.is_set()):
@@ -91,17 +121,6 @@ class MyAlgorithm2(threading.Thread):
                 break
         return crash
         
-#    def turn90(self, angle1, angle2, yawNow):
-#        turn = True
-#        if self.numCrash % 2 != 0 and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
-#            self.motors.sendV(0)
-#            self.motors.sendW(0.2)
-#        elif self.numCrash % 2 == 0 and (yawNow <= (angle2-0.115) or yawNow >= (angle2+0.115)):
-#            self.motors.sendV(0)
-#            self.motors.sendW(-0.2)
-#        else:
-#            turn = False
-#        return turn
 
     def turn90(self, angle1, angle2, yawNow):
         turn = True
@@ -122,19 +141,15 @@ class MyAlgorithm2(threading.Thread):
         # TODO
         # Map is self.map
         #cv2.imshow('map',self.map)
+        
+        # Show grid
+        self.changeValuesGrid()
+        self.showGrid()
                 
         # Vacuum's poses
         x = self.pose3d.getX()
         y = self.pose3d.getY()
         yaw = self.pose3d.getYaw()
-        
-        #for i in range(0, 350):
-        #    # Returns 1 if it collides, and 0 if it doesn't collide
-        #    crash = self.bumper.getBumperData().state
-        #    if crash == 1:
-        #        self.motors.sendW(0)
-        #        self.motors.sendV(0)
-        #        break
         
         # Check crash
         crash = self.checkCrash()
