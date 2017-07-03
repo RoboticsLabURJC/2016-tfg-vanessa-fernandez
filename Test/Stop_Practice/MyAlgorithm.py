@@ -211,6 +211,32 @@ class MyAlgorithm(threading.Thread):
             columns = img_detection.shape[1]
             print columns, rows
             
+            # Initialize variables
+            position_pixel_left = 0
+            position_pixel_right = 0
+            
+            # We look for the pixels in white
+            for i in range(0, columns-1):
+                value = image_filtered[300, i] - image_filtered[300, i-1]
+                if(value != 0):
+                    if (value == 255):
+                        position_pixel_left = i
+                    else:
+                        position_pixel_right = i - 1
+                        
+            if position_pixel_left != 0 or position_pixel_right != 0:    
+                # Calculating the intermediate position of the road
+                position_middle_road = (position_pixel_left + position_pixel_right) / 2
+                # Calculating the intermediate position of the lane
+                position_middle_lane = (position_middle_road + position_pixel_right) / 2
+                
+                cv2.rectangle(input_image, (300,position_middle_lane), (300 + 1, position_middle_lane + 1), (0,255,0), 2)
+                
+                
+                # Calculating the desviation
+                desviation = position_middle_lane - (columns/2)
+                print (" desviation    ", desviation)
+            
             
             
             # Acelera recto
