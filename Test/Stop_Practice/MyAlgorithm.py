@@ -175,15 +175,21 @@ class MyAlgorithm(threading.Thread):
             
             yaw = self.pose3d.getYaw() * 180/pi
             # Speed
-            v = 30
+            v = 10
             
             # Gira 90 grados
-            while yaw < -90 :
-                self.motors.sendV(v)              
+           # while yaw < -90 :
+           #     self.motors.sendV(v)              
+           #     self.motors.sendW(3.5)
+           #     yaw = self.pose3d.getYaw() * 180/pi
+           #     print 'yaw', yaw
+           #  self.motors.sendW(0)
+           
+            # Turn 45 degrees
+            while yaw < -145 :
+                self.motors.sendV(v)
                 self.motors.sendW(3.5)
                 yaw = self.pose3d.getYaw() * 180/pi
-            self.motors.sendW(0)
-            
             
                     
             # Center image
@@ -217,7 +223,10 @@ class MyAlgorithm(threading.Thread):
             
             # We look for the pixels in white
             for i in range(0, columns-1):
-                value = image_filtered[300, i] - image_filtered[300, i-1]
+                if i == 0:
+                    value = image_filtered[300, i+1] - image_filtered[300, i]
+                else:
+                    value = image_filtered[300, i] - image_filtered[300, i-1]
                 if(value != 0):
                     if (value == 255):
                         position_pixel_left = i
@@ -237,11 +246,19 @@ class MyAlgorithm(threading.Thread):
                 desviation = position_middle_lane - (columns/2)
                 print (" desviation    ", desviation)
             
-            
-            
+                # Speed
+                if abs(desviation) < 35:
+                    # Go straight
+                    self.motors.sendV(50)
+                    self.motors.sendW(0)
+                elif abs(desviation) >= 35:
+                    self.motors.sendW(-desviation*0.05)
+                    self.motors.sendV(15)
+                    
             # Acelera recto
-            while v < 70:  
-                v += 5
-                self.motors.sendV(v)  
+            #while v < 70:  
+            #    v += 5
+            #    self.motors.sendV(v)
+            
         
         
