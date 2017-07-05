@@ -30,6 +30,8 @@ class MyAlgorithm2(threading.Thread):
         self.turnFound = True
         self.crash = False
         self.horizontal = True
+        self.numIteracion = 0
+        self.time = 0
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -62,6 +64,21 @@ class MyAlgorithm2(threading.Thread):
     def RTVacuum(self):
         RTy = self.RTy(pi, 5.6, 4, 0)
         return RTy
+        
+    def reduceValueSquare(self, numRow, numColumn):
+        scale = 50
+        for i in range((numColumn * scale), (numColumn*scale + scale)):
+            for i in range((numRow * scale), (numRow*scale + scale)):
+                if self.grid[numColumn][numRow] != 0:
+                    self.grid[numColumn][numRow] = self.grid[numColumn][numRow] - 1
+        
+    def reduceValueTime(self):
+        # number of rows is 10 and number of columns is 10
+        numRowsColumns = 10
+        for i in range(0, numRowsColumns):
+            for j in range(0, numRowsColumns):
+                self.reduceValueSquare(i, j)
+            
         
     def changeValuesGrid(self):
         x = self.pose3d.getX()
@@ -97,6 +114,7 @@ class MyAlgorithm2(threading.Thread):
                 self.execute()
 
             finish_Time = datetime.now()
+
 
             dt = finish_Time - start_time
             ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
@@ -147,6 +165,15 @@ class MyAlgorithm2(threading.Thread):
         # TODO
         # Map is self.map
         #cv2.imshow('map',self.map)
+        
+        # Time
+        self.numIteracion = self.numIteracion + 1
+        if self.numIteracion % 5 == 0:
+            self.time = self.time + 1
+        
+        if self.time % 5 == 0:
+            # If 5 seconds have elapsed we reduce the value of the squares of the grid
+            self.reduceValueTime()
         
         # Show grid
         self.changeValuesGrid()
