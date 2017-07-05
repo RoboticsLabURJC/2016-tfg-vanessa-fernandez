@@ -32,6 +32,7 @@ class MyAlgorithm2(threading.Thread):
         self.horizontal = True
         self.numIteracion = 0
         self.time = 0
+        self.saturation = False
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -194,6 +195,10 @@ class MyAlgorithm2(threading.Thread):
             
         if self.time != 0 and self.time % 60 == 0:
             saturation = self.checkSaturation()
+            if saturation == True:
+                self.saturation = saturation
+            if self.time % 180 == 0:
+                self.saturation = saturation
             print "saturation", saturation
         
         # Show grid
@@ -210,58 +215,66 @@ class MyAlgorithm2(threading.Thread):
         
         print (crash)
         
-        if crash == 1:
-            print "CRAAASH"
-            # Stop
-            self.motors.sendW(0)
-            self.motors.sendV(0)
-            time.sleep(1)
-            # Go backwards
-            self.motors.sendV(-0.1)
-            time.sleep(1)
-            
-            # Yaw 
-            self.yaw = self.pose3d.getYaw()
-            self.turn = False
-            self.crash = True
-            
-        if self.turn == False and self.crash == True:
-            print "PRIMER GIRO"
-            # Yaw
-            yawNow = self.pose3d.getYaw()
-            # Turn 90
-            giro = self.turn90(pi/2, pi/2, yawNow)
-                
-            if giro == False:
-                print "GIRO HECHO"
-                self.turn = True
-                # Go backwards
+        if self.saturation == False:
+            if crash == 1:
+                print "CRAAASH"
+                # Stop
                 self.motors.sendW(0)
-                time.sleep(2)
-                self.motors.sendV(0.32)                                        
+                self.motors.sendV(0)
                 time.sleep(1)
-                self.turnFound = False
+                # Go backwards
+                self.motors.sendV(-0.1)
+                time.sleep(1)
                 
+                # Yaw 
+                self.yaw = self.pose3d.getYaw()
+                self.turn = False
+                self.crash = True
                 
-        elif self.turnFound == False and self.crash == True:
-            print "SEGUNDO GIRO"
-            # Yaw
-            yawNow = self.pose3d.getYaw()
-            giro = self.turn90(pi, 0, yawNow)
+            if self.turn == False and self.crash == True:
+                print "PRIMER GIRO"
+                # Yaw
+                yawNow = self.pose3d.getYaw()
+                # Turn 90
+                giro = self.turn90(pi/2, pi/2, yawNow)
+                    
+                if giro == False:
+                    print "GIRO HECHO"
+                    self.turn = True
+                    # Go backwards
+                    self.motors.sendW(0)
+                    time.sleep(2)
+                    self.motors.sendV(0.32)                                        
+                    time.sleep(1)
+                    self.turnFound = False
+                    
+                    
+            elif self.turnFound == False and self.crash == True:
+                print "SEGUNDO GIRO"
+                # Yaw
+                yawNow = self.pose3d.getYaw()
+                giro = self.turn90(pi, 0, yawNow)
+                
+                if giro == False:
+                    self.turnFound = True
             
-            if giro == False:
-                self.turnFound = True
-        
+            else:
+                print "AVANZAR"
+                # Go forward
+                self.motors.sendW(0.0)
+                time.sleep(1)
+                self.motors.sendV(0.5)
+                self.crash = False
+                self.turn == True
+                
         else:
-            print "AVANZAR"
-            # Go forward
-            self.motors.sendW(0.0)
-            time.sleep(1)
-            self.motors.sendV(0.5)
-            self.crash = False
-            self.turn == True
+            # There is saturation
+            print "RECORRER PERIMETRO"
             
-            
+            # Get the data of the laser sensor, which consists of 180 pairs of values
+            laser_data = self.laser.getLaserData()
+            #print laser_data.numLaser
+            #print laser_data.distanceData[0], laser_data.distanceData[laser_data.numLaser-1]
 
 
 '''
