@@ -68,9 +68,9 @@ class MyAlgorithm2(threading.Thread):
     def reduceValueSquare(self, numRow, numColumn):
         scale = 50
         for i in range((numColumn * scale), (numColumn*scale + scale)):
-            for i in range((numRow * scale), (numRow*scale + scale)):
-                if self.grid[numColumn][numRow] != 0:
-                    self.grid[numColumn][numRow] = self.grid[numColumn][numRow] - 1
+            for j in range((numRow * scale), (numRow*scale + scale)):
+                if self.grid[i][j] != 0:
+                    self.grid[i][j] = self.grid[i][j] - 1
         
     def reduceValueTime(self):
         # number of rows is 10 and number of columns is 10
@@ -103,6 +103,23 @@ class MyAlgorithm2(threading.Thread):
 		else:
 			 nCopy = self.grid
 		cv2.imshow("Grid ", nCopy)
+		
+		
+    def checkSaturation(self):
+        # Check saturation
+        saturation = False
+        numRowsColumns = 10
+        scale = 50
+        numSquaresVisited = 0
+        for i in range(0, numRowsColumns):
+            for j in range(0, numRowsColumns):
+                valuePos = self.grid[j*scale][i*scale]
+                if valuePos != 0:
+                    numSquaresVisited = numSquaresVisited + 1
+                    
+        if numSquaresVisited < 3:
+            saturation = True
+        return saturation
 		
 
     def run (self):
@@ -170,10 +187,14 @@ class MyAlgorithm2(threading.Thread):
         self.numIteracion = self.numIteracion + 1
         if self.numIteracion % 5 == 0:
             self.time = self.time + 1
-        
+
         if self.time % 5 == 0:
             # If 5 seconds have elapsed we reduce the value of the squares of the grid
             self.reduceValueTime()
+            
+        if self.time != 0 and self.time % 60 == 0:
+            saturation = self.checkSaturation()
+            print "saturation", saturation
         
         # Show grid
         self.changeValuesGrid()
