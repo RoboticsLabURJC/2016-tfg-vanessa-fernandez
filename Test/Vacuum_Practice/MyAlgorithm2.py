@@ -26,9 +26,11 @@ class MyAlgorithm2(threading.Thread):
         
         #self.numCrash = 0
         self.yaw = 0
+        self.orientation = 'left'
         self.turn = False
         self.turnFound = True
         self.crash = False
+        self.crashPerimeter = False
         self.horizontal = True
         self.numIteracion = 0
         self.time = 0
@@ -56,6 +58,36 @@ class MyAlgorithm2(threading.Thread):
             v = (x, y)
             laser_vectorized += [v]
         return laser_vectorized
+        
+        
+    def run (self):
+        while (not self.kill_event.is_set()):
+           
+            start_time = datetime.now()
+
+            if not self.stop_event.is_set():
+                self.execute()
+
+            finish_Time = datetime.now()
+
+
+            dt = finish_Time - start_time
+            ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
+            #print (ms)
+            if (ms < time_cycle):
+                time.sleep((time_cycle - ms) / 1000.0)
+
+    def stop (self):
+        self.stop_event.set()
+
+    def play (self):
+        if self.is_alive():
+            self.stop_event.clear()
+        else:
+            self.start()
+
+    def kill (self):
+        self.kill_event.set()
         
         
     def RTy(self, angle, tx, ty, tz):
@@ -87,8 +119,7 @@ class MyAlgorithm2(threading.Thread):
         scale = 50
 
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
-        self.grid[int(final_poses.flat[0])][int(final_poses.flat[1])] = 0
-        print final_poses.flat[0], final_poses.flat[1]
+
         numX = int(final_poses.flat[0] / scale)
         numY = int(final_poses.flat[1] / scale)
         
@@ -121,36 +152,6 @@ class MyAlgorithm2(threading.Thread):
         if numSquaresVisited < 3:
             saturation = True
         return saturation
-		
-
-    def run (self):
-        while (not self.kill_event.is_set()):
-           
-            start_time = datetime.now()
-
-            if not self.stop_event.is_set():
-                self.execute()
-
-            finish_Time = datetime.now()
-
-
-            dt = finish_Time - start_time
-            ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
-            #print (ms)
-            if (ms < time_cycle):
-                time.sleep((time_cycle - ms) / 1000.0)
-
-    def stop (self):
-        self.stop_event.set()
-
-    def play (self):
-        if self.is_alive():
-            self.stop_event.clear()
-        else:
-            self.start()
-
-    def kill (self):
-        self.kill_event.set()
         
         
     def checkCrash(self):
@@ -164,7 +165,7 @@ class MyAlgorithm2(threading.Thread):
         return crash
         
 
-    def turn90(self, angle1, angle2, yawNow):
+    '''def turn90(self, angle1, angle2, yawNow):
         turn = True
         if (-0.4 <= self.yaw <= 0.4 or (-pi/2-0.4) <= self.yaw <= (-pi/2+0.4)) and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
             self.motors.sendV(0)
@@ -174,36 +175,54 @@ class MyAlgorithm2(threading.Thread):
             self.motors.sendW(-0.2)
         else:
             turn = False
-        return turn
+        return turn'''
         
+    def returnOrientation(self, yaw):
+        if -pi/2 <= yaw <= pi/2:
+            orientation = 'left'
+        elif pi/2 <= yaw <= pi or -pi <= yaw <= -pi/2:
+            orientation = 'right'
+        return orientation
+        
+    def turn90(self, angle1, angle2, yawNow):
+        turn = True
+        rangeDegrees = 0.115
+        if (self.orientation == 'left') and (yawNow <= (angle1-rangeDegrees) or yawNow >= (angle1+rangeDegrees)):
+            self.motors.sendV(0)
+            self.motors.sendW(0.2)
+        elif (self.orientation == 'right') and (yawNow <= (angle2-rangeDegrees) or yawNow >= (angle2+rangeDegrees)):
+            self.motors.sendV(0)
+            self.motors.sendW(-0.2)
+        else:
+            turn = False
+        return turn
 
     def execute(self):
 
         print ('Execute')
         # TODO
-        # Map is self.map
-        #cv2.imshow('map',self.map)
-        
+
         # Time
         self.numIteracion = self.numIteracion + 1
         if self.numIteracion % 5 == 0:
             self.time = self.time + 1
 
-        if self.time % 5 == 0:
-            # If 5 seconds have elapsed we reduce the value of the squares of the grid
-            self.reduceValueTime()
+        if self.saturation == False:
+            if self.time % 5 == 0:
+                # If 5 seconds have elapsed we reduce the value of the squares of the grid
+                self.reduceValueTime()
+                
+            if self.time != 0 and self.time % 60 == 0:
+                self.saturation = self.checkSaturation()
+                if self.saturation == True:
+                    # Stop
+                    self.motors.sendW(0)
+                    self.motors.sendV(0)
+                print ("saturation", self.saturation)
             
-        if self.time != 0 and self.time % 60 == 0:
-            saturation = self.checkSaturation()
-            if saturation == True:
-                self.saturation = saturation
-            if self.time % 180 == 0:
-                self.saturation = saturation
-            print "saturation", saturation
-        
-        # Show grid
-        self.changeValuesGrid()
-        self.showGrid()
+            # Show grid
+            self.changeValuesGrid()
+            self.showGrid()
                 
         # Vacuum's poses
         x = self.pose3d.getX()
@@ -217,7 +236,7 @@ class MyAlgorithm2(threading.Thread):
         
         if self.saturation == False:
             if crash == 1:
-                print "CRAAASH"
+                print ("CRAAASH")
                 # Stop
                 self.motors.sendW(0)
                 self.motors.sendV(0)
@@ -232,25 +251,27 @@ class MyAlgorithm2(threading.Thread):
                 self.crash = True
                 
             if self.turn == False and self.crash == True:
-                print "PRIMER GIRO"
+                print ("PRIMER GIRO")
                 # Yaw
                 yawNow = self.pose3d.getYaw()
+                # Orientation
+                self.orientation = self.returnOrientation(self.yaw)
                 # Turn 90
                 giro = self.turn90(pi/2, pi/2, yawNow)
                     
                 if giro == False:
-                    print "GIRO HECHO"
+                    print ("GIRO HECHO")
                     self.turn = True
-                    # Go backwards
+                    # Go forwards
                     self.motors.sendW(0)
                     time.sleep(2)
-                    self.motors.sendV(0.32)                                        
+                    self.motors.sendV(0.22)                                        
                     time.sleep(1)
                     self.turnFound = False
                     
                     
             elif self.turnFound == False and self.crash == True:
-                print "SEGUNDO GIRO"
+                print ("SEGUNDO GIRO")
                 # Yaw
                 yawNow = self.pose3d.getYaw()
                 giro = self.turn90(pi, 0, yawNow)
@@ -259,7 +280,7 @@ class MyAlgorithm2(threading.Thread):
                     self.turnFound = True
             
             else:
-                print "AVANZAR"
+                print ("AVANZAR")
                 # Go forward
                 self.motors.sendW(0.0)
                 time.sleep(1)
@@ -269,12 +290,47 @@ class MyAlgorithm2(threading.Thread):
                 
         else:
             # There is saturation
-            print "RECORRER PERIMETRO"
+            print ("RECORRER PERIMETRO")
             
             # Get the data of the laser sensor, which consists of 180 pairs of values
             laser_data = self.laser.getLaserData()
             #print laser_data.numLaser
             #print laser_data.distanceData[0], laser_data.distanceData[laser_data.numLaser-1]
+            # Distancia en milimetros, pasamosa cent
+            laserRight = laser_data.distanceData[0]/10
+            
+            if crash == 0 and self.crashPerimeter == False:             
+                # Avanzo hasta que encuentro un obstaculo
+                self.motors.sendV(0.5)
+            elif crash == 1:
+                self.crashPerimeter = True
+                print("NUEVO CRASH")
+                # Stop
+                self.motors.sendW(0)
+                self.motors.sendV(0)
+                time.sleep(1)
+                # Go backwards
+                self.motors.sendV(-0.1)
+                time.sleep(1)
+                
+                
+            if self.crashPerimeter == True:
+                distToObstacle =  30
+                # Giro hasta que el obstaculo quede a la derecha
+                if laserRight > distToObstacle:
+                    self.motors.sendV(0)
+                    self.motors.sendW(0.2)
+                else:
+                    # Esta el obstaculo a la derecha
+                    self.motors.sendW(0)
+                    self.motors.sendV(0.5)
+                    
+                    
+                    # Esta en una esquina
+                    # Ya no hay obstaculo a la derecha
+
+
+
 
 
 '''
