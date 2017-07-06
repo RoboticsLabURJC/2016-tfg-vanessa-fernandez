@@ -274,8 +274,6 @@ class MyAlgorithm(threading.Thread):
                                 valNeighbour = val
                                 posMin = [i, j]
 
-                        #print("posactual",i, j, "posMin", posMin,"dest", dest, "posicion central", pixelCentral)
-                        #print("valMin", valMin, "val pos actual", val, "val dest", self.grid.getVal(dest[0], dest[1]))
             self.grid.setPathVal(posMin[0], posMin[1], valMin)
             pixelCentral = posMin
             posPath.append(posMin)
@@ -300,6 +298,16 @@ class MyAlgorithm(threading.Thread):
         #self.vel.setV(10)
         #self.vel.setW(5)
         #self.vel.sendVelocities()
+        '''
+        p1 = self.grid.worldToGrid(-9, -12)
+        p2 = self.grid.worldToGrid(40, 0)
+        p3 = self.grid.worldToGrid(60, 0)
+        self.grid.settpoint(p1[0], p1[1])
+        time.sleep(2)
+        self.grid.settpoint(p2[0], p2[1])
+        time.sleep(2)
+        self.grid.settpoint(p3[0], p3[1])
+        time.sleep(2)'''
 
         # Position of the robot
         posRobotX = self.sensor.getRobotX()
@@ -315,7 +323,6 @@ class MyAlgorithm(threading.Thread):
 
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
-
         if (abs(posRobotX)<(abs(destWorld[0])+5) and abs(posRobotX)>(abs(destWorld[0])-5)) and (abs(posRobotY)<(abs(destWorld[1])+5) and abs(posRobotY)>(abs(destWorld[1])-5)):
             self.vel.setV(0)
             self.vel.setW(0)
@@ -323,11 +330,16 @@ class MyAlgorithm(threading.Thread):
         else:
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
-            
+            #self.grid.settpoint(targetImage[0], targetImage[1])
+            targetx = target[0] + 3
+            targety = target[1] + 5
+            t = self.grid.worldToGrid(targetx, targety)
+            #self.grid.settpoint(t[0], t[1])
             print("TARGET", target)
             
             #targetNextImage = self.getTargetWorld(targetImage)
             #targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
+            #self.grid.settpoint(targetNextImage[0], targetNextImage[1])
             #print("TARGET NEXT", targetNext)
             
             # Interpolation
@@ -335,8 +347,8 @@ class MyAlgorithm(threading.Thread):
             #targety = (target[1] + targetNext[1]) / 2
             
             # Convert target[0] y target[1] to relative coordinates
-            directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
-            #directionx,directiony = self.absolutas2relativas(targetx,targety,posRobotX,posRobotY,orientationRobot)
+            #directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
+            directionx,directiony = self.absolutas2relativas(targetx,targety,posRobotX,posRobotY,orientationRobot)
 
             print("direction", directionx, directiony)
             #angle = math.atan((directionx/directiony))
@@ -345,45 +357,40 @@ class MyAlgorithm(threading.Thread):
             angle = math.atan((directiony/directionx))
             print("angle",angle)
 
-            # Correct position
-           # if directiony > 0:
-                #self.vel.setW(angle*24.5)
-           #     self.vel.setW(angle)
-           # elif abs(angle) >= 0.7:
-           
-           
+            # Correct position     
             if directionx < 0 and directiony > 0:
-                #self.vel.setW(-angle)
                 angle = -angle
-            #elif abs(angle) >= 0.9:
+                
+            '''
             if abs(angle) >= 0.9:
                 self.vel.setW(5.5*angle)
             elif abs(angle) >= 0.7:
-                #self.vel.setW(-angle*120)
-                #self.vel.setW(-angle*300)
                 self.vel.setW(1.5*angle)
             elif abs(angle) > 0.5 and abs(angle) <=  0.7:
-                #self.vel.setW(-angle*82.5)
-                #self.vel.setW(-angle*182.5)
                 self.vel.setW(angle)
             else:
-                #self.vel.setW(-angle*51.5)
-                #self.vel.setW(-angle*81.5)
                 self.vel.setW(angle)
-
+                
+            '''      
+            if directionx < 0 and directiony > 0:
+                self.vel.setW(0.5)
+            elif angle < 0:
+                self.vel.setW(-0.5)
+            else:
+                self.vel.setW(0.5)
+            '''
             if abs(angle) >= 0.65:
-                speed = 0.03
+                #speed = 0.03
+                speed = 0.5
             elif abs(angle) > 0.5 and abs(angle) <= 0.65:
                 speed = 1
             elif abs(angle) > 0.2 and abs(angle) <= 0.5:
                 speed = 1.5
             else:
-                #speed = 100
-                speed = 20
+                speed = 20'''
+                
+            speed = 3
 
-
-            #if directiony > 0:
-            #    speed = 0
       
             print('speed', speed)
             self.vel.setV(speed)
