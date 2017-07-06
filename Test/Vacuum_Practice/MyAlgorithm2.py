@@ -99,6 +99,7 @@ class MyAlgorithm2(threading.Thread):
         return RTy
         
     def reduceValueSquare(self, numRow, numColumn):
+        # Reduce the value of a particular square
         scale = 50
         for i in range((numColumn * scale), (numColumn*scale + scale)):
             for j in range((numRow * scale), (numRow*scale + scale)):
@@ -106,20 +107,24 @@ class MyAlgorithm2(threading.Thread):
                     self.grid[i][j] = self.grid[i][j] - 1
         
     def reduceValueTime(self):
-        # number of rows is 10 and number of columns is 10
+        # Number of rows is 10 and number of columns is 10
         numRowsColumns = 10
+        # Scrolls the entire image
         for i in range(0, numRowsColumns):
             for j in range(0, numRowsColumns):
                 self.reduceValueSquare(i, j)
             
         
     def changeValuesGrid(self):
+        # Change the value of the grid depending on where the vacuum goes
         x = self.pose3d.getX()
         y = self.pose3d.getY()
         scale = 50
 
         final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
 
+        # Grid 500 x 500 and we want a grid of 10 x 10
+        # We keep the whole section of the division to know in which square this is
         numX = int(final_poses.flat[0] / scale)
         numY = int(final_poses.flat[1] / scale)
         
@@ -129,8 +134,11 @@ class MyAlgorithm2(threading.Thread):
         
         
     def showGrid(self):
+        # To show the grid well
+        # Maximum value of the pixels
 		maxVal = np.amax(self.grid)
 		if maxVal != 0:
+		    # Saves a copy of the image but divided by the maximum value so that it is not saturated
 			nCopy = np.dot(self.grid, (1/maxVal))
 		else:
 			 nCopy = self.grid
@@ -138,13 +146,13 @@ class MyAlgorithm2(threading.Thread):
 		
 		
     def checkSaturation(self):
-        # Check saturation
         saturation = False
         numRowsColumns = 10
         scale = 50
         numSquaresVisited = 0
         for i in range(0, numRowsColumns):
             for j in range(0, numRowsColumns):
+                # I check the first pixel of the square because they all have the same value
                 valuePos = self.grid[j*scale][i*scale]
                 if valuePos != 0:
                     numSquaresVisited = numSquaresVisited + 1
@@ -164,18 +172,6 @@ class MyAlgorithm2(threading.Thread):
                 break
         return crash
         
-
-    '''def turn90(self, angle1, angle2, yawNow):
-        turn = True
-        if (-0.4 <= self.yaw <= 0.4 or (-pi/2-0.4) <= self.yaw <= (-pi/2+0.4)) and (yawNow <= (angle1-0.115) or yawNow >= (angle1+0.115)):
-            self.motors.sendV(0)
-            self.motors.sendW(0.2)
-        elif ((pi/2-0.4) <= self.yaw <= (pi/2+0.4) or (-pi+0.4) >= self.yaw or self.yaw >= (pi - 0.4)) and (yawNow <= (angle2-0.115) or yawNow >= (angle2+0.115)):
-            self.motors.sendV(0)
-            self.motors.sendW(-0.2)
-        else:
-            turn = False
-        return turn'''
         
     def returnOrientation(self, yaw):
         if -pi/2 <= yaw <= pi/2:
@@ -186,11 +182,22 @@ class MyAlgorithm2(threading.Thread):
         
     def turn90(self, angle1, angle2, yawNow):
         turn = True
-        rangeDegrees = 0.115
+        rangeDegrees = 0.125
+        
+        if angle1 == pi:
+            rangeDegrees = 0.145
+        if angle2 == 0:
+            rangeDegrees = 0.145
+            
+        if angle2 == pi and yawNow < 0:
+            angle2 = -angle2
+            
         if (self.orientation == 'left') and (yawNow <= (angle1-rangeDegrees) or yawNow >= (angle1+rangeDegrees)):
+            # Look left and turn left
             self.motors.sendV(0)
             self.motors.sendW(0.2)
         elif (self.orientation == 'right') and (yawNow <= (angle2-rangeDegrees) or yawNow >= (angle2+rangeDegrees)):
+            # Look right and turn right
             self.motors.sendV(0)
             self.motors.sendW(-0.2)
         else:
