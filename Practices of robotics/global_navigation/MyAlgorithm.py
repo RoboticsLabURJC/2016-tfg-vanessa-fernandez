@@ -337,14 +337,14 @@ class MyAlgorithm(threading.Thread):
             #self.grid.settpoint(t[0], t[1])
             print("TARGET", target)
             
-            #targetNextImage = self.getTargetWorld(targetImage)
-            #targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
-            #self.grid.settpoint(targetNextImage[0], targetNextImage[1])
-            #print("TARGET NEXT", targetNext)
+            targetNextImage = self.getTargetWorld(targetImage)
+            targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
+            targetNextx = targetNext[0] + 3
+            targetNexty = targetNext[1] + 5
             
             # Interpolation
-            #targetx = (target[0] + targetNext[0]) / 2
-            #targety = (target[1] + targetNext[1]) / 2
+            targetx = (targetx + targetNextx) / 2
+            targety = (targety + targetNexty) / 2
             
             # Convert target[0] y target[1] to relative coordinates
             #directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
@@ -371,13 +371,22 @@ class MyAlgorithm(threading.Thread):
             else:
                 self.vel.setW(angle)
                 
-            '''      
-            if directionx < 0 and directiony > 0:
-                self.vel.setW(0.5)
-            elif angle < 0:
-                self.vel.setW(-0.5)
+            '''
+            
+            #angleTurn = 0.5
+            
+            if angle < 0.05:
+                angleTurn = 0.3
             else:
-                self.vel.setW(0.5)
+                angleTurn = 0.5
+                
+            
+            if directionx < 0 and directiony > 0:
+                self.vel.setW(angleTurn)
+            elif angle < 0:
+                self.vel.setW(-angleTurn)
+            else:
+                self.vel.setW(angleTurn)
             '''
             if abs(angle) >= 0.65:
                 #speed = 0.03
@@ -388,8 +397,11 @@ class MyAlgorithm(threading.Thread):
                 speed = 1.5
             else:
                 speed = 20'''
-                
-            speed = 3
+            
+            if abs(angle) < 0.1:
+                speed = 10
+            else:
+                speed = 3
 
       
             print('speed', speed)
