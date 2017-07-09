@@ -125,11 +125,11 @@
       <uri>model://car</uri>
       <pose>-30 -1.5 0 0 0 1.57</pose>
     </include>
-    
+    <!--
     <include>
       <uri>model://car</uri>
       <pose>40 1.5 0 0 0 -1.57</pose>
-    </include>
+    </include>-->
     
     
     <!-- Roads -->
