@@ -191,7 +191,7 @@ class MyAlgorithm(threading.Thread):
                 
             # Si ha pasado cierto tiempo reinicio la imagen de fondo
             timeNow = time.time()
-            if timeNow - self.time >= 6:
+            if timeNow - self.time >= 1:
                 self.backgroundL = None
                 self.time = timeNow
             
@@ -237,7 +237,8 @@ class MyAlgorithm(threading.Thread):
                 (x, y, w, h) = cv2.boundingRect(c)
                 # Dibujamos el rectangulo del bounds
                 cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        
+                                
+       
         
         
         '''
