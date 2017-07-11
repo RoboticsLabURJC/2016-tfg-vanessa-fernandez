@@ -81,26 +81,8 @@
       </property>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-       
-       
-       <item row="0" column="1">
-         <widget class="QLabel" name="label_1">
-          <property name="text">
-           <string>Camera Center</string>
-          </property>
-         </widget>
-        </item>
-        
-        <item row="1" column="1">
-         <widget class="QLabel" name="imageCenter">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        
-        
-        <item row="0" column="2">
+      
+        <item row="0" column="1">
         <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Camera Left</string>
@@ -108,7 +90,7 @@
          </widget>
         </item>
         
-        <item row="1" column="2">
+        <item row="1" column="1">
          <widget class="QLabel" name="imageLeft">
           <property name="text">
            <string/>
@@ -129,6 +111,26 @@
          <widget class="QLabel" name="imageRight">
           <property name="text">
            <string/>
+          </property>
+         </widget>
+        </item>
+        
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_1">
+          <property name="text">
+           <string>Camera Center</string>
+          </property>
+         </widget>
+        </item>
+        
+        <item row="3" column="1">
+         <widget class="QLabel" name="imageCenter">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="geometry">
+           <width>500</width>
+           <height>250</height>
           </property>
          </widget>
         </item>
