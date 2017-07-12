@@ -177,11 +177,10 @@ class MyAlgorithm(threading.Thread):
         
         difXCar, difYCar = self.absolutas2relativas(xTar,yTar,xCar,yCar,yawCar)
         angle = math.atan((difYCar/difXCar))
-        print("angle", angle)
         
         self.motors.sendV(50)
         if angle >= 0.1:
-           self.motors.sendW(0.2)
+           self.motors.sendW(-angle)
         
     def checkTarget(self, target):
         difX = abs(target[0] - self.pose3d.getX())
@@ -206,6 +205,7 @@ class MyAlgorithm(threading.Thread):
             if self.checkTarget(target):
                 # Si ha llegado al objetivo lo elimino del camino
                 self.path.pop(0)
+                print("TARGET CONSEGUIDO")
             else: 
                 self.goTarget(target)
 
