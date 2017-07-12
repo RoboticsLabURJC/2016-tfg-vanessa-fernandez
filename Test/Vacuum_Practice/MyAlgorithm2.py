@@ -30,11 +30,14 @@ class MyAlgorithm2(threading.Thread):
         self.turn = False
         self.turnFound = True
         self.crash = False
-        self.crashPerimeter = False
+        self.crashObstacle = False
         self.horizontal = True
         self.numIteracion = 0
         self.time = 0
         self.saturation = False
+        self.obstacleRight = False
+        
+        self.startTime = 0
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -184,10 +187,10 @@ class MyAlgorithm2(threading.Thread):
         turn = True
         rangeDegrees = 0.125
         
-        if angle1 == pi:
+        if angle1 == pi or angle2 == 0:
             rangeDegrees = 0.145
-        if angle2 == 0:
-            rangeDegrees = 0.145
+        #if angle2 == 0:
+        #    rangeDegrees = 0.145
             
         if angle2 == pi and yawNow < 0:
             angle2 = -angle2
@@ -303,40 +306,64 @@ class MyAlgorithm2(threading.Thread):
             laser_data = self.laser.getLaserData()
             #print laser_data.numLaser
             #print laser_data.distanceData[0], laser_data.distanceData[laser_data.numLaser-1]
-            # Distancia en milimetros, pasamosa cent
-            laserRight = laser_data.distanceData[0]/10
             
-            if crash == 0 and self.crashPerimeter == False:             
-                # Avanzo hasta que encuentro un obstaculo
-                self.motors.sendV(0.5)
-            elif crash == 1:
-                self.crashPerimeter = True
-                print("NUEVO CRASH")
-                # Stop
-                self.motors.sendW(0)
-                self.motors.sendV(0)
-                time.sleep(1)
-                # Go backwards
-                self.motors.sendV(-0.1)
-                time.sleep(1)
-                
-                
-            if self.crashPerimeter == True:
-                distToObstacle =  30
-                # Giro hasta que el obstaculo quede a la derecha
-                if laserRight > distToObstacle:
-                    self.motors.sendV(0)
-                    self.motors.sendW(0.2)
-                else:
-                    # Esta el obstaculo a la derecha
-                    self.motors.sendW(0)
+            # Distance in millimeters, we change to cm
+            laserRight = laser_data.distanceData[0]/10
+            laserCenter = laser_data.distanceData[90]/10
+            
+            # Initialize start time
+            if self.startTime == 0:
+                self.startTime = time.time()
+            timeNow = time.time()
+            
+            # Only walks the wall for a while
+            if self.startTime - timeNow < 60:
+                if crash == 0 and self.crashObstacle == False:             
+                    # I go forward until I find an obstacle
                     self.motors.sendV(0.5)
+                elif crash == 1:
+                    self.crashObstacle = True
+                    print("NUEVO CRASH")
+                    # Stop
+                    self.motors.sendW(0)
+                    self.motors.sendV(0)
+                    time.sleep(1)
+                    # Go backwards
+                    self.motors.sendV(-0.1)
+                    time.sleep(1)
                     
                     
-                    # Esta en una esquina
-                    # Ya no hay obstaculo a la derecha
-
-
+                if self.crashObstacle == True:
+                    distToObstacleRight = 30
+                    distToObstacleFront = 15
+                    # Turn until the obstacle is to the right
+                    if laserRight > distToObstacleRight and self.obstacleRight == False:
+                        self.motors.sendV(0)
+                        self.motors.sendW(0.2)
+                        self.obstacleRight = True
+                        
+                    if self.obstacleRight == True:
+                        # The obstacle is on the right
+                        self.motors.sendW(0)
+                        self.motors.sendV(0.5)
+                        
+                        
+                        #if laserCenter < distToObstacleFront:
+                            # Esta en una esquina
+                            # Gira 90 grados a la izq
+                            
+                        #elif laserRight > distToObstacleRight:
+                            # Ya no hay obstaculo a la derecha
+                            
+                            # Avanza el tamano de la aspiradora
+                            
+                            # Gira 90 grados a la derecha
+                        
+            else:
+                # Restart all global variables
+                self.startTime = 0
+                self.crashObstacle = False
+                self.obstacleRight = False
 
 
 
