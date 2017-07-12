@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import threading
 import time
@@ -36,6 +39,8 @@ class MyAlgorithm2(threading.Thread):
         self.time = 0
         self.saturation = False
         self.obstacleRight = False
+        self.turnLeft = False
+        self.turnRight = False
         
         self.startTime = 0
 
@@ -184,13 +189,13 @@ class MyAlgorithm2(threading.Thread):
         return orientation
         
     def turn90(self, angle1, angle2, yawNow):
+        # angle1: orientacion a la que tiene que llegar si la orientacion es izq
+        # angle2: orientacion a la que tiene que llegar si la orientacion es derecha
         turn = True
         rangeDegrees = 0.125
         
         if angle1 == pi or angle2 == 0:
             rangeDegrees = 0.145
-        #if angle2 == 0:
-        #    rangeDegrees = 0.145
             
         if angle2 == pi and yawNow < 0:
             angle2 = -angle2
@@ -336,122 +341,63 @@ class MyAlgorithm2(threading.Thread):
                 if self.crashObstacle == True:
                     distToObstacleRight = 30
                     distToObstacleFront = 15
+                    print laserRight
                     # Turn until the obstacle is to the right
                     if laserRight > distToObstacleRight and self.obstacleRight == False:
                         self.motors.sendV(0)
                         self.motors.sendW(0.2)
+                        print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
+                    else:
                         self.obstacleRight = True
                         
                     if self.obstacleRight == True:
                         # The obstacle is on the right
-                        self.motors.sendW(0)
-                        self.motors.sendV(0.5)
                         
-                        
-                        #if laserCenter < distToObstacleFront:
+                        if laserCenter < distToObstacleFront and self.turnLeft == False:
                             # Esta en una esquina
+                            # Stop
+                            self.motors.sendV(0)
+
                             # Gira 90 grados a la izq
+                            self.orientation = 'left'
+                            giro = self.turn90(self.yaw+pi/2, pi/2, yaw)
                             
-                        #elif laserRight > distToObstacleRight:
+                            if giro == False:
+                                self.motors.sendW(0)
+                                self.turnLeft = True
+                                
+                            print("ESQUINAAAAAAAA")
+                                
+                        elif laserRight > distToObstacleRight and self.turnRight == False:
                             # Ya no hay obstaculo a la derecha
                             
                             # Avanza el tamano de la aspiradora
+                            self.motors.sendV(0.3)
                             
                             # Gira 90 grados a la derecha
+                            self.orientation = 'right'
+                            giro = self.turn90(self.yaw-pi/2, pi/2, yaw)
+                            
+                            if giro == False:
+                                self.motors.sendW(0)
+                                self.turnRight = True
+                            
+                            print ("NOOO HAY OBSTACULO A LA DERECHAAAAAAAA")
+                            
+                        else: 
+                            # Go forward
+                            self.motors.sendW(0)
+                            self.motors.sendV(0.5)
+                            self.yaw = yaw
+                            print("AVANZAAAAAAAAA")
+                            
                         
             else:
                 # Restart all global variables
                 self.startTime = 0
                 self.crashObstacle = False
                 self.obstacleRight = False
+                self.turnLeft = False
+                self.turnRight = False
 
 
-
-'''
-        print ('Execute')
-        # TODO
-        # Map is self.map
-        #cv2.imshow('map',self.map)
-                
-        # Vacuum's poses
-        x = self.pose3d.getX()
-        y = self.pose3d.getY()
-        yaw = self.pose3d.getYaw()
-        
-        for i in range(0, 350):
-            # Devuelve 1 si choca y 0 si no choca
-            crash = self.bumper.getBumperData().state
-            if crash == 1:
-                self.motors.sendW(0)
-                self.motors.sendV(0)
-                break
-                
-        print(crash)
-        
-        turn = False
-        
-        if crash == 1:
-            self.numCrash = self.numCrash + 1
-            
-            self.motors.sendW(0)
-            self.motors.sendV(0)
-            time.sleep(1)
-            self.motors.sendV(-0.1)
-            time.sleep(1)
-            
-            while turn == False:
-                yawNow = self.pose3d.getYaw()
-                if self.horizontal == True:                    
-                    giro = self.turn90(pi/2, pi/2, yawNow)
-                else:
-                    giro = self.turn90(0, 0, yawNow)
-                
-                if giro == False:
-                    self.motors.sendW(0)
-                    time.sleep(2)
-                    self.motors.sendV(0.32)
-                    #newCrash = self.bumper.getBumperData().state
-                    for i in range(0, 350):
-                        # Devuelve 1 si choca y 0 si no choca
-                        newCrash = self.bumper.getBumperData().state
-                        if newCrash == 1:
-                            self.motors.sendW(0)
-                            self.motors.sendV(0)
-                            break
-                    print "newCrash", newCrash
-                    if newCrash == 1 and self.horizontal == True:
-                        # No se puede avanzar en horizontal
-                        self.horizontal = False
-                        self.motors.sendW(0)
-                        self.motors.sendV(0)
-                        time.sleep(1)
-                        self.motors.sendV(-0.1)
-                        time.sleep(1)
-                        print "choque horizontal"
-                    elif newCrash == 1 and self.horizontal == False:
-                        self.horizontal == True
-                        self.motors.sendW(0)
-                        self.motors.sendV(0)
-                        time.sleep(1)
-                        self.motors.sendV(-0.1)
-                        time.sleep(1)
-                        print "choque vertical"
-                    else:
-                        time.sleep(1)
-                        yaw = self.pose3d.getYaw()
-                        
-                        while turn == False:
-                            yawNow = self.pose3d.getYaw()
-                            if self.horizontal == True:
-                                giro = self.turn90(pi, 0, yawNow)
-                            else:
-                                giro = self.turn90(-pi/2, pi/2, yawNow)
-                                
-                            if giro == False:
-                                turn = True
-        else:
-            self.motors.sendW(0.0)
-            time.sleep(1)
-            self.motors.sendV(0.5)
-        
-        '''
