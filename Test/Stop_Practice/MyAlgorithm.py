@@ -30,6 +30,7 @@ class MyAlgorithm(threading.Thread):
         
         self.detection = False
         self.stop = False
+        self.detectionCar = True
         
         self.yaw = 0
         
@@ -180,69 +181,69 @@ class MyAlgorithm(threading.Thread):
         
         
         
-        # DETECCION DE COCHES
+        # CAR DETECTION
         
         if self.stop == True:
         
-            # Paro un tiempo si o si antes de ver si vienen coches
+            # Stop for a while before seeing if cars come
             if self.sleep == False:
                 self.sleep = True
                 time.sleep(2)
                 
-            # Si ha pasado cierto tiempo reinicio la imagen de fondo
+            # Restart the background image from time to time
             timeNow = time.time()
             if timeNow - self.time >= 1:
                 self.backgroundL = None
                 self.time = timeNow
             
-            # Getting the imges
+            # Getting the images
             imageL = self.cameraL.getImage()
             imageR = self.cameraR.getImage()
             
-            # Convertimos a escala de grises
+            # Converting to grayscale
             imageL_gray = cv2.cvtColor(imageL, cv2.COLOR_BGR2GRAY)
             
-            # Aplicamos suavizado para eliminar ruido
+            # We apply smoothing to eliminate noise
             imageL_gray = cv2.GaussianBlur(imageL_gray, (21, 21), 0)
             
-            # Si todavia no hemos obtenido el fondo, lo obtenemos
-            # Sera el primer frame que obtengamos
+            # If we have not yet obtained the background, we obtain it
+            # It will be the first frame we get
             if self.backgroundL is None:
                 self.backgroundL = imageL_gray 
                 
-            # Calculo de la diferencia entre el fondo y el frame actual
+            # Calculating the difference between the background and the current frame
             image_diff = cv2.absdiff(self.backgroundL, imageL_gray)
             #cv2.imshow("image_diff", image_diff)
             
-            # Aplicamos un umbral
+            # We apply a threshold
             image_seg = cv2.threshold(image_diff, 50, 255, cv2.THRESH_BINARY)[1]
             #cv2.imshow("image_seg", image_seg)
             
-            # Dilatamos el umbral para tapar agujeros
+            # Dilatamos the image to cover holes
             image_dil = cv2.dilate(image_seg, None, iterations=2)
             cv2.imshow("image_dil", image_dil)
             
-            # Copiamos el umbral para detectar los contornos
+            # Copy the image to detect the contours
             contornosimg = image_dil.copy()
             
-            # Buscamos contorno en la imagen
+            # We look for contours in the image
             im, contornos, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
             
-            # Recorremos todos los contornos encontrados
-            for c in contornos:
-                # Eliminamos los contornos mas pequenos
-                #if cv2.contourArea(c) < 600:
-                    #continue
-                # Obtenemos el bounds del contorno, el rectangulo mayor que engloba al contorno
-                (x, y, w, h) = cv2.boundingRect(c)
-                # Dibujamos el rectangulo del bounds
-                cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            if len(contornos) != 0:
+                # We traverse all contours
+                for c in contornos:
+                    # We obtain the bounds of the contour, the larger rectangle that encloses the contour
+                    (x, y, w, h) = cv2.boundingRect(c)
+                    # We draw the rectangle of bounds
+                    cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            else:
+                self.detectionCar = False
                                 
        
         
         
-        '''
-        if self.detection == True and self.stop == True:
+        
+        if self.detection == True and self.stop == True and self.detectionCar == False:
             
             yaw = self.pose3d.getYaw() * 180/pi
             # Speed
@@ -326,7 +327,7 @@ class MyAlgorithm(threading.Thread):
                     self.motors.sendW(-desviation*0.05)
                     self.motors.sendV(15)
                     
-            '''
+            
                     
             # Acelera recto
             #while v < 70:  
