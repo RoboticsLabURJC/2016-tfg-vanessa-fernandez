@@ -24,7 +24,8 @@ class MyAlgorithm(threading.Thread):
         self.numCrash = 0
         self.turn = False
         self.yaw = 0
-
+        
+        self.MARGIN = 0.2
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -76,19 +77,32 @@ class MyAlgorithm(threading.Thread):
 
     def kill (self):
         self.kill_event.set()
-
-    def execute(self):
-
-        print ('Execute')
-        # TODO
-
+        
+        
+    
+    def checkCrash(self):
         for i in range(0, 350):
-            # Devuelve 1 si choca y 0 si no choca
+            # Returns 1 if it collides, and 0 if it doesn't collide
             crash = self.bumper.getBumperData().state
             if crash == 1:
                 self.motors.sendW(0)
                 self.motors.sendV(0)
                 break
+        return crash
+        
+    def stopVacuum(self):
+        self.motors.sendW(0)
+        self.motors.sendV(0)
+        time.sleep(1)
+        
+
+    def execute(self):
+
+        print ('Execute')
+        # TODO
+        
+        # Check crash
+        crash = self.checkCrash()
 
         if crash == 1:
             self.numCrash = 1
@@ -97,17 +111,19 @@ class MyAlgorithm(threading.Thread):
         self.yaw = self.pose3d.getYaw()
         
         if self.numCrash == 0:
+            # If self.numCrash equals 0, then we make the spiral
             self.motors.sendW(0.5)
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
             if crash == 1:
-                self.motors.sendW(0)
-                self.motors.sendV(0)
-                time.sleep(1)
+                # Stop
+                self.stopVacuum()
+                # Go backwards
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 
+                # Random angle and sign
                 numAngle = random.uniform(pi/3, pi)
                 signo = random.randint(0, 1)
                 
@@ -126,7 +142,7 @@ class MyAlgorithm(threading.Thread):
                             yawNow = yawNow + 2*pi
                             
                     angle = abs(self.yaw - yawNow)
-                    if angle <= (numAngle-0.2) or angle >= (numAngle+0.2):
+                    if angle <= (numAngle-self.MARGIN) or angle >= (numAngle+self.MARGIN):
                         self.motors.sendV(0)
                         if signo == 1:
                             self.motors.sendW(0.2)
@@ -134,6 +150,8 @@ class MyAlgorithm(threading.Thread):
                             self.motors.sendW(-0.2)
                     else:
                         self.turn = True
+                        
+            # Go forward
             self.motors.sendW(0)
             time.sleep(1)
             self.turn = False
