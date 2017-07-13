@@ -121,6 +121,12 @@ class MyAlgorithm(threading.Thread):
         omplSetup.setRobotMesh(robotFile)
         omplSetup.inferEnvironmentBounds()
         
+        # Set bounding box
+        bounds = ob.RealVectorBounds(2)
+        bounds.setLow(-25)
+        bounds.setHigh(25)
+        omplSetup.getStateSpace().setBounds(bounds)
+        
         # Start and goal
         startPose = self.setPose(-7, 2.5, 0)
         goalPose = self.setPose(7, -2.5, 0)
@@ -200,6 +206,7 @@ class MyAlgorithm(threading.Thread):
        
         if self.path == 0:
             self.path = self.parsePath()
+            print self.path
         else:
             target = self.getTarget()
             if self.checkTarget(target):
