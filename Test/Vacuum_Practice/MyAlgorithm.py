@@ -24,6 +24,9 @@ class MyAlgorithm(threading.Thread):
         self.numCrash = 0
         self.turn = False
         self.yaw = 0
+        self.crash = False
+        self.numAngle = 0
+        self.sign = 0
         
         self.MARGIN = 0.2
 
@@ -95,6 +98,16 @@ class MyAlgorithm(threading.Thread):
         self.motors.sendV(0)
         time.sleep(1)
         
+    def turnAngle(self, angle):
+        if angle <= (self.numAngle-self.MARGIN) or angle >= (self.numAngle+self.MARGIN):
+            self.motors.sendV(0)
+            if self.sign == 1:
+                self.motors.sendW(0.2)
+            else:
+                self.motors.sendW(-0.2)
+        else:
+            self.turn = True
+        
 
     def execute(self):
 
@@ -105,10 +118,10 @@ class MyAlgorithm(threading.Thread):
         crash = self.checkCrash()
 
         if crash == 1:
+            # When there has already been a crash we change the value of self.numCrash to start doing the bump & go
             self.numCrash = 1
 
         print(crash)
-        self.yaw = self.pose3d.getYaw()
         
         if self.numCrash == 0:
             # If self.numCrash equals 0, then we make the spiral
@@ -123,37 +136,40 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(-0.2)
                 time.sleep(1)
                 
+                self.crash = True
+                self.yaw = self.pose3d.getYaw()
                 # Random angle and sign
-                numAngle = random.uniform(pi/3, pi)
-                signo = random.randint(0, 1)
+                self.numAngle = random.uniform(pi/3, pi)
+                self.sign = random.randint(0, 1)
                 
-                while self.turn == False:
-                    yawNow = self.pose3d.getYaw()
-                                            
-                    if self.yaw == 2*pi:
-                        self.yaw = 0
-                    if yawNow == 2*pi:
-                        yawNow = 0
-                    
-                    if (-pi < self.yaw < -pi/2) or (-pi < yawNow < -pi/2):
-                        if (-pi < self.yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
-                            self.yaw = self.yaw + 2*pi
-                        elif (-pi < yawNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
-                            yawNow = yawNow + 2*pi
-                            
-                    angle = abs(self.yaw - yawNow)
-                    if angle <= (numAngle-self.MARGIN) or angle >= (numAngle+self.MARGIN):
-                        self.motors.sendV(0)
-                        if signo == 1:
-                            self.motors.sendW(0.2)
-                        else:
-                            self.motors.sendW(-0.2)
-                    else:
-                        self.turn = True
+            elif self.turn == False and self.crash == True:
+                # Rotate the self.numAngle
+                
+                # yawNow is the orientation that I have at the moment
+                yawNow = self.pose3d.getYaw()
+                                        
+                if self.yaw == 2*pi:
+                    self.yaw = 0
+                if yawNow == 2*pi:
+                    yawNow = 0
+                
+                if (-pi < self.yaw < -pi/2) or (-pi < yawNow < -pi/2):
+                    if (-pi < self.yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
+                        self.yaw = self.yaw + 2*pi
+                    elif (-pi < yawNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
+                        yawNow = yawNow + 2*pi
                         
-            # Go forward
-            self.motors.sendW(0)
-            time.sleep(1)
-            self.turn = False
-            self.motors.sendV(0.5)
+                angle = abs(self.yaw - yawNow)
+                self.turnAngle(angle)
+            
+            else:            
+                # Go forward
+                self.motors.sendW(0)
+                time.sleep(1)
+                self.turn = False
+                self.motors.sendV(0.5)
+                
+                # Restart global variables
+                self.crash = False
+                self.turn = False
 
