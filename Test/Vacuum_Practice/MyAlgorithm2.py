@@ -326,6 +326,7 @@ class MyAlgorithm2(threading.Thread):
                 if crash == 0 and self.crashObstacle == False:             
                     # I go forward until I find an obstacle
                     self.motors.sendV(0.5)
+                    print("SOLO AVANZO POR NO CRASH")
                 elif crash == 1:
                     self.crashObstacle = True
                     print("NUEVO CRASH")
@@ -336,6 +337,7 @@ class MyAlgorithm2(threading.Thread):
                     # Go backwards
                     self.motors.sendV(-0.1)
                     time.sleep(1)
+                    print("HACIA ATRAS ")
                     
                     
                 if self.crashObstacle == True:
