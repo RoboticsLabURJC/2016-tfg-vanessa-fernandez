@@ -236,9 +236,8 @@ class MyAlgorithm(threading.Thread):
                     (x, y, w, h) = cv2.boundingRect(c)
                     # We draw the rectangle of bounds
                     cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            else:
-                self.detectionCar = False
-                                
+                    if self.detectionCar == True:
+                        self.detectioCar = True
        
         
         
@@ -248,14 +247,6 @@ class MyAlgorithm(threading.Thread):
             yaw = self.pose3d.getYaw() * 180/pi
             # Speed
             v = 10
-            
-            # Gira 90 grados
-           # while yaw < -90 :
-           #     self.motors.sendV(v)              
-           #     self.motors.sendW(3.5)
-           #     yaw = self.pose3d.getYaw() * 180/pi
-           #     print 'yaw', yaw
-           #  self.motors.sendW(0)
            
             # Turn 45 degrees
             while yaw < -145 :
@@ -327,12 +318,8 @@ class MyAlgorithm(threading.Thread):
                     self.motors.sendW(-desviation*0.05)
                     self.motors.sendV(15)
                     
-            
-                    
-            # Acelera recto
-            #while v < 70:  
-            #    v += 5
-            #    self.motors.sendV(v)
-            
-        
-        
+        # Restart self.detectionCar
+        timeNow = time.time()
+        if timeNow - self.time >= 5:
+            if self.detectionCar == True:
+                self.detectionCar = False  
