@@ -23,7 +23,7 @@ namespace gazebo
 		
   			
   			if (pose.pos.y <= 0){
-  			    this->model->SetLinearVel(math::Vector3(10, 0, 0));
+  			    this->model->SetLinearVel(math::Vector3(5, 0, 0));
       			if ( pose.pos.x >=50 ) {
 			        pose.pos.x = -50;
 			        this->model->SetWorldPose(pose);
