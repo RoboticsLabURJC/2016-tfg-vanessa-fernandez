@@ -186,7 +186,13 @@ class MyAlgorithm(threading.Thread):
         # CAR DETECTION
         
         if self.stop == True and self.turn == False:
+            
+            # Stop for a while before seeing if cars come
+            if self.sleep == False:
+                self.sleep = True
+                time.sleep(2)
   
+            
             # Getting the images
             imageL = self.cameraL.getImage()
             imageR = self.cameraR.getImage()
