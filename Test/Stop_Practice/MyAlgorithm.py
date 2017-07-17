@@ -24,17 +24,20 @@ class MyAlgorithm(threading.Thread):
         self.imageL = None
         self.imageR = None
         
-        self.backgroundL = None
+        self.framePrev = None
         
         self.sleep = False
         
         self.detection = False
         self.stop = False
         self.detectionCar = True
+        self.turn = False
         
         self.yaw = 0
+        self.numFrames = 0
+        self.time = 0
         
-        self.time = time.time()
+        self.FRAMES = 10
         
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
@@ -114,7 +117,6 @@ class MyAlgorithm(threading.Thread):
         # Template's size
         h, w = self.template.shape
 
-        #detection = False
             
         # Detection of object contour
         img2, contours, hierarchy = cv2.findContours(image_filtered, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -183,18 +185,13 @@ class MyAlgorithm(threading.Thread):
         
         # CAR DETECTION
         
-        if self.stop == True:
+        if self.stop == True and self.turn == False:
         
             # Stop for a while before seeing if cars come
             if self.sleep == False:
                 self.sleep = True
                 time.sleep(2)
-                
-            # Restart the background image from time to time
-            timeNow = time.time()
-            if timeNow - self.time >= 1:
-                self.backgroundL = None
-                self.time = timeNow
+  
             
             # Getting the images
             imageL = self.cameraL.getImage()
@@ -208,20 +205,25 @@ class MyAlgorithm(threading.Thread):
             
             # If we have not yet obtained the background, we obtain it
             # It will be the first frame we get
-            if self.backgroundL is None:
-                self.backgroundL = imageL_gray 
+            if self.framePrev is None:
+                self.framePrev = imageL_gray 
                 
             # Calculating the difference between the background and the current frame
-            image_diff = cv2.absdiff(self.backgroundL, imageL_gray)
+            image_diff = cv2.absdiff(self.framePrev, imageL_gray)
             #cv2.imshow("image_diff", image_diff)
             
+            self.numFrames += 1
+            if self.numFrames == self.FRAMES:
+                self.framePrev = imageL_gray
+                self.numFrames = 0
+            
             # We apply a threshold
-            image_seg = cv2.threshold(image_diff, 50, 255, cv2.THRESH_BINARY)[1]
+            image_seg = cv2.threshold(image_diff, 25, 255, cv2.THRESH_BINARY)[1]
             #cv2.imshow("image_seg", image_seg)
             
             # Dilatamos the image to cover holes
             image_dil = cv2.dilate(image_seg, None, iterations=2)
-            cv2.imshow("image_dil", image_dil)
+            #cv2.imshow("image_dil", image_dil)
             
             # Copy the image to detect the contours
             contornosimg = image_dil.copy()
@@ -236,21 +238,18 @@ class MyAlgorithm(threading.Thread):
                     (x, y, w, h) = cv2.boundingRect(c)
                     # We draw the rectangle of bounds
                     cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    if self.detectionCar == True:
-                        self.detectioCar = True
+                    self.detectionCar = True
        
         
         
         
-        if self.detection == True and self.stop == True and self.detectionCar == False:
+        if self.detectionCar == False:
+            self.turn = True
             
             yaw = self.pose3d.getYaw() * 180/pi
-            # Speed
-            v = 10
-           
             # Turn 45 degrees
             while yaw < -145 :
-                self.motors.sendV(v)
+                self.motors.sendV(10)
                 self.motors.sendW(3.5)
                 yaw = self.pose3d.getYaw() * 180/pi
             
@@ -318,8 +317,12 @@ class MyAlgorithm(threading.Thread):
                     self.motors.sendW(-desviation*0.05)
                     self.motors.sendV(15)
                     
-        # Restart self.detectionCar
-        timeNow = time.time()
-        if timeNow - self.time >= 5:
-            if self.detectionCar == True:
-                self.detectionCar = False  
+                    
+        if self.stop == True:
+            timeNow = time.time()
+            if self.time == 0:
+                self.time = time.time()
+                
+            if timeNow - self.time >= 5:
+                self.time = 0
+                self.detectionCar = False
