@@ -211,11 +211,34 @@ class MyAlgorithm2(threading.Thread):
         else:
             turn = False
         return turn
+        
+    def calculateSideTriangle(self, a, b, angle):
+        c = math.sqrt(pow(a,2) + pow(b,2) - 2*a*b*math.cos(angle))
+        return c
+        
+    def calculateAngleTriangle(self, a, b, c):
+        numer = pow(a,2) + pow(b,2) - pow(c,2)
+        deno = 2 * a * b
+        angleC = math.acos(numer/deno)
+        return angleC
 
     def execute(self):
 
         print ('Execute')
         # TODO
+        '''
+        laser_data = self.laser.getLaserData()
+        laserRight = laser_data.distanceData[0]/10
+        laser45 = laser_data.distanceData[45]/10
+        a = math.sqrt(pow(b,2) + pow(c,2) - 2*b*c*math.cos(45))
+        a = self.calculateSideTriangle(laserRight, laser45, 45)
+        print("valor", a)
+        
+        num = pow(a,2) + pow(b,2) - pow(c,2)
+        deno = 2 * a * b
+        angleC = math.acos(num/deno)
+        angleC = self.calculateAngleTriangle(a, laserRight, laser45)
+        print "angle C", angleC'''
 
         # Time
         self.numIteracion = self.numIteracion + 1
@@ -315,6 +338,12 @@ class MyAlgorithm2(threading.Thread):
             # Distance in millimeters, we change to cm
             laserRight = laser_data.distanceData[0]/10
             laserCenter = laser_data.distanceData[90]/10
+            laser45 = laser_data.distanceData[45]/10
+            
+            # Calculate the angle of triangle
+            a = self.calculateSideTriangle(laserRight, laser45, 45)
+            angleC = self.calculateAngleTriangle(a, laserRight, laser45)
+            print "angleC", angleC
             
             # Initialize start time
             if self.startTime == 0:
@@ -332,7 +361,7 @@ class MyAlgorithm2(threading.Thread):
                     print("NUEVO CRASH")
                     # Stop
                     self.motors.sendW(0)
-                    self.motors.sendV(0)
+                    self.motors.sendV(0)    
                     time.sleep(1)
                     # Go backwards
                     self.motors.sendV(-0.1)
@@ -345,7 +374,8 @@ class MyAlgorithm2(threading.Thread):
                     distToObstacleFront = 15
                     print laserRight
                     # Turn until the obstacle is to the right
-                    if laserRight > distToObstacleRight and self.obstacleRight == False:
+                    #if laserRight > distToObstacleRight and self.obstacleRight == False:
+                    if (angleC >= pi/2 + 0.1 or angleC <= pi/2 - 0.1) and self.obstacleRight == False:
                         self.motors.sendV(0)
                         self.motors.sendW(0.2)
                         print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
