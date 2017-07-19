@@ -27,22 +27,26 @@ class MyAlgorithm2(threading.Thread):
         
         self.grid = np.ones([500, 500], float)
         
-        #self.numCrash = 0
-        self.yaw = 0
         self.orientation = 'left'
-        self.turn = False
-        self.turnFound = True
-        self.crash = False
-        self.crashObstacle = False
+        
+        self.secondTurn = True
         self.horizontal = True
-        self.numIteracion = 0
-        self.time = 0
+        self.crash = False
+        self.firstTurn = False
+        self.crashObstacle = False
         self.saturation = False
         self.obstacleRight = False
-        self.turnLeft = False
-        self.turnRight = False
+        self.noObstRight = False
+        self.corner = False
+        self.sizeVacuum = False
         
         self.startTime = 0
+        self.time = 0
+        self.timeSat = 0
+        self.yaw = 0
+        self.numIteracion = 0
+        self.DIST_TO_OBST_RIGHT = 30
+        self.DIST_TO_OBST_FRONT = 15
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -226,41 +230,35 @@ class MyAlgorithm2(threading.Thread):
 
         print ('Execute')
         # TODO
-        '''
-        laser_data = self.laser.getLaserData()
-        laserRight = laser_data.distanceData[0]/10
-        laser45 = laser_data.distanceData[45]/10
-        a = math.sqrt(pow(b,2) + pow(c,2) - 2*b*c*math.cos(45))
-        a = self.calculateSideTriangle(laserRight, laser45, 45)
-        print("valor", a)
-        
-        num = pow(a,2) + pow(b,2) - pow(c,2)
-        deno = 2 * a * b
-        angleC = math.acos(num/deno)
-        angleC = self.calculateAngleTriangle(a, laserRight, laser45)
-        print "angle C", angleC'''
 
-        # Time
-        self.numIteracion = self.numIteracion + 1
-        if self.numIteracion % 5 == 0:
-            self.time = self.time + 1
-
+        # Time     
+        if self.time == 0:
+            self.time = time.time()
+        if self.timeSat == 0:
+            self.timeSat = time.time()
+            
+        timeNow = time.time()
         if self.saturation == False:
-            if self.time % 5 == 0:
+            #print('TIME', abs(self.time - timeNow))
+            #print('TIME SATURATION', abs(self.timeSat - timeNow))
+            
+            if abs(self.time - timeNow) >= 5:
                 # If 5 seconds have elapsed we reduce the value of the squares of the grid
+                #print ('REDUCIR VALORES DEL GRID')
                 self.reduceValueTime()
+                self.time = 0
                 
-            if self.time != 0 and self.time % 60 == 0:
+            if abs(self.timeSat - timeNow) >= 20:
                 self.saturation = self.checkSaturation()
                 if self.saturation == True:
                     # Stop
                     self.motors.sendW(0)
                     self.motors.sendV(0)
-                print ("saturation", self.saturation)
+                self.timeSat = 0
             
-            # Show grid
-            self.changeValuesGrid()
-            self.showGrid()
+        # Show grid
+        self.changeValuesGrid()
+        self.showGrid()
                 
         # Vacuum's poses
         x = self.pose3d.getX()
@@ -370,8 +368,6 @@ class MyAlgorithm2(threading.Thread):
                     
                     
                 if self.crashObstacle == True:
-                    distToObstacleRight = 30
-                    distToObstacleFront = 15
                     print laserRight
                     # Turn until the obstacle is to the right
                     #if laserRight > distToObstacleRight and self.obstacleRight == False:
@@ -385,43 +381,53 @@ class MyAlgorithm2(threading.Thread):
                     if self.obstacleRight == True:
                         # The obstacle is on the right
                         
-                        if laserCenter < distToObstacleFront and self.turnLeft == False:
-                            # Esta en una esquina
-                            # Stop
+                        '''
+                        if laserCenter < self.DIST_TO_OBST_FRONT or self.corner == True:
+                            # Está en una esquina
+                            print (' ESTOY EN UNA ESQUINA ')
+                            self.corner = True
+                            
+                            # Parar
                             self.motors.sendV(0)
 
                             # Gira 90 grados a la izq
                             self.orientation = 'left'
-                            giro = self.turn90(self.yaw+pi/2, pi/2, yaw)
-                            
+                            giro = self.turn90(self.yaw + pi/2, pi/2, yaw)
+                            print('Girando a la izquierda...')
                             if giro == False:
                                 self.motors.sendW(0)
-                                self.turnLeft = True
-                                
-                            print("ESQUINAAAAAAAA")
-                                
-                        elif laserRight > distToObstacleRight and self.turnRight == False:
+                                self.corner = False
+                                print('GIRO A LA IZQUIERDA HECHO')
+
+                        elif laserRight > self.DIST_TO_OBST_RIGHT or self.noObstRight == True:
                             # Ya no hay obstaculo a la derecha
+                            print (' NO HAY OBSTACULO A LA DERECHA ')
+                            self.noObstRight = True
                             
-                            # Avanza el tamano de la aspiradora
-                            self.motors.sendV(0.3)
-                            
+                            if self.sizeVacuum == False:
+                                # Avanza el tamaño de la aspiradora
+                                self.motors.sendV(0.3)
+                                self.sizeVacuum = True
+                                print ('Avanzando tamaño vacuum...')
+                                time.sleep(1)
+
                             # Gira 90 grados a la derecha
                             self.orientation = 'right'
-                            giro = self.turn90(self.yaw-pi/2, pi/2, yaw)
-                            
+                            giro = self.turn90(self.yaw - pi/2, pi/2, yaw)
+                            print('Girando a la derecha...', giro)
                             if giro == False:
                                 self.motors.sendW(0)
-                                self.turnRight = True
-                            
-                            print ("NOOO HAY OBSTACULO A LA DERECHAAAAAAAA")
-                            
-                        else: 
-                            # Go forward
+                                self.noObstRight = False
+                                self.sizeVacuum = False
+                                print('GIRO A LA DERECHA HECHO')
+                                
+                        else:
+                            # Avanza
+                            print (' Avanzando... ')
                             self.motors.sendW(0)
-                            self.motors.sendV(0.5)
+                            self.motors.sendV(0.1)
                             self.yaw = yaw
-                            print("AVANZAAAAAAAAA")
+                                        '''              
                             
                         
             else:
@@ -429,7 +435,8 @@ class MyAlgorithm2(threading.Thread):
                 self.startTime = 0
                 self.crashObstacle = False
                 self.obstacleRight = False
-                self.turnLeft = False
-                self.turnRight = False
+                self.noObstRight = False
+                self.corner = False
+                self.sizeVacuum = False
 
 
