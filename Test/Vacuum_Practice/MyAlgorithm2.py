@@ -283,10 +283,10 @@ class MyAlgorithm2(threading.Thread):
                 
                 # Yaw 
                 self.yaw = self.pose3d.getYaw()
-                self.turn = False
+                self.firstTurn = False
                 self.crash = True
                 
-            if self.turn == False and self.crash == True:
+            if self.firstTurn == False and self.crash == True:
                 print ("PRIMER GIRO")
                 # Yaw
                 yawNow = self.pose3d.getYaw()
@@ -297,23 +297,23 @@ class MyAlgorithm2(threading.Thread):
                     
                 if giro == False:
                     print ("GIRO HECHO")
-                    self.turn = True
+                    self.firstTurn = True
                     # Go forwards
                     self.motors.sendW(0)
                     time.sleep(2)
                     self.motors.sendV(0.22)                                        
                     time.sleep(1)
-                    self.turnFound = False
+                    self.secondTurn = False
                     
                     
-            elif self.turnFound == False and self.crash == True:
+            elif self.secondTurn == False and self.crash == True:
                 print ("SEGUNDO GIRO")
                 # Yaw
                 yawNow = self.pose3d.getYaw()
                 giro = self.turn90(pi, 0, yawNow)
                 
                 if giro == False:
-                    self.turnFound = True
+                    self.secondTurn = True
             
             else:
                 print ("AVANZAR")
@@ -322,7 +322,7 @@ class MyAlgorithm2(threading.Thread):
                 time.sleep(1)
                 self.motors.sendV(0.5)
                 self.crash = False
-                self.turn == True
+                self.firstTurn = True
                 
         else:
             # There is saturation
@@ -330,8 +330,6 @@ class MyAlgorithm2(threading.Thread):
             
             # Get the data of the laser sensor, which consists of 180 pairs of values
             laser_data = self.laser.getLaserData()
-            #print laser_data.numLaser
-            #print laser_data.distanceData[0], laser_data.distanceData[laser_data.numLaser-1]
             
             # Distance in millimeters, we change to cm
             laserRight = laser_data.distanceData[0]/10
@@ -377,6 +375,7 @@ class MyAlgorithm2(threading.Thread):
                         print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
                     else:
                         self.obstacleRight = True
+                        self.motors.sendW(0)
                         
                     if self.obstacleRight == True:
                         # The obstacle is on the right
