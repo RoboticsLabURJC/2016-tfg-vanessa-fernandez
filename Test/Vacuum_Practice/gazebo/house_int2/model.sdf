@@ -3893,7 +3893,7 @@
           <pose>0 0 0.41 0 -0 0</pose>
           <geometry>
             <box>
-              <size>1 0.35 0.02</size>
+              <size>1 0.35 0.2</size>
             </box>
           </geometry>
           <surface>
@@ -4117,7 +4117,7 @@
           <pose>0 0 0.01 0 -0 0</pose>
           <geometry>
             <box>
-              <size>1 0.35 0.02</size>
+              <size>1 0.35 0.2</size>
             </box>
           </geometry>
           <material>
@@ -4529,7 +4529,7 @@
           <pose>0 0 0.01 0 -0 0</pose>
           <geometry>
             <box>
-              <size>1 0.35 0.02</size>
+              <size>1 0.35 0.2</size>
             </box>
           </geometry>
           <material>
@@ -4877,7 +4877,7 @@
           <pose>0 0 0.01 0 -0 0</pose>
           <geometry>
             <box>
-              <size>0.35 0.35 0.02</size>
+              <size>0.35 0.35 0.2</size>
             </box>
           </geometry>
           <material>
@@ -5301,7 +5301,7 @@
           <pose>0 0 0.01 0 -0 0</pose>
           <geometry>
             <box>
-              <size>0.35 0.35 0.02</size>
+              <size>0.35 0.35 0.2</size>
             </box>
           </geometry>
           <material>
