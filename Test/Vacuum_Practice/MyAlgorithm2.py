@@ -102,6 +102,12 @@ class MyAlgorithm2(threading.Thread):
     def kill (self):
         self.kill_event.set()
         
+    
+    def initTime(self):
+        if self.time == 0:
+            self.time = time.time()
+        if self.timeSat == 0:
+            self.timeSat = time.time()
         
     def RTy(self, angle, tx, ty, tz):
         RT = np.matrix([[math.cos(angle), 0, math.sin(angle), tx], [0, 1, 0, ty], [-math.sin(angle), 0, math.cos(angle), tz], [0,0,0,1]])
@@ -185,6 +191,10 @@ class MyAlgorithm2(threading.Thread):
                 break
         return crash
         
+    def stopVacuum(self):
+        self.motors.sendW(0)
+        self.motors.sendV(0)
+        
         
     def returnOrientation(self, yaw):
         if -pi/2 <= yaw <= pi/2:
@@ -232,11 +242,8 @@ class MyAlgorithm2(threading.Thread):
         print ('Execute')
         # TODO
 
-        # Time     
-        if self.time == 0:
-            self.time = time.time()
-        if self.timeSat == 0:
-            self.timeSat = time.time()
+        # Time
+        self.initTime()
             
         timeNow = time.time()
         if self.saturation == False:
@@ -253,8 +260,7 @@ class MyAlgorithm2(threading.Thread):
                 self.saturation = self.checkSaturation()
                 if self.saturation == True:
                     # Stop
-                    self.motors.sendW(0)
-                    self.motors.sendV(0)
+                    self.stopVacuum()
                 self.timeSat = 0
             
         # Show grid
@@ -276,8 +282,7 @@ class MyAlgorithm2(threading.Thread):
             if crash == 1:
                 print ("CRAAASH")
                 # Stop
-                self.motors.sendW(0)
-                self.motors.sendV(0)
+                self.stopVacuum()
                 time.sleep(1)
                 # Go backwards
                 self.motors.sendV(-0.1)
@@ -357,8 +362,7 @@ class MyAlgorithm2(threading.Thread):
                     self.crashObstacle = True
                     print("NUEVO CRASH")
                     # Stop
-                    self.motors.sendW(0)
-                    self.motors.sendV(0)    
+                    self.stopVacuum()   
                     time.sleep(1)
                     # Go backwards
                     self.motors.sendV(-0.1)
@@ -369,7 +373,6 @@ class MyAlgorithm2(threading.Thread):
                 if self.crashObstacle == True:
                     print laserRight
                     # Turn until the obstacle is to the right
-                    #if laserRight > distToObstacleRight and self.obstacleRight == False:
                     if (angleC >= pi/2 + 0.1 or angleC <= pi/2 - 0.1) and self.obstacleRight == False:
                         self.motors.sendV(0)
                         self.motors.sendW(0.2)
@@ -404,7 +407,6 @@ class MyAlgorithm2(threading.Thread):
 
                         else:
                             # Avanza
-                            #if laserRight >= self.DIST_TO_OBST_RIGHT:
                             if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
                                 print('Girooo')
                                 self.motors.sendV(0)
