@@ -102,6 +102,11 @@ class MyAlgorithm(threading.Thread):
             angle = 0
         return angle
         
+    def add2Pi(self, angle1, angle2):
+        if (-pi < angle1 < -pi/2) and ((pi/2 <= angle2 <= pi) or (0 <= angle2 <= pi/2)):
+            angle1 = angle1 + 2*pi
+        return angle1
+        
     def turnAngle(self, angle):
         if angle <= (self.numAngle-self.MARGIN) or angle >= (self.numAngle+self.MARGIN):
             self.motors.sendV(0)
@@ -158,10 +163,9 @@ class MyAlgorithm(threading.Thread):
                 yawNow = self.convert2PiTo0(yawNow)
                 
                 if (-pi < self.yaw < -pi/2) or (-pi < yawNow < -pi/2):
-                    if (-pi < self.yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
-                        self.yaw = self.yaw + 2*pi
-                    elif (-pi < yawNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
-                        yawNow = yawNow + 2*pi
+                    # Conversion of angles 
+                    self.yaw = self.add2Pi(self.yaw, yawNow)
+                    yawNow = self.add2Pi(yawNow, self.yaw)
                         
                 # Calculate the difference between angles and do the turn        
                 angle = abs(self.yaw - yawNow)
