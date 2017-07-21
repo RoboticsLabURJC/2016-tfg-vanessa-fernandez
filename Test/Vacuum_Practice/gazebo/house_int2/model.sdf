@@ -4267,7 +4267,7 @@
     <model name='estanteria_2'>
       <static>true</static>
       <link name='estanteria_link'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0.4 0 0 0 -0 0</pose>
         <inertial>
           <pose>0 0 1.046 0 -0 0</pose>
           <mass>100</mass>
