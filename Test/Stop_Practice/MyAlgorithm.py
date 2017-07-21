@@ -85,6 +85,47 @@ class MyAlgorithm(threading.Thread):
 
     def kill (self):
         self.kill_event.set()
+        
+        
+    def brake (self, bw):
+        if self.detection == True:
+            if self.stop == False:
+                if bw >= 10 and bw < 30:
+                    v = 50
+                elif bw >= 30 and bw < 45:
+                    v = 30
+                elif bw >= 45 and bw < 65:
+                    v = 15
+                elif bw >= 65:
+                    self.stop = True
+                    v = 0
+                else:
+                    v = 60
+            else:       
+                v = 0        
+        else:
+            v = 60
+        print('VELOCIDAD: ', v)
+        return v
+
+    
+    def saveFrame(self, image):
+        self.numFrames += 1
+        if self.numFrames == self.FRAMES:
+            self.framePrev = image
+            self.numFrames = 0
+    
+    
+    def findCar(self, cont, image):
+        if len(cont) != 0:
+            # We traverse all contours
+            for c in cont:
+                # We obtain the bounds of the contour, the larger rectangle that encloses the contour
+                (x, y, w, h) = cv2.boundingRect(c)
+                 # We draw the rectangle of bounds
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                self.detectionCar = True
+                
 
     def execute(self):
         
@@ -148,7 +189,15 @@ class MyAlgorithm(threading.Thread):
                     cv2.rectangle(input_image, (pt[0]+x,pt[1]+y), (pt[0] + bw+x, pt[1] + bh+y), (0,0,255), 2)
                     self.detection = True
                     print("Found signal")
-                    
+                  
+                  
+                # STOPPING
+                
+                v = self.brake(bw)
+                self.motors.sendV(v)
+                
+                
+                '''  
                 if self.detection == True:
                     print('bw:       ', bw)
                     print('bh:       ', bh)  
@@ -176,7 +225,7 @@ class MyAlgorithm(threading.Thread):
                     
                 else:
                     self.motors.sendV(70)
-                    print('VELOCIDAD:     70')
+                    print('VELOCIDAD:     70')'''
           
         print('DETECTION:            ', self.detection)
         print('STOP:            ', self.stop)
@@ -212,10 +261,15 @@ class MyAlgorithm(threading.Thread):
             image_diff = cv2.absdiff(self.framePrev, imageL_gray)
             #cv2.imshow("image_diff", image_diff)
             
+            # I save the image every 5 frames
+            self.saveFrame(imageL_gray)
+            '''
             self.numFrames += 1
             if self.numFrames == self.FRAMES:
                 self.framePrev = imageL_gray
                 self.numFrames = 0
+            '''
+            
             
             # We apply a threshold
             image_seg = cv2.threshold(image_diff, 25, 255, cv2.THRESH_BINARY)[1]
@@ -229,16 +283,18 @@ class MyAlgorithm(threading.Thread):
             contornosimg = image_dil.copy()
             
             # We look for contours in the image
-            im, contornos, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+            im, cont, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
             
-            if len(contornos) != 0:
+            self.findCar(cont, imageL)
+            '''
+            if len(cont) != 0:
                 # We traverse all contours
-                for c in contornos:
+                for c in cont:
                     # We obtain the bounds of the contour, the larger rectangle that encloses the contour
                     (x, y, w, h) = cv2.boundingRect(c)
                     # We draw the rectangle of bounds
                     cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    self.detectionCar = True
+                    self.detectionCar = True'''
        
         
         
@@ -248,7 +304,7 @@ class MyAlgorithm(threading.Thread):
             
             yaw = self.pose3d.getYaw() * 180/pi
             # Turn 45 degrees
-            while yaw < -145 :
+            while yaw < -145:
                 self.motors.sendV(10)
                 self.motors.sendW(3.5)
                 yaw = self.pose3d.getYaw() * 180/pi
