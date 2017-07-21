@@ -96,7 +96,11 @@ class MyAlgorithm(threading.Thread):
     def stopVacuum(self):
         self.motors.sendW(0)
         self.motors.sendV(0)
-        time.sleep(1)
+        
+    def convert2PiTo0(self, angle):
+        if angle == 2*pi:
+            angle = 0
+        return angle
         
     def turnAngle(self, angle):
         if angle <= (self.numAngle-self.MARGIN) or angle >= (self.numAngle+self.MARGIN):
@@ -132,6 +136,7 @@ class MyAlgorithm(threading.Thread):
             if crash == 1:
                 # Stop
                 self.stopVacuum()
+                time.sleep(1)
                 # Go backwards
                 self.motors.sendV(-0.2)
                 time.sleep(1)
@@ -147,11 +152,10 @@ class MyAlgorithm(threading.Thread):
                 
                 # yawNow is the orientation that I have at the moment
                 yawNow = self.pose3d.getYaw()
-                                        
-                if self.yaw == 2*pi:
-                    self.yaw = 0
-                if yawNow == 2*pi:
-                    yawNow = 0
+                
+                # Conversion of angles                
+                self.yaw = self.convert2PiTo0(self.yaw)
+                yawNow = self.convert2PiTo0(yawNow)
                 
                 if (-pi < self.yaw < -pi/2) or (-pi < yawNow < -pi/2):
                     if (-pi < self.yaw < -pi/2) and ((pi/2 <= yawNow <= pi) or (0 <= yawNow <= pi/2)) :
@@ -159,6 +163,7 @@ class MyAlgorithm(threading.Thread):
                     elif (-pi < yawNow < -pi/2) and ((pi/2 <= self.yaw <= pi) or (0 <= self.yaw <= pi/2)):
                         yawNow = yawNow + 2*pi
                         
+                # Calculate the difference between angles and do the turn        
                 angle = abs(self.yaw - yawNow)
                 self.turnAngle(angle)
             
@@ -166,7 +171,6 @@ class MyAlgorithm(threading.Thread):
                 # Go forward
                 self.motors.sendW(0)
                 time.sleep(1)
-                self.turn = False
                 self.motors.sendV(0.5)
                 
                 # Restart global variables
