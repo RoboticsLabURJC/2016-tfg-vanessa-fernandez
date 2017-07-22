@@ -36,6 +36,7 @@ class MyAlgorithm(threading.Thread):
         
         self.TIME_PERIMETER = 240
         self.MARGIN = 0.2
+        self.MARGIN_OBST_RIGHT = 0.1
         self.DIST_TO_OBST_RIGHT = 30
         self.DIST_MIN_TO_OBST_RIGHT = 15
         self.DIST_TO_OBST_FRONT = 15
@@ -139,6 +140,51 @@ class MyAlgorithm(threading.Thread):
         angleC = math.acos(numer/deno)
         return angleC
         
+        
+    def turnUntilObstacleToRight(self, angle):
+        # Turn until the obstacle is to the right
+        if (angle >= pi/2 + self.MARGIN_OBST_RIGHT or angle <= pi/2 - self.MARGIN_OBST_RIGHT) and self.obstacleRight == False:
+            # Turn to left
+            self.motors.sendV(0)
+            self.motors.sendW(0.2)
+        else:
+            self.obstacleRight = True
+            self.motors.sendW(0)
+            
+            
+    def turnCorner(self, yaw):
+        self.corner = True               
+        # Stop
+        self.motors.sendV(0)
+        
+        # Conversion of angles
+        if self.yaw <= (pi + 0.2) and self.yaw >= (pi - 0.2):
+            self.yaw = -pi
+
+        # Gira 90 grados a la izq
+        self.orientation = 'left'
+        self.numAngle = self.yaw + pi/2
+        self.sign = 1
+        giro = self.turnAngle(yaw)
+
+        if giro == True:
+            self.motors.sendW(0)
+            self.corner = False
+            
+            
+    def goNextToWall(self, laserRight):
+        if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
+            # Turn to left
+            self.motors.sendV(0)
+            self.motors.sendW(0.1)
+        elif laserRight >= self.DIST_TO_OBST_RIGHT:
+            # Turn to right
+            self.motors.sendV(0) 
+            self.motors.sendW(-0.1)
+        else:
+            self.motors.sendW(0)
+            self.motors.sendV(0.1)
+        
 
     def execute(self):
 
@@ -199,54 +245,19 @@ class MyAlgorithm(threading.Thread):
                 angleC = self.calculateAngleTriangle(a, laserRight, laser45)
                 
                 # Turn until the obstacle is to the right
-                if (angleC >= pi/2 + 0.1 or angleC <= pi/2 - 0.1) and self.obstacleRight == False:
-                    self.motors.sendV(0)
-                    self.motors.sendW(0.2)
-                    print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
-                else:
-                    self.obstacleRight = True
-                    self.motors.sendW(0)
+                self.turnUntilObstacleToRight(angleC)
                 
                 if self.obstacleRight == True:
                     # The obstacle is on the right
                     if laserCenter < self.DIST_TO_OBST_FRONT or self.corner == True:
-                        # Esta en una esquina
+                        # Vacuum is in the corner
                         print (' ESTOY EN UNA ESQUINA ')
-                        self.corner = True
+                        self.turnCorner(yaw)
                         
-                        # Stop
-                        self.motors.sendV(0)
-                        
-                        # Gira 90 grados a la izq
-                        if self.yaw <= (pi + 0.2) and self.yaw >= (pi - 0.2):
-                            self.yaw = -pi
-
-                        # Gira 90 grados a la izq
-                        self.orientation = 'left'
-                        self.numAngle = self.yaw + pi/2
-                        self.sign = 1
-                        giro = self.turnAngle(yaw)
-                        print('Girando a la izquierda...')
-                        if giro == True:
-                            self.motors.sendW(0)
-                            self.corner = False
-                            print('GIRO A LA IZQUIERDA HECHO')
-
                     else:
-                        # Avanza
-                        if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
-                            print('Girooo')
-                            self.motors.sendV(0)
-                            self.motors.sendW(0.1)
-                        elif laserRight >= self.DIST_TO_OBST_RIGHT:
-                            # Giro
-                            print('Girando...')
-                            self.motors.sendV(0) 
-                            self.motors.sendW(-0.1)
-                        else:
-                            print (' Avanzando... ')
-                            self.motors.sendW(0)
-                            self.motors.sendV(0.1)
+                        # Go next to the wall
+                        print("Go next to the wall")
+                        self.goNextToWall(laserRight)
                         self.yaw = yaw
                 
                 
