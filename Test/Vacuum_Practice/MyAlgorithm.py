@@ -93,6 +93,10 @@ class MyAlgorithm(threading.Thread):
         self.kill_event.set()
         
         
+    def initTime(self):
+        if self.startTime == 0:
+            self.startTime = time.time()
+        
     
     def checkCrash(self):
         for i in range(0, 350):
@@ -198,15 +202,16 @@ class MyAlgorithm(threading.Thread):
         crash = self.checkCrash()
 
         if crash == 1:
-            if self.startTime == 0:
-                self.startTime = time.time()
+            # Start time
+            self.initTime()
             # When there has already been a crash we change the value of self.numCrash to start doing the bump & go
             self.numCrash = 1
             
         if abs(self.startTime - time.time()) > self.TIME_PERIMETER:
+            # Restart variable
             self.foundPerimeter = False
 
-        print(crash)
+        print("Crash: ", crash)
         
         if self.numCrash == 0:
             # If self.numCrash equals 0, then we make the spiral
@@ -251,7 +256,7 @@ class MyAlgorithm(threading.Thread):
                     # The obstacle is on the right
                     if laserCenter < self.DIST_TO_OBST_FRONT or self.corner == True:
                         # Vacuum is in the corner
-                        print (' ESTOY EN UNA ESQUINA ')
+                        print ('Vacuum is in the corner ')
                         self.turnCorner(yaw)
                         
                     else:
