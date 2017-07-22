@@ -22,13 +22,23 @@ class MyAlgorithm(threading.Thread):
         self.radiusInitial = 0.1
         self.constant = 0.01
         self.numCrash = 0
-        self.turn = False
         self.yaw = 0
-        self.crash = False
         self.numAngle = 0
         self.sign = 0
         
+        self.turn = False
+        self.crash = False
+        self.obstacleRight = False
+        self.corner = False
+        self.foundPerimeter = False
+        
+        self.startTime = 0
+        
+        self.TIME_PERIMETER = 240
         self.MARGIN = 0.2
+        self.DIST_TO_OBST_RIGHT = 30
+        self.DIST_MIN_TO_OBST_RIGHT = 15
+        self.DIST_TO_OBST_FRONT = 15
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -108,6 +118,7 @@ class MyAlgorithm(threading.Thread):
         return angle1
         
     def turnAngle(self, angle):
+        turn = False
         if angle <= (self.numAngle-self.MARGIN) or angle >= (self.numAngle+self.MARGIN):
             self.motors.sendV(0)
             if self.sign == 1:
@@ -115,7 +126,18 @@ class MyAlgorithm(threading.Thread):
             else:
                 self.motors.sendW(-0.2)
         else:
-            self.turn = True
+            turn = True
+        return turn
+            
+    def calculateSideTriangle(self, a, b, angle):
+        c = math.sqrt(pow(a,2) + pow(b,2) - 2*a*b*math.cos(angle))
+        return c
+        
+    def calculateAngleTriangle(self, a, b, c):
+        numer = pow(a,2) + pow(b,2) - pow(c,2)
+        deno = 2 * a * b
+        angleC = math.acos(numer/deno)
+        return angleC
         
 
     def execute(self):
@@ -123,12 +145,20 @@ class MyAlgorithm(threading.Thread):
         print ('Execute')
         # TODO
         
+        # Vacuum's yaw
+        yaw = self.pose3d.getYaw()
+        
         # Check crash
         crash = self.checkCrash()
 
         if crash == 1:
+            if self.startTime == 0:
+                self.startTime = time.time()
             # When there has already been a crash we change the value of self.numCrash to start doing the bump & go
             self.numCrash = 1
+            
+        if abs(self.startTime - time.time()) > self.TIME_PERIMETER:
+            self.foundPerimeter = False
 
         print(crash)
         
@@ -138,12 +168,12 @@ class MyAlgorithm(threading.Thread):
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
-            if crash == 1:
+            if crash == 1 and self.foundPerimeter == False:
                 # Stop
                 self.stopVacuum()
                 time.sleep(1)
                 # Go backwards
-                self.motors.sendV(-0.2)
+                self.motors.sendV(-0.1)
                 time.sleep(1)
                 
                 self.crash = True
@@ -151,6 +181,74 @@ class MyAlgorithm(threading.Thread):
                 # Random angle and sign
                 self.numAngle = random.uniform(pi/3, pi)
                 self.sign = random.randint(0, 1)
+                
+            elif abs(self.startTime - time.time()) < self.TIME_PERIMETER:
+                # PERIMETER
+                self.foundPerimeter = True
+                
+                # Get the data of the laser sensor, which consists of 180 pairs of values
+                laser_data = self.laser.getLaserData()
+                
+                # Distance in millimeters, we change to cm
+                laserRight = laser_data.distanceData[0]/10
+                laserCenter = laser_data.distanceData[90]/10
+                laser45 = laser_data.distanceData[45]/10
+                
+                # Calculate the angle of triangle
+                a = self.calculateSideTriangle(laserRight, laser45, 45)
+                angleC = self.calculateAngleTriangle(a, laserRight, laser45)
+                
+                # Turn until the obstacle is to the right
+                if (angleC >= pi/2 + 0.1 or angleC <= pi/2 - 0.1) and self.obstacleRight == False:
+                    self.motors.sendV(0)
+                    self.motors.sendW(0.2)
+                    print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
+                else:
+                    self.obstacleRight = True
+                    self.motors.sendW(0)
+                
+                if self.obstacleRight == True:
+                    # The obstacle is on the right
+                    if laserCenter < self.DIST_TO_OBST_FRONT or self.corner == True:
+                        # Esta en una esquina
+                        print (' ESTOY EN UNA ESQUINA ')
+                        self.corner = True
+                        
+                        # Stop
+                        self.motors.sendV(0)
+                        
+                        # Gira 90 grados a la izq
+                        if self.yaw <= (pi + 0.2) and self.yaw >= (pi - 0.2):
+                            self.yaw = -pi
+
+                        # Gira 90 grados a la izq
+                        self.orientation = 'left'
+                        self.numAngle = self.yaw + pi/2
+                        self.sign = 1
+                        giro = self.turnAngle(yaw)
+                        print('Girando a la izquierda...')
+                        if giro == True:
+                            self.motors.sendW(0)
+                            self.corner = False
+                            print('GIRO A LA IZQUIERDA HECHO')
+
+                    else:
+                        # Avanza
+                        if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
+                            print('Girooo')
+                            self.motors.sendV(0)
+                            self.motors.sendW(0.1)
+                        elif laserRight >= self.DIST_TO_OBST_RIGHT:
+                            # Giro
+                            print('Girando...')
+                            self.motors.sendV(0) 
+                            self.motors.sendW(-0.1)
+                        else:
+                            print (' Avanzando... ')
+                            self.motors.sendW(0)
+                            self.motors.sendV(0.1)
+                        self.yaw = yaw
+                
                 
             elif self.turn == False and self.crash == True:
                 # Rotate the self.numAngle
@@ -169,7 +267,7 @@ class MyAlgorithm(threading.Thread):
                         
                 # Calculate the difference between angles and do the turn        
                 angle = abs(self.yaw - yawNow)
-                self.turnAngle(angle)
+                self.turn = self.turnAngle(angle)
             
             else:            
                 # Go forward
