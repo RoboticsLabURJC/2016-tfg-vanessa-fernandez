@@ -162,7 +162,7 @@ class MyAlgorithm(threading.Thread):
         self.motors.sendV(0)
         
         # Conversion of angles
-        if self.yaw <= (pi + 0.2) and self.yaw >= (pi - 0.2):
+        if self.yaw <= (pi + self.MARGIN) and self.yaw >= (pi - self.MARGIN):
             self.yaw = -pi
 
         # Gira 90 grados a la izq
