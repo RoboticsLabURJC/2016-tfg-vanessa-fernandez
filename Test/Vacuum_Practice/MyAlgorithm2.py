@@ -198,6 +198,15 @@ class MyAlgorithm2(threading.Thread):
         self.motors.sendV(0)
         
         
+    def stopAndBackwards(self):
+        # Stop
+        self.stopVacuum()
+        time.sleep(1)
+        # Go backwards
+        self.motors.sendV(-0.1)
+        time.sleep(1)
+        
+        
     def returnOrientation(self, yaw):
         if -pi/2 <= yaw <= pi/2:
             orientation = 'left'
@@ -331,12 +340,15 @@ class MyAlgorithm2(threading.Thread):
         if self.saturation == False:
             if crash == 1:
                 print ("CRAAASH")
+                # Stop and go backwards
+                self.stopAndBackwards()
+                '''
                 # Stop
                 self.stopVacuum()
                 time.sleep(1)
                 # Go backwards
                 self.motors.sendV(-0.1)
-                time.sleep(1)
+                time.sleep(1)'''
                 
                 # Yaw 
                 self.yaw = self.pose3d.getYaw()
@@ -411,12 +423,15 @@ class MyAlgorithm2(threading.Thread):
                 elif crash == 1 and self.crashObstacle == False:
                     self.crashObstacle = True
                     print("NEW CRASH")
+                    # Stop and go backwards
+                    self.stopAndBackwards()
+                    '''
                     # Stop
                     self.stopVacuum()   
                     time.sleep(1)
                     # Go backwards
                     self.motors.sendV(-0.1)
-                    time.sleep(1)                    
+                    time.sleep(1)'''               
                     
                 if self.crashObstacle == True:
                     # Turn until the obstacle is to the right
