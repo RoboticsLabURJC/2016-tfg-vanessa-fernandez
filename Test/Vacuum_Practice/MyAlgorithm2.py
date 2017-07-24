@@ -48,6 +48,8 @@ class MyAlgorithm2(threading.Thread):
         self.DIST_TO_OBST_RIGHT = 30
         self.DIST_MIN_TO_OBST_RIGHT = 15
         self.DIST_TO_OBST_FRONT = 15
+        self.MARGIN = 0.2
+        self.MARGIN_OBST_RIGHT = 0.1
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -216,11 +218,11 @@ class MyAlgorithm2(threading.Thread):
             angle2 = -angle2
             
         if (self.orientation == 'left') and (yawNow <= (angle1-rangeDegrees) or yawNow >= (angle1+rangeDegrees)):
-            # Look left and turn left
+            # Look left and turn to left
             self.motors.sendV(0)
             self.motors.sendW(0.2)
         elif (self.orientation == 'right') and (yawNow <= (angle2-rangeDegrees) or yawNow >= (angle2+rangeDegrees)):
-            # Look right and turn right
+            # Look right and turn to right
             self.motors.sendV(0)
             self.motors.sendW(-0.2)
         else:
@@ -236,6 +238,58 @@ class MyAlgorithm2(threading.Thread):
         deno = 2 * a * b
         angleC = math.acos(numer/deno)
         return angleC
+        
+    
+    def turnUntilObstacleToRight(self, angle):
+        # Turn until the obstacle is to the right
+        if (angle >= pi/2 + self.MARGIN_OBST_RIGHT or angle <= pi/2 - self.MARGIN_OBST_RIGHT) and self.obstacleRight == False:
+            # Turn to left
+            self.motors.sendV(0)
+            self.motors.sendW(0.2)
+        else:
+            self.obstacleRight = True
+            self.motors.sendW(0)
+            
+            
+    def turnCorner(self, yaw):
+        self.corner = True
+        # Stop
+        self.motors.sendV(0)
+        
+        # Gira 90 grados a la izq
+        if self.yaw <= (pi + self.MARGIN) and self.yaw >= (pi - self.MARGIN):
+            self.yaw = -pi
+
+        # Gira 90 grados a la izq
+        self.orientation = 'left'
+        giro = self.turn90(self.yaw + pi/2, pi/2, yaw)
+        if giro == False:
+            self.motors.sendW(0)
+            self.corner = False
+    
+            
+    def goNextToWall(self, laserRight):
+        if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
+            # Turn to left
+            self.motors.sendV(0)
+            self.motors.sendW(0.1)
+        elif laserRight >= self.DIST_TO_OBST_RIGHT:
+            # Turn to right
+            self.motors.sendV(0) 
+            self.motors.sendW(-0.1)
+        else:
+            self.motors.sendW(0)
+            self.motors.sendV(0.1)
+            
+            
+    def restartVariables(self):
+        self.startTime = 0
+        self.crashObstacle = False
+        self.obstacleRight = False
+        self.noObstRight = False
+        self.corner = False
+        self.sizeVacuum = False
+    
 
     def execute(self):
 
@@ -246,13 +300,9 @@ class MyAlgorithm2(threading.Thread):
         self.initTime()
             
         timeNow = time.time()
-        if self.saturation == False:
-            #print('TIME', abs(self.time - timeNow))
-            #print('TIME SATURATION', abs(self.timeSat - timeNow))
-            
+        if self.saturation == False:          
             if abs(self.time - timeNow) >= 5:
                 # If 5 seconds have elapsed we reduce the value of the squares of the grid
-                #print ('REDUCIR VALORES DEL GRID')
                 self.reduceValueTime()
                 self.time = 0
                 
@@ -333,7 +383,7 @@ class MyAlgorithm2(threading.Thread):
                 
         else:
             # There is saturation
-            print ("RECORRER PERIMETRO")
+            print ("PERIMETER")
             
             # Get the data of the laser sensor, which consists of 180 pairs of values
             laser_data = self.laser.getLaserData()
@@ -357,78 +407,35 @@ class MyAlgorithm2(threading.Thread):
                 if crash == 0 and self.crashObstacle == False:             
                     # I go forward until I find an obstacle
                     self.motors.sendV(0.5)
-                    print("SOLO AVANZO POR NO CRASH")
+                    print("GO FORWARD")
                 elif crash == 1 and self.crashObstacle == False:
                     self.crashObstacle = True
-                    print("NUEVO CRASH")
+                    print("NEW CRASH")
                     # Stop
                     self.stopVacuum()   
                     time.sleep(1)
                     # Go backwards
                     self.motors.sendV(-0.1)
-                    time.sleep(1)
-                    print("HACIA ATRAS ")
-                    
+                    time.sleep(1)                    
                     
                 if self.crashObstacle == True:
-                    print laserRight
                     # Turn until the obstacle is to the right
-                    if (angleC >= pi/2 + 0.1 or angleC <= pi/2 - 0.1) and self.obstacleRight == False:
-                        self.motors.sendV(0)
-                        self.motors.sendW(0.2)
-                        print("GIRO HASTA QUE ESTE LA PARED A LA DERECHA")
-                    else:
-                        self.obstacleRight = True
-                        self.motors.sendW(0)
+                    self.turnUntilObstacleToRight(angleC)
                         
                     if self.obstacleRight == True:
                         # The obstacle is on the right
-                        
                         if laserCenter < self.DIST_TO_OBST_FRONT or self.corner == True:
-                            # Está en una esquina
-                            print (' ESTOY EN UNA ESQUINA ')
-                            self.corner = True
-                            
-                            # Stop
-                            self.motors.sendV(0)
-                            
-                            # Gira 90 grados a la izq
-                            if self.yaw <= (pi + 0.2) and self.yaw >= (pi - 0.2):
-                                self.yaw = -pi
-
-                            # Gira 90 grados a la izq
-                            self.orientation = 'left'
-                            giro = self.turn90(self.yaw + pi/2, pi/2, yaw)
-                            print('Girando a la izquierda...')
-                            if giro == False:
-                                self.motors.sendW(0)
-                                self.corner = False
-                                print('GIRO A LA IZQUIERDA HECHO')
+                            # Vacuum is in the corner
+                            print ('Vacuum is in the corner ')
+                            self.turnCorner(yaw)
 
                         else:
-                            # Avanza
-                            if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
-                                print('Girooo')
-                                self.motors.sendV(0)
-                                self.motors.sendW(0.1)
-                            elif laserRight >= self.DIST_TO_OBST_RIGHT:
-                                # Giro
-                                print('Girando...')
-                                self.motors.sendV(0) 
-                                self.motors.sendW(-0.1)
-                            else:
-                                print (' Avanzando... ')
-                                self.motors.sendW(0)
-                                self.motors.sendV(0.1)
+                            # Go next to the wall
+                            print("Go next to the wall")
+                            self.goNextToWall(laserRight)
                             self.yaw = yaw
                         
             else:
                 # Restart all global variables
-                self.startTime = 0
-                self.crashObstacle = False
-                self.obstacleRight = False
-                self.noObstRight = False
-                self.corner = False
-                self.sizeVacuum = False
-
+                self.restartVariables()
 
