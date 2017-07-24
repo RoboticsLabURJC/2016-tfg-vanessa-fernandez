@@ -87,6 +87,25 @@ class MyAlgorithm(threading.Thread):
         self.kill_event.set()
         
         
+    def filterHSV(self, input_image, Hmin, Hmax, Smin, Smax, Vmin, Vmax, size_Kernel):
+        # RGB model change to HSV
+        hsv_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
+
+        # Values of red
+        value_min_HSV = np.array([Hmin, Smin, Vmin])
+        value_max_HSV = np.array([Hmax, Smax, Vmax])
+
+        # Segmentation
+        image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
+        #cv2.imshow("filtered", image_filtered)
+
+        # Close, morphology element
+        kernel = np.ones((size_Kernel,size_Kernel), np.uint8)
+        image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
+        
+        return image_filtered
+        
+        
     def brake (self, bw):
         if self.detection == True:
             if self.stop == False:
@@ -126,6 +145,16 @@ class MyAlgorithm(threading.Thread):
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 self.detectionCar = True
                 
+    def restartVariables(self):
+        if self.stop == True:
+            timeNow = time.time()
+            if self.time == 0:
+                self.time = time.time()
+                
+            if timeNow - self.time >= 5:
+                self.time = 0
+                self.detectionCar = False
+                
 
     def execute(self):
         
@@ -139,6 +168,7 @@ class MyAlgorithm(threading.Thread):
         #self.motors.setV(10)
         #self.motors.setW(5)
 
+        '''
         # RGB model change to HSV
         hsv_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
 
@@ -152,7 +182,10 @@ class MyAlgorithm(threading.Thread):
 
         # Close, morphology element
         kernel = np.ones((11,11), np.uint8)
-        image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
+        image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
+        
+        # RGB model change to HSV
+        image_filtered = self.filterHSV(input_image, 131, 179, 71, 232, 0, 63, 11)
         #cv2.imshow('cierre', image_filtered)
 
         # Template's size
@@ -191,41 +224,10 @@ class MyAlgorithm(threading.Thread):
                     print("Found signal")
                   
                   
-                # STOPPING
-                
+                # STOPPING              
                 v = self.brake(bw)
                 self.motors.sendV(v)
-                
-                
-                '''  
-                if self.detection == True:
-                    print('bw:       ', bw)
-                    print('bh:       ', bh)  
-                    
-                    if self.stop == False:
-                        if bw >= 10 and bw < 30:
-                            self.motors.sendV(50)
-                            print('VELOCIDAD:     50')
-                        elif bw >= 30 and bw < 45:
-                            self.motors.sendV(30)
-                            print('VELOCIDAD:     30')
-                        elif bw >= 45 and bw < 65:
-                            self.motors.sendV(15)
-                            print('VELOCIDAD:     15')
-                        elif bw >= 65:
-                            self.stop = True
-                            self.motors.sendV(0)
-                            print('VELOCIDAD:     0')
-                        else:
-                            self.motors.sendV(70)
-                            print('VELOCIDAD:     70')
-                    else:       
-                        self.motors.sendV(0)
-                        print('VELOCIDAD:     0')                        
-                    
-                else:
-                    self.motors.sendV(70)
-                    print('VELOCIDAD:     70')'''
+
           
         print('DETECTION:            ', self.detection)
         print('STOP:            ', self.stop)
@@ -263,12 +265,6 @@ class MyAlgorithm(threading.Thread):
             
             # I save the image every 5 frames
             self.saveFrame(imageL_gray)
-            '''
-            self.numFrames += 1
-            if self.numFrames == self.FRAMES:
-                self.framePrev = imageL_gray
-                self.numFrames = 0
-            '''
             
             
             # We apply a threshold
@@ -284,18 +280,7 @@ class MyAlgorithm(threading.Thread):
             
             # We look for contours in the image
             im, cont, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-            
-            self.findCar(cont, imageL)
-            '''
-            if len(cont) != 0:
-                # We traverse all contours
-                for c in cont:
-                    # We obtain the bounds of the contour, the larger rectangle that encloses the contour
-                    (x, y, w, h) = cv2.boundingRect(c)
-                    # We draw the rectangle of bounds
-                    cv2.rectangle(imageL, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    self.detectionCar = True'''
-       
+            self.findCar(cont, imageL)       
         
         
         
@@ -313,7 +298,7 @@ class MyAlgorithm(threading.Thread):
             # Center image
             img_detection = self.cameraC.getImage()
             
-            # RGB model change to HSV
+            '''# RGB model change to HSV
             hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
             
             # Values
@@ -325,15 +310,16 @@ class MyAlgorithm(threading.Thread):
             cv2.imshow("filtered no kernel", image_filtered)
             # Close, morphology element
             kernel = np.ones((18,18), np.uint8)
-            image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)
+            image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
             
+            # RGB model change to HSV
+            image_filtered = self.filterHSV(img_detection, 0, 10, 5, 20, 0, 60, 18)
             cv2.imshow("filtered", image_filtered)
             
             # Colums and rows
             # Shape gives us the number of rows and columns of an image
             rows = img_detection.shape[0]
             columns = img_detection.shape[1]
-            print columns, rows
             
             # Initialize variables
             position_pixel_left = 0
@@ -373,7 +359,9 @@ class MyAlgorithm(threading.Thread):
                     self.motors.sendW(-desviation*0.05)
                     self.motors.sendV(15)
                     
-                    
+        # Restart variables
+        self.restartVariables()
+        '''       
         if self.stop == True:
             timeNow = time.time()
             if self.time == 0:
@@ -381,4 +369,4 @@ class MyAlgorithm(threading.Thread):
                 
             if timeNow - self.time >= 5:
                 self.time = 0
-                self.detectionCar = False
+                self.detectionCar = False'''
