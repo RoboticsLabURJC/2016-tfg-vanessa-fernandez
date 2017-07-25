@@ -23,15 +23,14 @@ class MyAlgorithm(threading.Thread):
         self.imageC = None
         self.imageL = None
         self.imageR = None
-        
         self.framePrev = None
         
         self.sleep = False
-        
         self.detection = False
         self.stop = False
         self.detectionCar = True
         self.turn = False
+        self.turn45 = False
         
         self.yaw = 0
         self.numFrames = 0
@@ -287,77 +286,86 @@ class MyAlgorithm(threading.Thread):
         if self.detectionCar == False:
             self.turn = True
             
-            yaw = self.pose3d.getYaw() * 180/pi
+            yaw = abs(self.pose3d.getYaw() * 180/pi)
             # Turn 45 degrees
-            while yaw < -145:
-                self.motors.sendV(10)
-                self.motors.sendW(3.5)
-                yaw = self.pose3d.getYaw() * 180/pi
-            
-                    
-            # Center image
-            img_detection = self.cameraC.getImage()
-            
-            '''# RGB model change to HSV
-            hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
-            
-            # Values
-            value_min_HSV = np.array([0, 5, 0])
-            value_max_HSV = np.array([10, 20, 60])
-
-            # Segmentation
-            image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-            cv2.imshow("filtered no kernel", image_filtered)
-            # Close, morphology element
-            kernel = np.ones((18,18), np.uint8)
-            image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
-            
-            # RGB model change to HSV
-            image_filtered = self.filterHSV(img_detection, 0, 10, 5, 20, 0, 60, 18)
-            cv2.imshow("filtered", image_filtered)
-            
-            # Colums and rows
-            # Shape gives us the number of rows and columns of an image
-            rows = img_detection.shape[0]
-            columns = img_detection.shape[1]
-            
-            # Initialize variables
-            position_pixel_left = 0
-            position_pixel_right = 0
-            
-            # We look for the pixels in white
-            for i in range(0, columns-1):
-                if i == 0:
-                    value = image_filtered[300, i+1] - image_filtered[300, i]
+            if self.turn45 == False:
+                if yaw < 180 and yaw > 145:
+                    self.motors.sendV(10)
+                    self.motors.sendW(3.5)
                 else:
-                    value = image_filtered[300, i] - image_filtered[300, i-1]
-                if(value != 0):
-                    if (value == 255):
-                        position_pixel_left = i
-                    else:
-                        position_pixel_right = i - 1
-                        
-            if position_pixel_left != 0 or position_pixel_right != 0:    
-                # Calculating the intermediate position of the road
-                position_middle_road = (position_pixel_left + position_pixel_right) / 2
-                # Calculating the intermediate position of the lane
-                position_middle_lane = (position_middle_road + position_pixel_right) / 2
-                
-                cv2.rectangle(input_image, (300,position_middle_lane), (300 + 1, position_middle_lane + 1), (0,255,0), 2)
-                
-                
-                # Calculating the desviation
-                desviation = position_middle_lane - (columns/2)
-                print (" desviation    ", desviation)
+                    self.turn45 = True
             
-                # Speed
-                if abs(desviation) < 35:
-                    # Go straight
-                    self.motors.sendV(50)
-                    self.motors.sendW(0)
-                elif abs(desviation) >= 35:
-                    self.motors.sendW(-desviation*0.05)
-                    self.motors.sendV(15)
+            
+            if self.turn45:
+                # ROAD DETECTION
+                 
+                # Center image
+                img_detection = self.cameraC.getImage()
+                
+                '''# RGB model change to HSV
+                hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
+                
+                # Values
+                value_min_HSV = np.array([0, 5, 0])
+                value_max_HSV = np.array([10, 20, 60])
+
+                # Segmentation
+                image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
+                cv2.imshow("filtered no kernel", image_filtered)
+                # Close, morphology element
+                kernel = np.ones((18,18), np.uint8)
+                image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
+                
+                # RGB model change to HSV
+                image_filtered = self.filterHSV(img_detection, 0, 10, 5, 20, 0, 60, 18)
+                cv2.imshow("filtered", image_filtered)
+                
+                # Colums and rows
+                # Shape gives us the number of rows and columns of an image
+                rows = img_detection.shape[0]
+                columns = img_detection.shape[1]
+                
+                # Initialize variables
+                position_pixel_left = 0
+                position_pixel_right = 0
+                
+                # We look for the pixels in white
+                for i in range(0, columns-1):
+                    if i == 0:
+                        value = image_filtered[300, i+1] - image_filtered[300, i]
+                    else:
+                        value = image_filtered[300, i] - image_filtered[300, i-1]
+                    if(value != 0):
+                        if (value == 255):
+                            position_pixel_left = i
+                        else:
+                            position_pixel_right = i - 1
+                            
+                if position_pixel_left != 0 or position_pixel_right != 0:    
+                    # Calculating the intermediate position of the road
+                    position_middle_road = (position_pixel_left + position_pixel_right) / 2
+                    # Calculating the intermediate position of the lane
+                    position_middle_lane = (position_middle_road + position_pixel_right) / 2
+                    
+                    cv2.rectangle(input_image, (300,position_middle_lane), (300 + 1, position_middle_lane + 1), (0,255,0), 2)
+                    
+                    
+                    # Calculating the desviation
+                    desviation = position_middle_lane - (columns/2)
+                    print (" desviation    ", desviation)
+                
+                    # Speed
+                    if abs(desviation) < 15:
+                        # Go straight
+                        self.motors.sendV(50)
+                        self.motors.sendW(0)
+                    else:
+                        if desviation < 0:
+                            self.motors.sendW(3.5)
+                        else:
+                            self.motors.sendW(-3.5)
+                        self.motors.sendV(30)
+
                     
         # Restart variables
         self.restartVariables()
