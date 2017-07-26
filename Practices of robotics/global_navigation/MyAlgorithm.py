@@ -308,9 +308,6 @@ class MyAlgorithm(threading.Thread):
         dest = self.grid.getDestiny()
         destWorld = self.grid.gridToWorld(dest[0], dest[1])
 
-        #print("robot",posRobotX, posRobotY, orientationRobot)
-        #print(dest, destWorld)
-
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
         if (abs(posRobotX)<(abs(destWorld[0])+5) and abs(posRobotX)>(abs(destWorld[0])-5)) and (abs(posRobotY)<(abs(destWorld[1])+5) and abs(posRobotY)>(abs(destWorld[1])-5)):
@@ -321,33 +318,20 @@ class MyAlgorithm(threading.Thread):
             print(" NO DESTINATION")
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
-            #targetx = target[0] + 3
-            #targety = target[1] + 5
-            self.grid.settpoint(200, 200)
-            #print("TARGET", target)
             
             targetNextImage = self.getTargetWorld(targetImage)
             targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
-            #targetNextx = targetNext[0] + 3
-            #targetNexty = targetNext[1] + 5
             
             # Interpolation
             targetInterpolationx = (target[0] + targetNext[0]) / 2
-            targetInterpolationy = (target[1] + targetNext[1]) / 2
-            #targetInterpolationx = (targetx + targetNextx) / 2
-            #targetInterpolationy = (targety + targetNexty) / 2
+            targetInterpolationy = (target[1] + targetNext[1]) / 2            
             
-            
-            # Convert target[0] y target[1] to relative coordinates
+            # Convert targetInterpolationx y targetInterpolationy to relative coordinates
             directionx,directiony = self.absolutas2relativas(targetInterpolationx,targetInterpolationy,posRobotX,posRobotY,orientationRobot)
-           
-            #print("direction", directionx, directiony)
 
             if directionx == 0:
                 directionx = 0.01
             angle = math.atan((directiony/directionx))
-                
-            #print("angle",angle)
 
             # Correct position     
             if directionx < 0 and directiony > 0:
@@ -361,10 +345,6 @@ class MyAlgorithm(threading.Thread):
             else:
                 angleTurn = 0.5
                 
-            
-            #if directionx < 0 and directiony > 0:
-            #    self.vel.setW(angleTurn)
-            #elif angle < 0:
             if angle < 0:
                 self.vel.setW(-angleTurn)
             else:
@@ -378,7 +358,6 @@ class MyAlgorithm(threading.Thread):
 
             if directionx < 0 and directiony > 0:
                 speed = 3
-            
-            #print('speed', speed)
+                
             self.vel.setV(speed)
 
