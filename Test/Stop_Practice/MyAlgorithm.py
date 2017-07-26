@@ -23,7 +23,8 @@ class MyAlgorithm(threading.Thread):
         self.imageC = None
         self.imageL = None
         self.imageR = None
-        self.framePrev = None
+        self.framePrevLeft = None
+        self.framePrevRight = None
         
         self.sleep = False
         self.detection = False
@@ -133,11 +134,13 @@ class MyAlgorithm(threading.Thread):
         return v
 
     
-    def saveFrame(self, image):
+    def saveFrame(self, image, framePrev):
         self.numFrames += 1
         if self.numFrames == self.FRAMES:
-            self.framePrev = image
+            #self.framePrevLeft = image
+            framePrev = image
             self.numFrames = 0
+        return framePrev
     
     
     def findCar(self, cont, image):
@@ -301,34 +304,47 @@ class MyAlgorithm(threading.Thread):
             
             # Converting to grayscale
             imageL_gray = cv2.cvtColor(imageL, cv2.COLOR_BGR2GRAY)
+            imageR_gray = cv2.cvtColor(imageR, cv2.COLOR_BGR2GRAY)
             
             # We apply smoothing to eliminate noise
             imageL_gray = cv2.GaussianBlur(imageL_gray, (21, 21), 0)
+            imageR_gray = cv2.GaussianBlur(imageR_gray, (21, 21), 0)
             
             # If we have not yet obtained the background, we obtain it
             # It will be the first frame we get
-            if self.framePrev is None:
-                self.framePrev = imageL_gray 
+            if self.framePrevLeft is None:
+                self.framePrevLeft = imageL_gray
+                
+            if self.framePrevRight is None:
+                self.framePrevRight = imageR_gray 
                 
             # Calculating the difference between the background and the current frame
-            image_diff = cv2.absdiff(self.framePrev, imageL_gray)
+            image_diff_left = cv2.absdiff(self.framePrevLeft, imageL_gray)
+            image_diff_right = cv2.absdiff(self.framePrevRight, imageR_gray)
             
             # I save the image every 5 frames
-            self.saveFrame(imageL_gray)
+            self.framePrevLeft = self.saveFrame(imageL_gray, self.framePrevLeft)
+            self.framePrevRight = self.saveFrame(imageR_gray, self.framePrevRight)
                     
             # We apply a threshold
-            image_seg = cv2.threshold(image_diff, 25, 255, cv2.THRESH_BINARY)[1]
+            image_seg_left = cv2.threshold(image_diff_left, 25, 255, cv2.THRESH_BINARY)[1]
+            image_seg_right = cv2.threshold(image_diff_right, 25, 255, cv2.THRESH_BINARY)[1]
             #cv2.imshow("image_seg", image_seg)
             
             # Dilatamos the image to cover holes
-            image_dil = cv2.dilate(image_seg, None, iterations=2)
+            image_dil_left = cv2.dilate(image_seg_left, None, iterations=2)
+            image_dil_right = cv2.dilate(image_seg_right, None, iterations=2)
             
             # Copy the image to detect the contours
-            contornosimg = image_dil.copy()
+            contornosimg = image_dil_left.copy()
+            contornosimg_right = image_dil_right.copy()
             
             # We look for contours in the image
             im, cont, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-            self.findCar(cont, imageL) 
+            self.findCar(cont, imageL)
+            
+            im, cont, hierarchy = cv2.findContours(contornosimg_right,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+            self.findCar(cont, imageR)  
             
             # Check detection
             self.checkDetectionCar()
