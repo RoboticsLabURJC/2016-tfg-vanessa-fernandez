@@ -96,7 +96,7 @@ class MyAlgorithm(threading.Thread):
         # Penaltie's Obstacles
         penaltie =  0
         penaltieMax = 180
-        for c in range(1, 5):
+        for c in range(1, 4):
             if ((((i == (dest0-c)) or (i == (dest0+c)) and (dest1-c <= j <= dest1+c)) or (((j == (dest1-c)) or (j == (dest1+c))) and (dest0-c-1 <= i <= dest0+c-1)))):
                 penaltie = penaltieMax - c * 6
         if (penaltie > self.rejilla[j][i] and (i != destino[0] or j != destino[1])):
@@ -194,7 +194,7 @@ class MyAlgorithm(threading.Thread):
                     frente2 = [[nodo[i][0]-1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]+1], [nodo[i][0]-1, nodo[i][1]+1]]
                     val_init = self.grid.getVal(nodo[i][0], nodo[i][1])
                     for j in range(0, len(frente1)):
-                        if (frente1[j][1] >= 0) and (frente1[j][1] < 400) and (frente1[j][0] >= 0) and (frente1[j][0] < 400):
+                        if (frente1[j][1] >= 0) and (frente1[j][1] < mapIm.shape[1]) and (frente1[j][0] >= 0) and (frente1[j][0] < mapIm.shape[0]):
                             if mapIm[frente1[j][1], frente1[j][0]] == 255:
                                 val = self.grid.getVal(frente1[j][0], frente1[j][1])
                                 if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
@@ -208,7 +208,7 @@ class MyAlgorithm(threading.Thread):
                             #    out.write((imagen))
                             #    o = o + 1
                     for j in range(0, len(frente2)):
-                        if (frente2[j][1] >= 0) and (frente2[j][1] <400) and (frente2[j][0] >= 0) and (frente2[j][0] < 400):
+                        if (frente2[j][1] >= 0) and (frente2[j][1] < mapIm.shape[1]) and (frente2[j][0] >= 0) and (frente2[j][0] < mapIm.shape[0]):
                             if mapIm[frente2[j][1], frente2[j][0]] == 255:
                                 val = self.grid.getVal(frente2[j][0], frente2[j][1])
                                 if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
@@ -230,9 +230,9 @@ class MyAlgorithm(threading.Thread):
 
         # Obstacles penalties
         for i in range(0, len(self.posObstaclesBorder)):
-            for k in range(self.posObstaclesBorder[i][0]-4, self.posObstaclesBorder[i][0]+5):
-                for l in range(self.posObstaclesBorder[i][1]-4, self.posObstaclesBorder[i][1]+5):
-                    if ((k >= 0) and (k < 400) and (l >= 0) and (l < 400)):
+            for k in range(self.posObstaclesBorder[i][0]-3, self.posObstaclesBorder[i][0]+4):
+                for l in range(self.posObstaclesBorder[i][1]-3, self.posObstaclesBorder[i][1]+4):
+                    if ((k >= 0) and (k < mapIm.shape[0]) and (l >= 0) and (l < mapIm.shape[1])):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1], dest)
                     #imagen[l][k] = self.grid.getVal(k, l)
@@ -258,7 +258,7 @@ class MyAlgorithm(threading.Thread):
             foundNeighbour = "false"
             for i in range(pixelCentral[0]-1, pixelCentral[0]+2):
                 for j in range(pixelCentral[1]-1, pixelCentral[1]+2):
-                    if ((i >= 0) and (i < 400) and (j >= 0) and (j < 400) and (mapIm[j][i] !=0)):
+                    if ((i >= 0) and (i < mapIm.shape[0]) and (j >= 0) and (j < mapIm.shape[1]) and (mapIm[j][i] !=0)):
                         val = self.grid.getVal(i, j)
                         posFound = self.checkPositionPath(posPath, i, j)
                         if (foundNeighbour == "false" and posFound == "false"):
@@ -298,16 +298,6 @@ class MyAlgorithm(threading.Thread):
         #self.vel.setV(10)
         #self.vel.setW(5)
         #self.vel.sendVelocities()
-        '''
-        p1 = self.grid.worldToGrid(-9, -12)
-        p2 = self.grid.worldToGrid(40, 0)
-        p3 = self.grid.worldToGrid(60, 0)
-        self.grid.settpoint(p1[0], p1[1])
-        time.sleep(2)
-        self.grid.settpoint(p2[0], p2[1])
-        time.sleep(2)
-        self.grid.settpoint(p3[0], p3[1])
-        time.sleep(2)'''
 
         # Position of the robot
         posRobotX = self.sensor.getRobotX()
@@ -318,8 +308,8 @@ class MyAlgorithm(threading.Thread):
         dest = self.grid.getDestiny()
         destWorld = self.grid.gridToWorld(dest[0], dest[1])
 
-        print("robot",posRobotX, posRobotY, orientationRobot)
-        print(dest, destWorld)
+        #print("robot",posRobotX, posRobotY, orientationRobot)
+        #print(dest, destWorld)
 
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
@@ -328,82 +318,67 @@ class MyAlgorithm(threading.Thread):
             self.vel.setW(0)
             print("DESTINATION")
         else:
+            print(" NO DESTINATION")
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
-            #self.grid.settpoint(targetImage[0], targetImage[1])
-            targetx = target[0] + 3
-            targety = target[1] + 5
-            t = self.grid.worldToGrid(targetx, targety)
-            #self.grid.settpoint(t[0], t[1])
-            print("TARGET", target)
+            #targetx = target[0] + 3
+            #targety = target[1] + 5
+            self.grid.settpoint(200, 200)
+            #print("TARGET", target)
             
             targetNextImage = self.getTargetWorld(targetImage)
             targetNext = self.grid.gridToWorld(targetNextImage[0], targetNextImage[1])
-            targetNextx = targetNext[0] + 3
-            targetNexty = targetNext[1] + 5
+            #targetNextx = targetNext[0] + 3
+            #targetNexty = targetNext[1] + 5
             
             # Interpolation
-            targetx = (targetx + targetNextx) / 2
-            targety = (targety + targetNexty) / 2
+            targetInterpolationx = (target[0] + targetNext[0]) / 2
+            targetInterpolationy = (target[1] + targetNext[1]) / 2
+            #targetInterpolationx = (targetx + targetNextx) / 2
+            #targetInterpolationy = (targety + targetNexty) / 2
+            
             
             # Convert target[0] y target[1] to relative coordinates
-            #directionx,directiony = self.absolutas2relativas(target[0],target[1],posRobotX,posRobotY,orientationRobot)
-            directionx,directiony = self.absolutas2relativas(targetx,targety,posRobotX,posRobotY,orientationRobot)
+            directionx,directiony = self.absolutas2relativas(targetInterpolationx,targetInterpolationy,posRobotX,posRobotY,orientationRobot)
+           
+            #print("direction", directionx, directiony)
 
-            print("direction", directionx, directiony)
-            #angle = math.atan((directionx/directiony))
             if directionx == 0:
                 directionx = 0.01
             angle = math.atan((directiony/directionx))
-            print("angle",angle)
+                
+            #print("angle",angle)
 
             # Correct position     
             if directionx < 0 and directiony > 0:
                 angle = -angle
                 
-            '''
-            if abs(angle) >= 0.9:
-                self.vel.setW(5.5*angle)
-            elif abs(angle) >= 0.7:
-                self.vel.setW(1.5*angle)
-            elif abs(angle) > 0.5 and abs(angle) <=  0.7:
-                self.vel.setW(angle)
-            else:
-                self.vel.setW(angle)
-                
-            '''
             
-            #angleTurn = 0.5
-            
-            if angle < 0.05:
+            if abs(angle) < 0.05:
                 angleTurn = 0.3
+            elif abs(angle) > 0.8:
+                angleTurn = 1.2
             else:
                 angleTurn = 0.5
                 
             
-            if directionx < 0 and directiony > 0:
-                self.vel.setW(angleTurn)
-            elif angle < 0:
+            #if directionx < 0 and directiony > 0:
+            #    self.vel.setW(angleTurn)
+            #elif angle < 0:
+            if angle < 0:
                 self.vel.setW(-angleTurn)
             else:
                 self.vel.setW(angleTurn)
-            '''
-            if abs(angle) >= 0.65:
-                #speed = 0.03
-                speed = 0.5
-            elif abs(angle) > 0.5 and abs(angle) <= 0.65:
-                speed = 1
-            elif abs(angle) > 0.2 and abs(angle) <= 0.5:
-                speed = 1.5
-            else:
-                speed = 20'''
+
             
             if abs(angle) < 0.1:
                 speed = 10
             else:
                 speed = 3
 
-      
-            print('speed', speed)
+            if directionx < 0 and directiony > 0:
+                speed = 3
+            
+            #print('speed', speed)
             self.vel.setV(speed)
 
