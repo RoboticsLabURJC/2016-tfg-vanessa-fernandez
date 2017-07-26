@@ -28,15 +28,20 @@ class MyAlgorithm(threading.Thread):
         self.sleep = False
         self.detection = False
         self.stop = False
-        self.detectionCar = True
         self.turn = False
         self.turn45 = False
         
         self.yaw = 0
         self.numFrames = 0
         self.time = 0
+        self.detectionCar = 100 
         
         self.FRAMES = 10
+        self.MAX_DESV = 15
+        self.MAX_DETECTION = 100
+        self.THRESHOLD_DET = 70
+        self.MIN_DET = 1
+        self.ADD_DET = 20
         
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
@@ -123,6 +128,7 @@ class MyAlgorithm(threading.Thread):
                 v = 0        
         else:
             v = 60
+            print('Going foward..')
         print('VELOCIDAD: ', v)
         return v
 
@@ -142,17 +148,80 @@ class MyAlgorithm(threading.Thread):
                 (x, y, w, h) = cv2.boundingRect(c)
                  # We draw the rectangle of bounds
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                self.detectionCar = True
+                if self.detectionCar < self.MAX_DETECTION:
+                    self.detectionCar += self.ADD_DET
+                    
+                    
+    def checkDetectionCar(self):
+        if self.detectionCar >= self.MIN_DET:
+            self.detectionCar -= self.MIN_DET
+            
+
+    def findRoad(self, image):
+
+        # Shape gives us the number of rows and columns of an image
+        columns = image.shape[1]
+        
+        # Initialize variables
+        border_left = 0
+        border_right = 0
+        
+        # Recorre las columnas de la imagen y la fila 300
+        for i in range(0, columns-1):   
+            # We look for the pixels in white                
+            if i == 0:
+                # If the pixel is the first
+                value = image[300, i+1] - image[300, i] 
+            else:
+                value = image[300, i] - image[300, i-1]
                 
-    def restartVariables(self):
-        if self.stop == True:
-            timeNow = time.time()
-            if self.time == 0:
-                self.time = time.time()
-                
-            if timeNow - self.time >= 5:
-                self.time = 0
-                self.detectionCar = False
+            if(value != 0):
+                # If there are changes of color
+                if (value == 255):
+                    # Left border (change to black)
+                    border_left = i
+                else:
+                    # Right border (change to white)
+                    border_right = i - 1
+                    
+        return border_left, border_right  
+        
+        
+    def controlDesviation(self, desv):
+        if abs(desv) < self.MAX_DESV:
+            # Go straight
+            self.motors.sendV(50)
+            self.motors.sendW(0)
+        else:
+            # Turn
+            self.motors.sendW(3.5)
+            self.motors.sendV(30)
+         
+            
+    def mean(self, a, b):
+        m = (a + b)/2
+        return m
+        
+        
+    def findMidLane(self, border_left, border_right, columns):
+        middle_lane = 0
+        if border_left != 0 or border_right != 0:    
+            # Calculating the intermediate position of the road
+            middle_road = self.mean(border_left, border_right)
+            # Calculating the intermediate position of the lane
+            middle_lane = self.mean(middle_road, border_right)
+            
+        return middle_lane
+                    
+    
+    def turn45degrees(self, yaw):
+        if self.turn45 == False:
+            if yaw < 180 and yaw > 145:
+                print('Girando 45 grados...')
+                self.motors.sendV(30)
+                self.motors.sendW(3.5)
+            else:
+                self.turn45 = True
                 
 
     def execute(self):
@@ -166,26 +235,9 @@ class MyAlgorithm(threading.Thread):
         #EXAMPLE OF HOW TO SEND INFORMATION TO THE ROBOT ACTUATORS
         #self.motors.setV(10)
         #self.motors.setW(5)
-
-        '''
-        # RGB model change to HSV
-        hsv_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2HSV)
-
-        # Values of red
-        value_min_HSV = np.array([131, 71, 0])
-        value_max_HSV = np.array([179, 232, 63])
-
-        # Segmentation
-        image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-        #cv2.imshow("filtered", image_filtered)
-
-        # Close, morphology element
-        kernel = np.ones((11,11), np.uint8)
-        image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
         
         # RGB model change to HSV
         image_filtered = self.filterHSV(input_image, 131, 179, 71, 232, 0, 63, 11)
-        #cv2.imshow('cierre', image_filtered)
 
         # Template's size
         h, w = self.template.shape
@@ -260,121 +312,60 @@ class MyAlgorithm(threading.Thread):
                 
             # Calculating the difference between the background and the current frame
             image_diff = cv2.absdiff(self.framePrev, imageL_gray)
-            #cv2.imshow("image_diff", image_diff)
             
             # I save the image every 5 frames
             self.saveFrame(imageL_gray)
-            
-            
+                    
             # We apply a threshold
             image_seg = cv2.threshold(image_diff, 25, 255, cv2.THRESH_BINARY)[1]
             #cv2.imshow("image_seg", image_seg)
             
             # Dilatamos the image to cover holes
             image_dil = cv2.dilate(image_seg, None, iterations=2)
-            #cv2.imshow("image_dil", image_dil)
             
             # Copy the image to detect the contours
             contornosimg = image_dil.copy()
             
             # We look for contours in the image
             im, cont, hierarchy = cv2.findContours(contornosimg,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-            self.findCar(cont, imageL)       
-        
-        
-        
-        if self.detectionCar == False:
-            self.turn = True
+            self.findCar(cont, imageL) 
             
-            yaw = abs(self.pose3d.getYaw() * 180/pi)
+            # Check detection
+            self.checkDetectionCar()
+            print('DETECTION CAR: ', self.detectionCar)
+        
+        
+        
+        if self.detectionCar <= self.THRESHOLD_DET:
+            # GO
+        
             # Turn 45 degrees
-            if self.turn45 == False:
-                if yaw < 180 and yaw > 145:
-                    self.motors.sendV(10)
-                    self.motors.sendW(3.5)
-                else:
-                    self.turn45 = True
+            self.turn = True         
+            yaw = abs(self.pose3d.getYaw() * 180/pi)
+            self.turn45degrees(yaw)
             
             
             if self.turn45:
                 # ROAD DETECTION
                  
                 # Center image
-                img_detection = self.cameraC.getImage()
-                
-                '''# RGB model change to HSV
-                hsv_image = cv2.cvtColor(img_detection, cv2.COLOR_RGB2HSV)
-                
-                # Values
-                value_min_HSV = np.array([0, 5, 0])
-                value_max_HSV = np.array([10, 20, 60])
-
-                # Segmentation
-                image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-                cv2.imshow("filtered no kernel", image_filtered)
-                # Close, morphology element
-                kernel = np.ones((18,18), np.uint8)
-                image_filtered = cv2.morphologyEx(image_filtered, cv2.MORPH_CLOSE, kernel)'''
+                imageC = self.cameraC.getImage()
                 
                 # RGB model change to HSV
-                image_filtered = self.filterHSV(img_detection, 0, 10, 5, 20, 0, 60, 18)
-                cv2.imshow("filtered", image_filtered)
+                image_filtered = self.filterHSV(imageC, 0, 10, 5, 20, 0, 60, 18)
+                #cv2.imshow("filtered", image_filtered)
                 
-                # Colums and rows
-                # Shape gives us the number of rows and columns of an image
-                rows = img_detection.shape[0]
-                columns = img_detection.shape[1]
+                # Find the position of the road
+                border_left, border_right = self.findRoad(image_filtered)
                 
-                # Initialize variables
-                position_pixel_left = 0
-                position_pixel_right = 0
+                # Shape gives the size of image
+                columns = imageC.shape[1]
                 
-                # We look for the pixels in white
-                for i in range(0, columns-1):
-                    if i == 0:
-                        value = image_filtered[300, i+1] - image_filtered[300, i]
-                    else:
-                        value = image_filtered[300, i] - image_filtered[300, i-1]
-                    if(value != 0):
-                        if (value == 255):
-                            position_pixel_left = i
-                        else:
-                            position_pixel_right = i - 1
-                            
-                if position_pixel_left != 0 or position_pixel_right != 0:    
-                    # Calculating the intermediate position of the road
-                    position_middle_road = (position_pixel_left + position_pixel_right) / 2
-                    # Calculating the intermediate position of the lane
-                    position_middle_lane = (position_middle_road + position_pixel_right) / 2
-                    
-                    cv2.rectangle(input_image, (300,position_middle_lane), (300 + 1, position_middle_lane + 1), (0,255,0), 2)
-                    
-                    
+                # TURN LEFT
+                middle_lane = self.findMidLane(border_left, border_right, columns)
+                if middle_lane != 0:
+                    cv2.rectangle(imageC, (300, middle_lane), (300 + 1, middle_lane + 1), (0,255,0), 2)
                     # Calculating the desviation
-                    desviation = position_middle_lane - (columns/2)
-                    print (" desviation    ", desviation)
-                
+                    desviation = middle_lane - (columns/2)
                     # Speed
-                    if abs(desviation) < 15:
-                        # Go straight
-                        self.motors.sendV(50)
-                        self.motors.sendW(0)
-                    else:
-                        if desviation < 0:
-                            self.motors.sendW(3.5)
-                        else:
-                            self.motors.sendW(-3.5)
-                        self.motors.sendV(30)
-
-                    
-        # Restart variables
-        self.restartVariables()
-        '''       
-        if self.stop == True:
-            timeNow = time.time()
-            if self.time == 0:
-                self.time = time.time()
-                
-            if timeNow - self.time >= 5:
-                self.time = 0
-                self.detectionCar = False'''
+                    self.controlDesviation(desviation)
