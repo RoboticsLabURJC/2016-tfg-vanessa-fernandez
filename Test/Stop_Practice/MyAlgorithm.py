@@ -42,7 +42,7 @@ class MyAlgorithm(threading.Thread):
         self.MAX_DESV = 15
         self.MAX_DETECTION = 100
         self.THRESHOLD_DET = 70
-        self.MIN_DET = 1
+        self.MIN_DET = 2
         self.ADD_DET = 20
         
         # 0 to grayscale
