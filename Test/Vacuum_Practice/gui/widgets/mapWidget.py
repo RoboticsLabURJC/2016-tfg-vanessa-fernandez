@@ -99,9 +99,9 @@ class MapWidget(QWidget):
         painter.rotate(-180*yaw/pi)
 
         triangle = QtGui.QPolygon()
-        triangle.append(QtCore.QPoint(x+50/4, y-4))
-        triangle.append(QtCore.QPoint(x+50/4, y+50/4-4))
-        triangle.append(QtCore.QPoint(x-9, y+2.25))
+        triangle.append(QtCore.QPoint(x+50/4, y-50/9))
+        triangle.append(QtCore.QPoint(x+50/4, y+50/3-3))
+        triangle.append(QtCore.QPoint(x-9, y+4.05))
 
         pen = QPen(Qt.red, 2)
         painter.setPen(pen)
