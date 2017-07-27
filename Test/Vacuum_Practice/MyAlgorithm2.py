@@ -25,7 +25,7 @@ class MyAlgorithm2(threading.Thread):
         self.map = cv2.imread("resources/images/mapgrannyannie.png", cv2.IMREAD_GRAYSCALE)
         self.map = cv2.resize(self.map, (500, 500))
         
-        self.grid = np.ones([500, 500], float)
+        self.grid = np.zeros([500, 500], float)
         
         self.orientation = 'left'
         
@@ -134,8 +134,9 @@ class MyAlgorithm2(threading.Thread):
         scale = 50
         for i in range((numColumn * scale), (numColumn*scale + scale)):
             for j in range((numRow * scale), (numRow*scale + scale)):
-                if self.grid[i][j] != 0:
-                    self.grid[i][j] = self.grid[i][j] - 1
+                if self.grid[i][j] > 0:
+                    self.grid[i][j] = self.grid[i][j] - 2
+                    print i,j, self.grid[i][j]
                     
         
     def reduceValueTime(self):
@@ -323,7 +324,7 @@ class MyAlgorithm2(threading.Thread):
     def checkSaturationVacuum(self):
         timeNow = time.time()
         if self.saturation == False:          
-            if abs(self.time - timeNow) >= 5:
+            if abs(self.time - timeNow) >= 2:
                 # If 5 seconds have elapsed we reduce the value of the squares of the grid
                 self.reduceValueTime()
                 self.time = 0
@@ -360,7 +361,6 @@ class MyAlgorithm2(threading.Thread):
         crash = self.checkCrash()
         
         print (crash)
-        #self.saturation = True
         
         if self.saturation == False:
             if crash == 1:
@@ -386,13 +386,8 @@ class MyAlgorithm2(threading.Thread):
                     print ("Turn done")
                     self.firstTurn = True
                     # Go forwards
-                    self.goForward(0.22)
+                    self.goForward(0.24)
                     time.sleep(1)
-                    '''
-                    self.motors.sendW(0)
-                    time.sleep(2)
-                    self.motors.sendV(0.22)                                        
-                    time.sleep(1)'''
                     self.secondTurn = False
                     
                     
@@ -409,10 +404,6 @@ class MyAlgorithm2(threading.Thread):
                 print ("AVANZAR")
                 # Go forward
                 self.goForward(0.5)
-                '''
-                self.motors.sendW(0.0)
-                time.sleep(1)
-                self.motors.sendV(0.5)'''
                 self.crash = False
                 self.firstTurn = True
                 
