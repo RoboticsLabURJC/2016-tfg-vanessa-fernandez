@@ -226,9 +226,11 @@ class tiempoDigitalWidget(QWidget):
     def __init__(self,winParent):    
         super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 2700
+        self.seconds = 900
         self.pose3d = pose3d
         self.show = False
+        self.MAX_PERCENT = 30
+        self.MAX_NOTA = 10
 
         self.hLayout = QHBoxLayout()
   
@@ -281,6 +283,10 @@ class tiempoDigitalWidget(QWidget):
     def testPorcentaje(self):
         porcentaje = porcentajeWidget(self,pose3d)
         pCasa = porcentaje.porcentajeCasa
+        notaPorc = pCasa * self.MAX_NOTA / self.MAX_PERCENT
+        if pCasa > self.MAX_PERCENT:
+            notaPorc = 10
+        '''
         if pCasa >= 90:
             notaPorc = 10
         elif pCasa < 90 and pCasa >= 75:
@@ -290,7 +296,7 @@ class tiempoDigitalWidget(QWidget):
         elif pCasa < 60 and pCasa >= 50:
             notaPorc = 5
         else:
-            notaPorc = 0
+            notaPorc = 0'''
         return notaPorc
 
 
@@ -303,7 +309,7 @@ class tiempoAnalogWidget(QWidget):
         self.rectangle = QRectF(0.0, 0.0, 300.0, 300.0)
         self.angle = -pi/2
         self.angleMinutes = -pi/2
-        self.seconds = 2700
+        self.seconds = 900
         self.contador = 0
         self.minutes = 0
 
