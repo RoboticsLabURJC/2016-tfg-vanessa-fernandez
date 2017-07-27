@@ -81,6 +81,8 @@ class MyAlgorithm(threading.Thread):
                 time.sleep((time_cycle - ms) / 1000.0)
 
     def stop (self):
+        self.motors.sendV(0)
+        self.motors.sendW(0)
         self.stop_event.set()
 
     def play (self):
