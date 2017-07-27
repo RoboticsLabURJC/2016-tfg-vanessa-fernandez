@@ -86,7 +86,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.pushButton.setText('STOPPED')
             self.pushButton.setStyleSheet("background-color: red")
-            self.algorithm.stop()
+            self.algorithm.stopAlgorithm()
 
     def setAlgorithm(self, algorithm ):
         self.algorithm=algorithm
