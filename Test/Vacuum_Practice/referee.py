@@ -224,8 +224,7 @@ class tiempoDigitalWidget(QWidget):
     def __init__(self,winParent, porcentaje):    
         super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        #self.seconds = 900
-        self.seconds = 20
+        self.seconds = 900
         self.pose3d = pose3d
         self.porcentaje = porcentaje
         self.show = False
