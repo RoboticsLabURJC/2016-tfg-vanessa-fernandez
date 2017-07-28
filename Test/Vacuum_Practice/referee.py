@@ -18,9 +18,9 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__(parent)
         
         layout = QGridLayout()
-        self.tiempoDigital = tiempoDigitalWidget(self)
-        self.tiempoAnalog = tiempoAnalogWidget(self)
         self.porcentaje = porcentajeWidget(self, pose3d)
+        self.tiempoDigital = tiempoDigitalWidget(self, self.porcentaje)
+        self.tiempoAnalog = tiempoAnalogWidget(self)
         self.mapa = mapaWidget(self, pose3d)
         self.logo = logoWidget(self)
         layout.addWidget(self.tiempoDigital,0,2)
@@ -145,8 +145,6 @@ class porcentajeWidget(QWidget):
 
         vLayout.addWidget(self.Porcentaje, 0)
 
-        #self.setLayout(vLayout)
-
         self.bar = QProgressBar()
         self.bar.setValue(self.porcentajeCasa)
         st = "QProgressBar::chunk {background-color: #ff0000;}\n QProgressBar {border: 1px solid grey;border-radius: 2px;text-align: center;background: #eeeeee;}"
@@ -223,11 +221,13 @@ class porcentajeWidget(QWidget):
 class tiempoDigitalWidget(QWidget):
 
     time = pyqtSignal()
-    def __init__(self,winParent):    
+    def __init__(self,winParent, porcentaje):    
         super(tiempoDigitalWidget, self).__init__()
         self.winParent=winParent
-        self.seconds = 900
+        #self.seconds = 900
+        self.seconds = 20
         self.pose3d = pose3d
+        self.porcentaje = porcentaje
         self.show = False
         self.MAX_PERCENT = 30
         self.MAX_NOTA = 10
@@ -281,22 +281,10 @@ class tiempoDigitalWidget(QWidget):
 
     
     def testPorcentaje(self):
-        porcentaje = porcentajeWidget(self,pose3d)
-        pCasa = porcentaje.porcentajeCasa
+        pCasa = self.porcentaje.calculatePercentaje()
         notaPorc = pCasa * self.MAX_NOTA / self.MAX_PERCENT
         if pCasa > self.MAX_PERCENT:
             notaPorc = 10
-        '''
-        if pCasa >= 90:
-            notaPorc = 10
-        elif pCasa < 90 and pCasa >= 75:
-            notaPorc = 8
-        elif pCasa < 75 and pCasa >= 60:
-            notaPorc = 6
-        elif pCasa < 60 and pCasa >= 50:
-            notaPorc = 5
-        else:
-            notaPorc = 0'''
         return notaPorc
 
 
