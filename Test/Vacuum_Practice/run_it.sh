@@ -13,7 +13,9 @@ sleep 10 # up to 20 for circuit.world
 
 python2 vacuum.py --Ice.Config=vacuum.cfg &
 
-python2 referee.py --Ice.Config=vacuum.cfg
+python2 referee.py --Ice.Config=vacuum.cfg &
+
+python2 graphicPercentaje.py --Ice.Config=vacuum.cfg
 
 killall gzserver
 killall python2
