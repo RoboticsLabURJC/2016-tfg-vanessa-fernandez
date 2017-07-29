@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from sensors import sensor
 import numpy as np
 import cv2
@@ -39,7 +42,6 @@ class MyAlgorithm(threading.Thread):
 
             dt = finish_Time - start_time
             ms = (dt.days * 24 * 60 * 60 + dt.seconds) * 1000 + dt.microseconds / 1000.0
-            #print (ms)
             if (ms < time_cycle):
                 time.sleep((time_cycle - ms) / 1000.0)
 
@@ -90,6 +92,21 @@ class MyAlgorithm(threading.Thread):
                 found = True
         if (found == False):
             self.posObstaclesBorder.append([pos0, pos1])
+            
+            
+    def expansionNode(self, frente, valAdd, mapIm, val_init, dest, nodos):
+        for j in range(0, len(frente)):
+            if (frente[j][1] >= 0) and (frente[j][1] < mapIm.shape[1]) and (frente[j][0] >= 0) and (frente[j][0] < mapIm.shape[0]):
+                if mapIm[frente[j][1], frente[j][0]] == 255:
+                    val = self.grid.getVal(frente[j][0], frente[j][1])
+                    if ((math.isnan(val)) or ((val_init + valAdd) < val) or (val <= 0)):
+                        if frente[j][0] != dest[0] or frente[j][1] != dest[1]:
+                            self.grid.setVal(frente[j][0], frente[j][1], val_init+valAdd)
+                            nodos = self.incorporateNode(frente[j][0], frente[j][1], nodos)
+                else:
+                    if valAdd == 1:
+                        self.incorporatePosObstacle(frente[j][0], frente[j][1])
+        return nodos
 
 
     def penaltiesObstacles(self, i, j, dest0, dest1, destino):
@@ -169,18 +186,11 @@ class MyAlgorithm(threading.Thread):
         # We need some variables in the loop while
         fin = "false"
         margin = 20
-        #fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
-        #out = cv2.VideoWriter('Expansion_Penalizacion.avi', fourcc, 30, (400, 400),False)
 
         # Evaluating the value of the field on position (dest[0], dest[1])
         if (mapIm[dest[1]][dest[0]] == 255):
             self.grid.setVal(dest[0], dest[1], 0.0)
             nodo = [[dest[0], dest[1]]]
-
-
-        imagen = np.zeros((400, 400),np.uint8)
-        x=1
-        o=1
 
         # New nodes
         nodos = []
@@ -190,42 +200,23 @@ class MyAlgorithm(threading.Thread):
             for i in range(0, len(nodo)):
                 if ((mapIm[nodo[i][1], nodo[i][0]] == 255) and nodo[i][0] >= 0 and nodo[i][0] < mapIm.shape[0] and nodo[i][1] >= 0 and nodo[i][1] < mapIm.shape[1]):
                     # Wave fronts of each node
+                    # frente1 are the pixels to which 1 is added
                     frente1 = [[nodo[i][0]-1, nodo[i][1]], [nodo[i][0], nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]], [nodo[i][0], nodo[i][1]+1]]
+                    # frente2 are the pixels to which sqrt(2) is added
                     frente2 = [[nodo[i][0]-1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]-1], [nodo[i][0]+1, nodo[i][1]+1], [nodo[i][0]-1, nodo[i][1]+1]]
+                    # val_init is the value of the central pixel of the expansion
                     val_init = self.grid.getVal(nodo[i][0], nodo[i][1])
-                    for j in range(0, len(frente1)):
-                        if (frente1[j][1] >= 0) and (frente1[j][1] < mapIm.shape[1]) and (frente1[j][0] >= 0) and (frente1[j][0] < mapIm.shape[0]):
-                            if mapIm[frente1[j][1], frente1[j][0]] == 255:
-                                val = self.grid.getVal(frente1[j][0], frente1[j][1])
-                                if ((math.isnan(val)) or ((val_init + 1.0) < val) or (val <= 0)):
-                                    if frente1[j][0] != dest[0] or frente1[j][1] != dest[1]:
-                                        self.grid.setVal(frente1[j][0], frente1[j][1], val_init+1.0)
-                                        nodos = self.incorporateNode(frente1[j][0], frente1[j][1], nodos)
-                            else:
-                                self.incorporatePosObstacle(frente1[j][0], frente1[j][1])
-                            #imagen[frente1[j][1]][frente1[j][0]] = self.grid.getVal(frente1[j][0], frente1[j][1])
-                            #if (x/o) == 100:
-                            #    out.write((imagen))
-                            #    o = o + 1
-                    for j in range(0, len(frente2)):
-                        if (frente2[j][1] >= 0) and (frente2[j][1] < mapIm.shape[1]) and (frente2[j][0] >= 0) and (frente2[j][0] < mapIm.shape[0]):
-                            if mapIm[frente2[j][1], frente2[j][0]] == 255:
-                                val = self.grid.getVal(frente2[j][0], frente2[j][1])
-                                if ((math.isnan(val)) or ((val_init + math.sqrt(2.0)) < val) or (val <= 0)):
-                                    if frente2[j][0] != dest[0] or frente2[j][1] != dest[1]:
-                                        self.grid.setVal(frente2[j][0], frente2[j][1], val_init+math.sqrt(2.0))
-                                        nodos = self.incorporateNode(frente2[j][0], frente2[j][1], nodos)
-                            #imagen[frente2[j][1]][frente2[j][0]] = self.grid.getVal(frente2[j][0], frente2[j][1])
-                            #if (x/o) == 100:
-                            #    out.write((imagen))
-                            #    o = o + 1
-                # Cases of the margins
+                    
+                    # Expansion of the nodes
+                    nodos = self.expansionNode(frente1, 1, mapIm, val_init, dest, nodos)
+                    nodos = self.expansionNode(frente2, math.sqrt(2.0), mapIm, val_init, dest, nodos)
+                                        
+                # Cases of the margins, we check if we finish the expansion
                 fin = self.findStopExpansion(dest, posRobot, margin, nodo[i][0], nodo[i][1], fin)
-                #x = x + 1
             if (nodos != []):
+                # We update the node that will expand values ​​and remove the previous node
                 nodo = nodos[0]
                 nodos.pop(0)
-        #out.release()
 
 
         # Obstacles penalties
@@ -235,18 +226,14 @@ class MyAlgorithm(threading.Thread):
                     if ((k >= 0) and (k < mapIm.shape[0]) and (l >= 0) and (l < mapIm.shape[1])):
                         if (mapIm[l][k] == 255):
                             self.penaltiesObstacles(k, l, self.posObstaclesBorder[i][0], self.posObstaclesBorder[i][1], dest)
-                    #imagen[l][k] = self.grid.getVal(k, l)
-                    #if (x/o) == 100:
-                    #    out.write((imagen))
-                    #    o = o+1
-            #x=x+1
-        #out.release()
 
+        # We add our grid and the penalty grid
         self.grid.grid = self.rejilla+self.grid.grid
 
 
 
         # Find the path
+        # We need some variables in the loop while
         pixelCentral = [posRobot[0], posRobot[1]]
         valMin = self.grid.getVal(posRobot[0], posRobot[1])
         posMin = pixelCentral
@@ -311,11 +298,15 @@ class MyAlgorithm(threading.Thread):
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
         if (abs(posRobotX)<(abs(destWorld[0])+5) and abs(posRobotX)>(abs(destWorld[0])-5)) and (abs(posRobotY)<(abs(destWorld[1])+5) and abs(posRobotY)>(abs(destWorld[1])-5)):
+            # We have arrived at the destination
             self.vel.setV(0)
             self.vel.setW(0)
             print("DESTINATION")
         else:
+            # We haven't arrived at the destination
             print(" NO DESTINATION")
+            
+            # We calculate the next objective and the next one to do an interpolation
             targetImage = self.getTargetWorld(posRobotImage)
             target = self.grid.gridToWorld(targetImage[0], targetImage[1])
             
@@ -330,27 +321,31 @@ class MyAlgorithm(threading.Thread):
             directionx,directiony = self.absolutas2relativas(targetInterpolationx,targetInterpolationy,posRobotX,posRobotY,orientationRobot)
 
             if directionx == 0:
+                # If directionx is 0 we change it by 0.01
                 directionx = 0.01
+            # We calculate the angle between our position and the goal
             angle = math.atan((directiony/directionx))
 
-            # Correct position     
+            # Correct position    
             if directionx < 0 and directiony > 0:
+                # If the target is behind
                 angle = -angle
                 
-            
+            # Angle of turn
             if abs(angle) < 0.05:
                 angleTurn = 0.3
             elif abs(angle) > 0.8:
                 angleTurn = 1.2
             else:
                 angleTurn = 0.5
-                
+            
+            # Angular speed
             if angle < 0:
                 self.vel.setW(-angleTurn)
             else:
                 self.vel.setW(angleTurn)
 
-            
+            # Linear speed
             if abs(angle) < 0.1:
                 speed = 10
             else:
