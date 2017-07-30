@@ -23,6 +23,7 @@ class MainWindow(QWidget):
         
         self.seconds = 0
         self.MAXseconds = 900
+        self.contSeconds = 0
         self.secondsArray = [0]
         
         self.devPercentajes = [0]
@@ -50,9 +51,10 @@ class MainWindow(QWidget):
             self.percentaje.updateG()
             self.seconds += 1
             if self.seconds % 2 == 0:
+                self.contSeconds += 1
                 dif = float(float(self.percentaje.porcentajeCasa) - float(self.percentajePrev))
                 self.devPercentajes.append(dif)
-                self.secondsArray.append(self.seconds)
+                self.secondsArray.append(self.contSeconds)
                 self.percentajePrev = self.percentaje.porcentajeCasa
             
             ax = self.figure.add_subplot(111)
