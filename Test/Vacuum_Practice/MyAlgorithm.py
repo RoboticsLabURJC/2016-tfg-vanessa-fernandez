@@ -40,6 +40,7 @@ class MyAlgorithm(threading.Thread):
         self.DIST_TO_OBST_RIGHT = 30
         self.DIST_MIN_TO_OBST_RIGHT = 15
         self.DIST_TO_OBST_FRONT = 15
+        self.DIST_TO_OBST_45 = 24
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -178,12 +179,12 @@ class MyAlgorithm(threading.Thread):
             self.corner = False
             
             
-    def goNextToWall(self, laserRight):
+    def goNextToWall(self, laserRight, laser45):
         if laserRight <= self.DIST_MIN_TO_OBST_RIGHT:
             # Turn to left
             self.motors.sendV(0)
             self.motors.sendW(0.1)
-        elif laserRight >= self.DIST_TO_OBST_RIGHT:
+        elif laserRight >= self.DIST_TO_OBST_RIGHT and laser45 >= self.DIST_TO_OBST_45:
             # Turn to right
             self.motors.sendV(0) 
             self.motors.sendW(-0.1)
@@ -221,7 +222,7 @@ class MyAlgorithm(threading.Thread):
             self.motors.sendV(self.radiusInitial*self.constant)
             self.constant += 0.012
         else:
-            if crash == 1 and self.foundPerimeter == False:
+            if crash == 1 and self.foundPerimeter == False and self.crash == False:
                 # Stop
                 self.stopVacuum()
                 time.sleep(1)
@@ -264,7 +265,7 @@ class MyAlgorithm(threading.Thread):
                     else:
                         # Go next to the wall
                         print("Go next to the wall")
-                        self.goNextToWall(laserRight)
+                        self.goNextToWall(laserRight, laser45)
                         self.yaw = yaw
                 
                 
