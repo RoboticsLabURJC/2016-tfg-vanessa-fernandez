@@ -17,7 +17,7 @@
     <include>
       <static>true</static>
       <uri>model://gazebo/models/stop_sign</uri>
-      <pose>3 -3 0 0 0 0</pose>
+      <pose>3.3 -3.4 0 0 0 0</pose>
     </include>
     
     <include>
