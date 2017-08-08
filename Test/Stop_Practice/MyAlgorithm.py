@@ -36,14 +36,17 @@ class MyAlgorithm(threading.Thread):
         self.numFramesL = 0
         self.numFramesR = 0
         self.time = 0
-        self.detectionCar = 100 
         
+        self.detectionCar = 100 
         self.FRAMES = 10
         self.MAX_DESV = 15
         self.MAX_DETECTION = 100
         self.THRESHOLD_DET = 70
         self.MIN_DET = 2
         self.ADD_DET = 20
+        self.ROW = 300
+        
+        self.turnTo = ''
         
         # 0 to grayscale
         self.template = cv2.imread('resources/template.png',0)
@@ -105,7 +108,6 @@ class MyAlgorithm(threading.Thread):
 
         # Segmentation
         image_filtered = cv2.inRange(hsv_image, value_min_HSV, value_max_HSV)
-        #cv2.imshow("filtered", image_filtered)
 
         # Close, morphology element
         kernel = np.ones((size_Kernel,size_Kernel), np.uint8)
@@ -226,17 +228,23 @@ class MyAlgorithm(threading.Thread):
         return border_left, border_right  
         
         
-    def controlDesviation(self, desv):
+    def controlDesviation(self, desv, direction):
         if abs(desv) < self.MAX_DESV:
             # Go straight
             self.motors.sendV(50)
             self.motors.sendW(0)
         else:
             # Turn
-            if desv < 0:
-                self.motors.sendW(3.5)
+            if direction == 'left':
+                if desv < 0:
+                    self.motors.sendW(3.5)
+                else:
+                    self.motors.sendW(-3.5)
             else:
-                self.motors.sendW(-3.5)
+                if desv < 0:
+                    self.motors.sendW(4)
+                else:
+                    self.motors.sendW(-4)
             self.motors.sendV(30)
          
             
@@ -256,14 +264,29 @@ class MyAlgorithm(threading.Thread):
         return middle_lane
                     
     
-    def turn45degrees(self, yaw):
+    def turn45degrees(self, yaw, direction):
         if self.turn45 == False:
-            if yaw < 180 and yaw > 145:
-                print('Girando 45 grados...')
-                self.motors.sendV(30)
-                self.motors.sendW(3.5)
+            if yaw < 180 and yaw > 100:
+                if direction == 'left':
+                    print('Girando 45...')
+                    self.motors.sendV(30)
+                    self.motors.sendW(3.5)
+                else:
+                    print('Girando -45...')
+                    self.motors.sendV(30)
+                    self.motors.sendW(-5.6)
+                    print('yaw: ', yaw)
             else:
                 self.turn45 = True
+                
+ 
+    def chooseDirection(self):
+        # Random int number between [0,2) --> 0 o 1
+        randm = np.random.randint(2)
+        if randm == 1:
+            return 'left'
+        else:
+            return 'right'
                 
 
     def execute(self):
@@ -348,10 +371,17 @@ class MyAlgorithm(threading.Thread):
         if self.detectionCar <= self.THRESHOLD_DET:
             # GO
         
+            self.turn = True
+            
+            # Choose the direction of the rotation
+            if self.turnTo == '':
+                self.turnTo = self.chooseDirection()
+            self.turnTo = 'right'
+            print ('Turn to: ', self.turnTo)    
+            
             # Turn 45 degrees
-            self.turn = True         
             yaw = abs(self.pose3d.getYaw() * 180/pi)
-            self.turn45degrees(yaw)
+            self.turn45degrees(yaw, self.turnTo)
             
             
             if self.turn45:
@@ -373,8 +403,10 @@ class MyAlgorithm(threading.Thread):
                 # TURN LEFT
                 middle_lane = self.findMidLane(border_left, border_right, columns)
                 if middle_lane != 0:
-                    cv2.rectangle(imageC, (300, middle_lane), (300 + 1, middle_lane + 1), (0,255,0), 2)
+                    #cv2.rectangle(imageC, (self.ROW, middle_lane), (self.ROW + 1, middle_lane + 1), (0,255,0), 2)
+                    cv2.rectangle(imageC, (middle_lane, self.ROW), ( middle_lane + 1,self.ROW + 1), (0,255,0), 2)
                     # Calculating the desviation
                     desviation = middle_lane - (columns/2)
+                    print('desv', desviation)
                     # Speed
-                    self.controlDesviation(desviation)
+                    self.controlDesviation(desviation, self.turnTo)
