@@ -10,7 +10,6 @@ from parallelIce.pose3dClient import Pose3DClient
 import easyiceconfig as EasyIce
 from gui.threadGUI import ThreadGUI
 
-
 class MainWindow(QWidget):
 
     updGUI=pyqtSignal()
@@ -271,7 +270,8 @@ class tiempoDigitalWidget(QWidget):
         self.setLayout(self.hLayout)
 
     def printTime(self):
-        if self.seconds >0:
+        
+        if self.seconds > 0:
             self.seconds -= 1
         else:
             if not self.show:
@@ -281,7 +281,7 @@ class tiempoDigitalWidget(QWidget):
     
     def testPorcentaje(self):
         pCasa = self.porcentaje.calculatePercentaje()
-        notaPorc = pCasa * self.MAX_NOTA / self.MAX_PERCENT
+        notaPorc = float(pCasa) * float(self.MAX_NOTA) / float(self.MAX_PERCENT)
         if pCasa > self.MAX_PERCENT:
             notaPorc = 10
         return notaPorc
@@ -366,9 +366,8 @@ class tiempoAnalogWidget(QWidget):
         self.drawCLockLines(painter)
 
     def updateG(self):
-        self.update()
-
-
+        self.update()  
+        
 
 if __name__ == "__main__":
     
