@@ -28,19 +28,21 @@ class MyAlgorithm(threading.Thread):
         
         self.turn = False
         self.crash = False
+        self.firstCrash = True
         self.obstacleRight = False
         self.corner = False
         self.foundPerimeter = False
         
         self.startTime = 0
         
-        self.TIME_PERIMETER = 240
+        self.TIME_PERIMETER = 400
         self.MARGIN = 0.2
         self.MARGIN_OBST_RIGHT = 0.1
         self.DIST_TO_OBST_RIGHT = 30
         self.DIST_MIN_TO_OBST_RIGHT = 15
         self.DIST_TO_OBST_FRONT = 15
-        self.DIST_TO_OBST_45 = 24
+        self.DIST_TO_OBST_45 = 22
+        self.DIST_TO_OBST_135 = 18
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -184,7 +186,7 @@ class MyAlgorithm(threading.Thread):
             # Turn to left
             self.motors.sendV(0)
             self.motors.sendW(0.1)
-        elif laserRight >= self.DIST_TO_OBST_RIGHT and laser45 >= self.DIST_TO_OBST_45:
+        elif laserRight >= self.DIST_TO_OBST_RIGHT and laser45 >= self.DIST_TO_OBST_45 or self.firstCrash == True:
             # Turn to right
             self.motors.sendV(0) 
             self.motors.sendW(-0.1)
@@ -247,6 +249,7 @@ class MyAlgorithm(threading.Thread):
                 laserRight = laser_data.distanceData[0]/10
                 laserCenter = laser_data.distanceData[90]/10
                 laser45 = laser_data.distanceData[45]/10
+                laser135 = laser_data.distanceData[135]/10                
                 
                 # Calculate the angle of triangle
                 a = self.calculateSideTriangle(laserRight, laser45, 45)
@@ -262,11 +265,17 @@ class MyAlgorithm(threading.Thread):
                         print ('Vacuum is in the corner ')
                         self.turnCorner(yaw)
                         
+                    elif crash == 1 and laser135 <= self.DIST_TO_OBST_135:
+                        # The vacuum cleaner is stuck
+                        self.motors.sendV(-0.3)
+                        self.corner = True
+                        
                     else:
                         # Go next to the wall
                         print("Go next to the wall")
                         self.goNextToWall(laserRight, laser45)
                         self.yaw = yaw
+                        self.firstCrash = False
                 
                 
             elif self.turn == False and self.crash == True:
