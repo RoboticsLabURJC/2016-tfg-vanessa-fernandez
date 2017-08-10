@@ -16,16 +16,13 @@
           <izz>0.083</izz>      
         </inertia>-->
       </inertial>
-      <!--<collision name="collision">
+      <collision name="collision">
         <geometry>
-          <box>
-            <size>10 10 10</size>
-          </box>
-	  <mesh>
-	    <uri>model://car/meshes/model.dae</uri>
-	  </mesh>
+	        <mesh>
+	            <uri>model://car/meshes/model.dae</uri>
+	        </mesh>
         </geometry>
-      </collision>-->
+      </collision>
       <visual name="visual">
         <geometry>
           <mesh>
