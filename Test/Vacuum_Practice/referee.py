@@ -28,7 +28,7 @@ class MainWindow(QWidget):
         layout.addWidget(self.tiempoAnalog,1,2)
         layout.addWidget(self.logo,2,2)
     
-        vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
+        vSpacer = QSpacerItem(50, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
         
         self.setFixedSize(840,640);
