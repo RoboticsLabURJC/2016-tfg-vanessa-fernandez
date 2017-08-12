@@ -40,6 +40,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mapLayout.addWidget(self.map)
         self.teleop.setVisible(True)
 
+        self.logo = LogoWidget(self, self.logoLayout.parent().width(), self.logoLayout.parent().height())
+        self.logoLayout.addWidget(self.logo)
+        self.logo.setVisible(True)
+
         self.updGUI.connect(self.updateGUI)
         self.getPathButton.clicked.connect(self.getPathClicked)
         self.playButton.clicked.connect(self.playClicked)
