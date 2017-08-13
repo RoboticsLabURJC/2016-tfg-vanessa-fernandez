@@ -14,7 +14,7 @@
     
     <!-- Ground -->
     <include>
-      <uri>model://ground_plane</uri>
+      <uri>model://ground_plane_sincolor</uri>
     </include>
     <include>
       <uri>model://acera</uri>
