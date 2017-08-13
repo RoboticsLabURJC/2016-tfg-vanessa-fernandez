@@ -6,10 +6,9 @@
 # License: GPLv3 <http://www.gnu.org/licenses/gpl-3.0.html>
 
 world=autopark.world
-#world=circuit.world
 
 gzserver --verbose --minimal_comms $world &
-sleep 5 # up to 20 for circuit.world
+sleep 5 # up to 20 for autopark.world
 
 [ "$1" = "GUI" ] && gzclient &
 
