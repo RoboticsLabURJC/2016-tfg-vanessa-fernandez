@@ -5,11 +5,6 @@ from datetime import datetime
 import jderobot
 import math
 import cv2
-from ompl import base as ob
-from ompl import geometric as og
-from ompl import control as oc
-from ompl import app as oa
-
 from math import pi as pi
 
 time_cycle = 80
