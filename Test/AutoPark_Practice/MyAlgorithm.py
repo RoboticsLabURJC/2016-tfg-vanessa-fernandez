@@ -24,11 +24,18 @@ class MyAlgorithm(threading.Thread):
         self.laser3 = laser3
         self.motors = motors
         
-        self.path = 0
+        self.StopTaxi = False
+        self.goForward = False
         
-        self.THX = 0.1
-        self.THY = 0.1
-        self.THYAW = 0.01
+        self.startTime = 0
+        self.startTimePark = 2
+        
+        self.DIST_REAR_SPOT = 6.3
+        self.DIST_REAR_CARY = 3.8
+        self.DIST_REAR_CARX = 2.15
+        self.DIST_RIGHT = 3.7
+        self.MARGIN1 = 0.2
+        self.MARGIN2 = 0.15
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -45,7 +52,7 @@ class MyAlgorithm(threading.Thread):
         return laser
 
 
-    def laser_vector(self,laser_array):
+    def get_laser_vector(self,laser_array):
         laser_vectorized = []
         for d,a in laser_array:
             # (4.2.1) laser into GUI reference system
@@ -97,122 +104,80 @@ class MyAlgorithm(threading.Thread):
         x = dx*math.cos(-rt) - dy*math.sin(-rt)
         y = dx*math.sin(-rt) + dy*math.cos(-rt)
 
-        return x,y
-
-    def setPose(self, x, y, rot):
-        state = ob.State(ob.SE2StateSpace())
-        state().setX(x)
-        state().setY(y)
-        state().setYaw(rot * pi / 180)
-        return state
-
-
-    def configPlan(self):
-        # Type of robot
-        robotType = 'GKinematicCarPlanning'
-        omplSetup = eval('oa.%s()' % robotType)
-        
-        # Open environment
-        environmentFile = "/home/vanejessi/Escritorio/Vanessa/2016-tfg-vanessa-fernandez/Test/AutoPark_Practice/omplAutopark/autopark_sin_taxi3.dae"
-        omplSetup.setEnvironmentMesh(environmentFile)
-        
-        # Open robot
-        robotFile = "/home/vanejessi/Escritorio/Vanessa/2016-tfg-vanessa-fernandez/Test/AutoPark_Practice/omplAutopark/taxicopia.dae"
-        omplSetup.setRobotMesh(robotFile)
-        omplSetup.inferEnvironmentBounds()
-        
-        # Set bounding box
-        bounds = ob.RealVectorBounds(2)
-        bounds.setLow(-25)
-        bounds.setHigh(25)
-        omplSetup.getStateSpace().setBounds(bounds)
-        
-        # Start and goal
-        startPose = self.setPose(-7, 2.5, 0)
-        goalPose = self.setPose(7, -2.5, 0)
-        
-        # set the start & goal states
-        omplSetup.setStartAndGoalStates(startPose, goalPose, .1)
-
-        # set the planner
-        planner = oc.RRT(omplSetup.getSpaceInformation())
-        omplSetup.setPlanner(planner)
-
-        # try to solve the problem
-        if omplSetup.solve(20):
-            # print the (approximate) solution path: print states along the path
-            # and controls required to get from one state to the next
-            path = omplSetup.getSolutionPath().asGeometric()
-            #path.interpolate(); # uncomment if you want to plot the path
-            if not omplSetup.haveExactSolutionPath():
-                print("Solution is approximate. Distance to actual goal is %g" %
-                    omplSetup.getProblemDefinition().getSolutionDifference())
-                    
-        return path.printAsMatrix()
-      
-        
-    def parsePath(self):
-        path = []
-        if self.path == 0:
-            self.path = self.configPlan()
-            self.path = self.path.split("\n")
-            for target in self.path:
-                if target != "":
-                    targetSplit = target.split(" ")
-                    tuplaTarget =(float(targetSplit[0]), float(targetSplit[1]), float(targetSplit[2]))
-                    path.append(tuplaTarget)            
-        return path
-        
-        
-    def getTarget(self):
-        if len(self.path) != 0:
-            nextTarget = self.path[0]
-        else:
-            nextTarget = None
-        return nextTarget
-        
-        
-    def goTarget(self,target):
-        xTar = target[0]
-        yTar = target[1]
-        yawTar = target[2]
-        
-        xCar = self.pose3d.getX()
-        yCar = self.pose3d.getY()
-        yawCar = self.pose3d.getYaw()
-        
-        difXCar, difYCar = self.absolutas2relativas(xTar,yTar,xCar,yCar,yawCar)
-        angle = math.atan((difYCar/difXCar))
-        
-        self.motors.sendV(50)
-        if angle >= 0.1:
-           self.motors.sendW(-angle)
-        
-    def checkTarget(self, target):
-        difX = abs(target[0] - self.pose3d.getX())
-        difY = abs(target[1] - self.pose3d.getY())
-        difYaw = abs(target[2] - self.pose3d.getYaw())
-        
-        if difX  <= self.THX and difY <= self.THY and difYaw <= self.THYAW:
-            # Si cumple las restricciones, ha llegao al objetivo
-            return True
-        else:
-            return False
+        return x,y 
             
          
     def execute(self):
 
-        # TODO      
-       
-        if self.path == 0:
-            self.path = self.parsePath()
-            print self.path
+        # TODO
+
+        # Target
+        target = [7.25, -3]
+        targetx = target[0]
+        targety = target[1]
+
+        # Get the position of the robot
+        xCar = self.pose3d.getX()
+        yCar = self.pose3d.getY()
+        
+        # We get the orientation of the robot with respect to the map
+        yawCar = self.pose3d.getYaw()
+
+        # Get the data of the laser sensor, which consists of 180 pairs of values
+        laser_data_Front = self.laser1.getLaserData()
+        laserFront = self.parse_laser_data(laser_data_Front)
+        
+        laser_data_Rear = self.laser2.getLaserData()
+        laserRear = self.parse_laser_data(laser_data_Rear)
+        
+        laser_data_Right = self.laser3.getLaserData()
+        laserRight = self.parse_laser_data(laser_data_Right)
+              
+        laserFront_vectorized = self.get_laser_vector(laserFront)
+        laserRear_vectorized = self.get_laser_vector(laserRear)
+        laserRight_vectorized = self.get_laser_vector(laserRight)
+        
+        # Average of the 180 values of the laser
+        laserFront_mean = np.mean(laserFront_vectorized, axis=0)
+        laserRear_mean = np.mean(laserRear_vectorized, axis=0)
+        laserRight_mean = np.mean(laserRight_vectorized, axis=0)
+            
+        print('LASER FRONT', laserFront_mean)
+        print('LASER REAR', laserRear_mean)
+        print('LASER RIGHT', laserRight_mean)
+        
+        if self.StopTaxi == False:
+            if(self.DIST_RIGHT-self.MARGIN1)<=abs(laserRight_mean[1])<=(self.DIST_RIGHT+self.MARGIN1) and (self.DIST_REAR_SPOT-self.MARGIN1)<=abs(laserRear_mean[1])<=(self.DIST_REAR_SPOT+self.MARGIN1):
+                self.motors.sendV(0)
+                self.StopTaxi = True
+                if self.startTime == 0:
+                    self.startTime = time.time()
+                print('STOOOOOOOP')
+            else:
+                self.motors.sendV(20)
         else:
-            target = self.getTarget()
-            if self.checkTarget(target):
-                # Si ha llegado al objetivo lo elimino del camino
-                self.path.pop(0)
-                print("TARGET CONSEGUIDO")
-            else: 
-                self.goTarget(target)
+            print(yawCar)
+            if (time.time() - self.startTime) <= self.startTimePark:
+                self.motors.sendV(0)
+            else:
+                if self.goForward == False:
+                    if yawCar <= 0.7:
+                        self.motors.sendV(-3)
+                        self.motors.sendW(pi/4)
+                    else:
+                        self.motors.sendV(-3)
+                        self.motors.sendW(-pi/4)
+                    
+                    if (self.DIST_REAR_CARX-self.MARGIN2)<= abs(laserRear_mean[0]) <= (self.DIST_REAR_CARX+self.MARGIN2): 
+                        if (self.DIST_REAR_CARY-self.MARGIN2) <= abs(laserRear_mean[1]) <= (self.DIST_REAR_CARY+self.MARGIN2):
+                            self.goForward = True
+                            self.motors.sendV(0)
+                            self.motors.sendW(0)
+                else:
+                    if -0.05 <= yawCar <= 0.05:
+                        self.motors.sendV(3)
+                        self.motors.sendW(-pi/2)
+                    else:
+                        self.motors.sendV(0)
+                        self.motors.sendW(0)
 
