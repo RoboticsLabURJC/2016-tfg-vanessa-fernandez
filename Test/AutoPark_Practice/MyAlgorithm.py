@@ -26,16 +26,17 @@ class MyAlgorithm(threading.Thread):
         
         self.StopTaxi = False
         self.goForward = False
+        self.turn1 = False
         
         self.startTime = 0
         self.startTimePark = 2
         
         self.DIST_REAR_SPOT = 6.3
         self.DIST_REAR_CARY = 3.8
-        self.DIST_REAR_CARX = 2.15
+        self.DIST_REAR_CARX = 1.9
         self.DIST_RIGHT = 3.7
         self.MARGIN1 = 0.2
-        self.MARGIN2 = 0.15
+        self.MARGIN2 = 0.3
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -161,10 +162,11 @@ class MyAlgorithm(threading.Thread):
                 self.motors.sendV(0)
             else:
                 if self.goForward == False:
-                    if yawCar <= 0.7:
+                    if yawCar <= 1.2 and self.turn1 == False:
                         self.motors.sendV(-3)
                         self.motors.sendW(pi/4)
                     else:
+                        self.turn1 = True
                         self.motors.sendV(-3)
                         self.motors.sendW(-pi/4)
                     
@@ -174,10 +176,11 @@ class MyAlgorithm(threading.Thread):
                             self.motors.sendV(0)
                             self.motors.sendW(0)
                 else:
-                    if -0.05 <= yawCar <= 0.05:
+                    if yawCar <= -0.08 or yawCar >= 0.08:
                         self.motors.sendV(3)
                         self.motors.sendW(-pi/2)
                     else:
+                        print('CAR PARKED')
                         self.motors.sendV(0)
                         self.motors.sendW(0)
 
