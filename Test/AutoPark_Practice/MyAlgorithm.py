@@ -32,11 +32,14 @@ class MyAlgorithm(threading.Thread):
         self.startTimePark = 2
         
         self.DIST_REAR_SPOT = 6.3
-        self.DIST_REAR_CARY = 3.8
+        self.DIST_REAR_CARY = 4.2
         self.DIST_REAR_CARX = 1.9
-        self.DIST_RIGHT = 3.7
+        self.DIST_RIGHT = 3.5
         self.MARGIN1 = 0.2
-        self.MARGIN2 = 0.3
+        self.MARGIN2 = 0.15
+        self.YAW_MAX = 1.05
+        self.YAW_MARGIN = 0.02
+        self.DIST_MAX = 20
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -112,11 +115,6 @@ class MyAlgorithm(threading.Thread):
 
         # TODO
 
-        # Target
-        target = [7.25, -3]
-        targetx = target[0]
-        targety = target[1]
-
         # Get the position of the robot
         xCar = self.pose3d.getX()
         yCar = self.pose3d.getY()
@@ -142,10 +140,6 @@ class MyAlgorithm(threading.Thread):
         laserFront_mean = np.mean(laserFront_vectorized, axis=0)
         laserRear_mean = np.mean(laserRear_vectorized, axis=0)
         laserRight_mean = np.mean(laserRight_vectorized, axis=0)
-            
-        print('LASER FRONT', laserFront_mean)
-        print('LASER REAR', laserRear_mean)
-        print('LASER RIGHT', laserRight_mean)
         
         if self.StopTaxi == False:
             if(self.DIST_RIGHT-self.MARGIN1)<=abs(laserRight_mean[1])<=(self.DIST_RIGHT+self.MARGIN1) and (self.DIST_REAR_SPOT-self.MARGIN1)<=abs(laserRear_mean[1])<=(self.DIST_REAR_SPOT+self.MARGIN1):
@@ -153,34 +147,36 @@ class MyAlgorithm(threading.Thread):
                 self.StopTaxi = True
                 if self.startTime == 0:
                     self.startTime = time.time()
-                print('STOOOOOOOP')
             else:
                 self.motors.sendV(20)
         else:
-            print(yawCar)
             if (time.time() - self.startTime) <= self.startTimePark:
                 self.motors.sendV(0)
             else:
                 if self.goForward == False:
-                    if yawCar <= 1.2 and self.turn1 == False:
+                    if yawCar <= self.YAW_MAX and self.turn1 == False:
                         self.motors.sendV(-3)
                         self.motors.sendW(pi/4)
                     else:
                         self.turn1 = True
                         self.motors.sendV(-3)
-                        self.motors.sendW(-pi/4)
+                        self.motors.sendW(-pi/7)
                     
-                    if (self.DIST_REAR_CARX-self.MARGIN2)<= abs(laserRear_mean[0]) <= (self.DIST_REAR_CARX+self.MARGIN2): 
-                        if (self.DIST_REAR_CARY-self.MARGIN2) <= abs(laserRear_mean[1]) <= (self.DIST_REAR_CARY+self.MARGIN2):
+                    if (self.DIST_REAR_CARY-self.MARGIN2) <= abs(laserRear_mean[1]) <= (self.DIST_REAR_CARY+self.MARGIN2):
                             self.goForward = True
                             self.motors.sendV(0)
                             self.motors.sendW(0)
                 else:
-                    if yawCar <= -0.08 or yawCar >= 0.08:
-                        self.motors.sendV(3)
+                    if yawCar <= -self.YAW_MARGIN or yawCar >= self.YAW_MARGIN:
+                        self.motors.sendV(1)
                         self.motors.sendW(-pi/2)
                     else:
-                        print('CAR PARKED')
-                        self.motors.sendV(0)
                         self.motors.sendW(0)
+                        if (laser_data_Front.distanceData[90]/10 - laser_data_Rear.distanceData[90]/10) > self.DIST_MAX:
+                            self.motors.sendV(2)
+                        elif (laser_data_Rear.distanceData[90]/10 - laser_data_Front.distanceData[90]/10) > self.DIST_MAX:
+                            self.motors.sendV(-2)
+                        else:
+                            print('CAR PARKED')
+                            self.motors.sendV(0)
 
