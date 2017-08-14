@@ -7,19 +7,20 @@ from PyQt5.QtGui import (QBrush, QConicalGradient, QLinearGradient, QPainter, QP
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QCheckBox, QComboBox, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QSpinBox, QWidget, QPushButton, QSpacerItem, QSizePolicy, QLCDNumber )
 from PyQt5 import QtGui, QtCore
 from parallelIce.pose3dClient import Pose3DClient
+from parallelIce.laserClient import LaserClient
 import easyiceconfig as EasyIce
 from gui.threadGUI import ThreadGUI
 
 class MainWindow(QWidget):
 
     updGUI=pyqtSignal()
-    def __init__(self, pose3d, parent=None):
+    def __init__(self, pose3d, laser1, laser2, laser3, parent=None):
         super(MainWindow, self).__init__(parent)
         
         layout = QGridLayout()
         self.quesito = quesoWidget(self, pose3d)
         self.tiempo = tiempoWidget(self)
-        self.calidad = calidadWidget(self)
+        self.calidad = calidadWidget(self, laser1, laser2, laser3)
         self.distancia = distanciaWidget(self, pose3d)
         self.nota = notaWidget(self,pose3d)
         self.logo = logoWidget(self)
@@ -41,7 +42,9 @@ class MainWindow(QWidget):
     def update(self):
         self.quesito.updateG()
         self.distancia.updateG()
+        self.calidad.updateG()
         self.nota.updateG()
+        
 
 class logoWidget(QWidget):
     def __init__(self, winParent):
@@ -58,26 +61,58 @@ class logoWidget(QWidget):
         self.mapWidget.resize(self.width, self.height)
         self.setMinimumSize(100,100)
         
+        
 class calidadWidget(QWidget):
-    def __init__(self,winParent):    
+    def __init__(self,winParent, laser1, laser2, laser3):    
         super(calidadWidget, self).__init__()
         self.winParent=winParent
+        self.laser1 = laser1
+        self.laser2 = laser2
+        self.laser3 = laser3
+        self.numCrash = 0
+        self.MAX_CRASH = 1000
 
         vLayout = QVBoxLayout()
         choquesLabel = QLabel("Choques:")
-        bar = QProgressBar()
-        bar.setValue(50)
+        self.bar = QProgressBar()
+        self.bar.setValue(self.numCrash)
         st = "QProgressBar::chunk {background-color: #ff0000;}\n QProgressBar {border: 1px solid grey;border-radius: 2px;text-align: center;background: #eeeeee;}"
-        bar.setStyleSheet(st)
-        bar.setTextVisible(False)
+        self.bar.setStyleSheet(st)
+        self.bar.setTextVisible(False)
         vLayout.addWidget(choquesLabel, 0)
-        vLayout.addWidget(bar, 0)
+        vLayout.addWidget(self.bar, 0)
 
         vSpacer = QSpacerItem(30, 80, QSizePolicy.Ignored, QSizePolicy.Ignored)
         vLayout.addItem(vSpacer)
 
         self.setLayout(vLayout)
+        
+        
+    def get_laser_distance(self, laser):
+        DIST = 15
+        maxAngle = 180
+        crash = False
+        for i in range(0, maxAngle+1):
+            # Distance in millimeters, we change to cm
+            laserI = float(laser.distanceData[i])/float(10)
+            if i != 0 and i != 180:
+                if laserI <= DIST:
+                    crash = True
+        return crash
+                    
 
+    def updateG(self):
+        laser_data_Front = self.laser1.getLaserData()
+        laser_data_Rear = self.laser2.getLaserData()
+        laser_data_Right = self.laser3.getLaserData()
+        crashFront = self.get_laser_distance(laser_data_Front)
+        crashRear = self.get_laser_distance(laser_data_Rear)
+        crashRight = self.get_laser_distance(laser_data_Right)
+        if crashFront or crashRear or crashRight:
+            self.numCrash = self.numCrash + 1
+        percentajeCrash = self.numCrash * 100/self.MAX_CRASH
+        self.bar.setValue(self.numCrash)
+        self.update()
 
 
 class distanciaWidget(QWidget):
@@ -463,8 +498,11 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     ic = EasyIce.initialize(sys.argv)
     pose3d = Pose3DClient(ic, "Autopark.Pose3D", True)
+    laser1 = LaserClient(ic, "Autopark.Laser1", True)
+    laser2 = LaserClient(ic, "Autopark.Laser2", True)
+    laser3 = LaserClient(ic, "Autopark.Laser3", True)
 
-    myGUI = MainWindow(pose3d)
+    myGUI = MainWindow(pose3d, laser1, laser2, laser3)
     myGUI.show()
     t2 = ThreadGUI(myGUI)
     t2.daemon=True
