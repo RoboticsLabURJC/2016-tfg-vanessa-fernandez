@@ -28,7 +28,7 @@ class MyAlgorithm(threading.Thread):
         
         self.DIST_REAR_SPOT = 6.3
         self.DIST_REAR_CARY = 4.2
-        self.DIST_REAR_CARX = 1.9
+        self.DIST_REAR_CARX = 2.2
         self.DIST_RIGHT = 3.5
         self.MARGIN1 = 0.2
         self.MARGIN2 = 0.15
@@ -103,7 +103,12 @@ class MyAlgorithm(threading.Thread):
         x = dx*math.cos(-rt) - dy*math.sin(-rt)
         y = dx*math.sin(-rt) + dy*math.cos(-rt)
 
-        return x,y 
+        return x,y
+        
+        
+    def driveArc(self, speed, angleTurn):
+        self.motors.sendV(speed)
+        self.motors.sendW(angleTurn)
             
          
     def execute(self):
@@ -138,40 +143,47 @@ class MyAlgorithm(threading.Thread):
         
         if self.StopTaxi == False:
             if(self.DIST_RIGHT-self.MARGIN1)<=abs(laserRight_mean[1])<=(self.DIST_RIGHT+self.MARGIN1) and (self.DIST_REAR_SPOT-self.MARGIN1)<=abs(laserRear_mean[1])<=(self.DIST_REAR_SPOT+self.MARGIN1):
+                # If the taxi is alligned with the car in front of the parking spot the taxi stops
                 self.motors.sendV(0)
                 self.StopTaxi = True
                 if self.startTime == 0:
                     self.startTime = time.time()
             else:
+                # If the taxi did not get to the car ahead, the taxi drives forward
                 self.motors.sendV(20)
         else:
             if (time.time() - self.startTime) <= self.startTimePark:
+                # The taxi stopped for a while
                 self.motors.sendV(0)
             else:
                 if self.goForward == False:
+                    # The taxi goes backward
                     if yawCar <= self.YAW_MAX and self.turn1 == False:
-                        self.motors.sendV(-3)
-                        self.motors.sendW(pi/4)
+                        # The car is getting into the parking space
+                        self.driveArc(-3, pi/4)
                     else:
+                        # The taxi straightens
                         self.turn1 = True
-                        self.motors.sendV(-3)
-                        self.motors.sendW(-pi/7)
+                        self.driveArc(-3, -pi/7)
                     
                     if (self.DIST_REAR_CARY-self.MARGIN2) <= abs(laserRear_mean[1]) <= (self.DIST_REAR_CARY+self.MARGIN2):
-                            self.goForward = True
-                            self.motors.sendV(0)
-                            self.motors.sendW(0)
+                        # If the taxi is very close to the car from behind, it stop
+                        self.goForward = True
+                        self.motors.sendV(0)
+                        self.motors.sendW(0)
                 else:
                     if yawCar <= -self.YAW_MARGIN or yawCar >= self.YAW_MARGIN:
-                        self.motors.sendV(1)
-                        self.motors.sendW(-pi/2)
+                        # The taxi rectifies
+                        self.driveArc(1, -pi/2)
                     else:
+                        # When the car is straight, it stops and rectifies until it is centered in the parking spot
                         self.motors.sendW(0)
                         if (laser_data_Front.distanceData[90]/10 - laser_data_Rear.distanceData[90]/10) > self.DIST_MAX:
                             self.motors.sendV(2)
                         elif (laser_data_Rear.distanceData[90]/10 - laser_data_Front.distanceData[90]/10) > self.DIST_MAX:
                             self.motors.sendV(-2)
                         else:
+                            # The taxi is parked
                             print('CAR PARKED')
                             self.motors.sendV(0)
 
