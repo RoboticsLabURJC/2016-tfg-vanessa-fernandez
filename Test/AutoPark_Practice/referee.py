@@ -22,7 +22,7 @@ class MainWindow(QWidget):
         self.tiempo = tiempoWidget(self)
         self.calidad = calidadWidget(self, laser1, laser2, laser3)
         self.distancia = distanciaWidget(self, pose3d)
-        self.nota = notaWidget(self,pose3d)
+        self.nota = notaWidget(self,pose3d, self.tiempo, self.calidad, self.distancia)
         self.logo = logoWidget(self)
         layout.addWidget(self.quesito,1,0)
         layout.addWidget(self.tiempo,0,0)
@@ -34,7 +34,7 @@ class MainWindow(QWidget):
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
         
-        self.setFixedSize(840,640);
+        self.setFixedSize(940,640);
 
         self.setLayout(layout)
         self.updGUI.connect(self.update)
@@ -283,18 +283,21 @@ class distanciaWidget(QWidget):
    
         
 class notaWidget(QWidget):
-    def __init__(self,winParent,pose3d):    
+    def __init__(self,winParent,pose3d, tiempo, calidad, distancia):    
         super(notaWidget, self).__init__()
         self.winParent=winParent
         self.pose3d = pose3d
+        self.time = tiempo
+        self.calidad = calidad
+        self.distancia = distancia
 
-        hLayout = QHBoxLayout()
-         
-        nota = self.notaFinal()
-        notaLabel = QLabel('Nota final: ' + str(nota))
-        hLayout.addWidget(notaLabel, 0) 
+        self.hLayout = QHBoxLayout()
         
-        self.setLayout(hLayout) 
+        self.button = QPushButton('Show me my mark')
+        self.button.clicked.connect(self.notaFinal)
+        self.hLayout.addWidget(self.button, 0)
+        
+        self.setLayout(self.hLayout) 
         
     def notaFinal(self):
         notaAngle = self.testAngle() * 0.025
@@ -302,7 +305,8 @@ class notaWidget(QWidget):
         notaDist = self.testDistance() * 0.025
         notaCol = self.testCollision() * 0.025
         nota = notaAngle + notaTime + notaDist + notaCol
-        return nota
+        notaLabel = QLabel('Nota final: ' + str(nota))
+        self.hLayout.addWidget(notaLabel, 0)
         
     def testAngle(self):
         yawRad = self.pose3d.getYaw()
@@ -318,50 +322,48 @@ class notaWidget(QWidget):
         return notaAngle
     
     def testTime(self):
-        time = tiempoWidget(self)
-        myTime = time.seconds
-        if myTime <= 30:
-            notaTime = 100
-        elif myTime > 30 and myTime <= 60:
-            notaTime = 80
-        elif myTime > 60 and myTime <= 120:
-            notaTime = 50
-        else:
-            notaTime = 0    
+        minTime = 170
+        myTime = self.time.seconds
+        notaTime = float(minTime*100)/float(myTime)
+        if myTime < 170:
+            notaTime = 100  
         return notaTime
     
     def testDistance(self):
-        distancia = distanciaWidget(self,pose3d)
-        MyDistFront = distancia.distFrontFinal
-        MyDistRear = distancia.distRearFinal
-        MyDistSidewalk = distancia.distanceSidewalk
+        MyDistFront = self.distancia.distFrontFinal
+        MyDistRear = self.distancia.distRearFinal
+        MyDistSidewalk = self.distancia.distanceSidewalk
 
-        if MyDistFront >= 2 and MyDistFront < 3.5:
+        if MyDistFront >= 1.5 and MyDistFront < 3.5:
             notaDistFront = 100
-        elif MyDistFront < 2 and MyDistFront >= 1:
+        elif MyDistFront < 1.5 and MyDistFront >= 1:
             notaDistFront = 50
         else:
             notaDistFront = 0
 
-        if MyDistRear >= 2 and MyDistRear < 3.5:
+        if MyDistRear >= 1.5 and MyDistRear < 3.5:
             notaDistRear = 100
-        elif MyDistRear < 2 and MyDistRear >= 1:
+        elif MyDistRear < 1.5 and MyDistRear >= 1:
             notaDistRear = 50
         else:
             notaDistRear = 0
 
-        if MyDistSidewalk <= 0.75:
+        if MyDistSidewalk > 0 and MyDistSidewalk <= 0.75:
             notaDistSidewalk = 100
         elif MyDistSidewalk > 0.75 and MyDistSidewalk < 1.5:
             notaDistSidewalk = 50
         else:
             notaDistSidewalk = 0
 
-        notaDist = notaDistFront*1/3 + notaDistRear*1/3 + notaDistSidewalk*1/3
+        notaDist = float(notaDistFront+notaDistRear+notaDistSidewalk)/float(3)
         return notaDist
     
     def testCollision(self):
-        notaCol = 0
+        minCrash = 0
+        if self.calidad.numCrash == 0:
+            notaCol = 100
+        else:
+            notaCol = float(minCrash*100)/float(self.calidad.numCrash)
         return notaCol
 
     def updateG(self):
