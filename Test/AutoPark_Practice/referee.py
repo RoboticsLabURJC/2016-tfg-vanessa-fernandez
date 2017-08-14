@@ -33,7 +33,7 @@ class MainWindow(QWidget):
         vSpacer = QSpacerItem(30, 50, QSizePolicy.Ignored, QSizePolicy.Ignored)
         layout.addItem(vSpacer,1,0)
         
-        self.setFixedSize(740,640);
+        self.setFixedSize(840,640);
 
         self.setLayout(layout)
         self.updGUI.connect(self.update)
@@ -176,6 +176,7 @@ class distanciaWidget(QWidget):
 
     def distances(self):
         carSize = [5.75, 2.5]
+        carSizeTaxi = [4, 2]
         
         #Poses sidewalk
         positionSideWalk_start = [-25, -4.25]
@@ -195,10 +196,10 @@ class distanciaWidget(QWidget):
 
         
         # Pose 3D (origin poses)
-        xFront = self.pose3d.getX() + carSize[0]/2
-        xRear = self.pose3d.getX() - carSize[0]/2
-        yLeft = self.pose3d.getY() + carSize[1]/2
-        yRight = self.pose3d.getY() - carSize[1]/2
+        xFront = self.pose3d.getX() + carSizeTaxi[0]/2
+        xRear = self.pose3d.getX() - carSizeTaxi[0]/2
+        yLeft = self.pose3d.getY() + carSizeTaxi[1]/2
+        yRight = self.pose3d.getY() - carSizeTaxi[1]/2
 
         # Final poses (Car's rotation)
         pointFrontLeft = self.RTCar() * np.matrix([[xFront], [yLeft], [1], [1]])
