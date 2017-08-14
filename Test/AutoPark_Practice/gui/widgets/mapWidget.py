@@ -265,7 +265,7 @@ class MapWidget1(QWidget):
         orig_poses = np.matrix([[x], [y], [1], [1]]) * self.scale
         final_poses = self.RTCar() * orig_poses
 
-        carsize = 30
+        carsize = 25
         painter.translate(QPoint(final_poses[0],final_poses[1]))
         painter.rotate(-180*yaw/pi)
         
