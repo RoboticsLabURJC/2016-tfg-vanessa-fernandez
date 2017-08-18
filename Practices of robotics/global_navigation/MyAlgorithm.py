@@ -297,7 +297,7 @@ class MyAlgorithm(threading.Thread):
 
         posRobotImage = self.grid.worldToGrid(posRobotX, posRobotY)
 
-        if (abs(posRobotX)<(abs(destWorld[0])+5) and abs(posRobotX)>(abs(destWorld[0])-5)) and (abs(posRobotY)<(abs(destWorld[1])+5) and abs(posRobotY)>(abs(destWorld[1])-5)):
+        if (abs(posRobotX)<(abs(destWorld[0])+2) and abs(posRobotX)>(abs(destWorld[0])-2)) and (abs(posRobotY)<(abs(destWorld[1])+2) and abs(posRobotY)>(abs(destWorld[1])-2)):
             # We have arrived at the destination
             self.vel.setV(0)
             self.vel.setW(0)
