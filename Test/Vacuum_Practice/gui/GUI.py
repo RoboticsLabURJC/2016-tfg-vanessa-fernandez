@@ -23,7 +23,6 @@ from gui.widgets.mapWidget import LogoWidget
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from gui.form import Ui_MainWindow
-from gui.widgets.cameraWidget import CameraWidget
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
