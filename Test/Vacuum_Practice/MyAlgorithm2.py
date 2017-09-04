@@ -44,12 +44,21 @@ class MyAlgorithm2(threading.Thread):
         self.time = 0
         self.timeSat = 0
         self.yaw = 0
-        self.numIteracion = 0
+        
         self.DIST_TO_OBST_RIGHT = 30
         self.DIST_MIN_TO_OBST_RIGHT = 15
         self.DIST_TO_OBST_FRONT = 15
         self.MARGIN = 0.2
         self.MARGIN_OBST_RIGHT = 0.1
+        self.TIME_PERIM = 60
+        self.NUM_ROWS_COLUMNS = 10
+        self.SCALE = 50
+        self.MAX_VAL_GRID = 100
+        self.ADD_VAL_GRID = 10
+        self.SUB_VAL_GRID = 2
+        self.MAX_SQUARES = 3
+        self.SECONDS_REDUCE = 1
+        self.SECONDS_SAT = 60
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -107,16 +116,53 @@ class MyAlgorithm2(threading.Thread):
         self.kill_event.set()
         
     
+    ######    CRASH FUNCTIONS   ######
+    
+    def checkBumper(self):
+        for i in range(0, 350):
+            # Returns 1 if it collides, and 0 if it doesn't collides
+            crash = self.bumper.getBumperData().state
+            if crash == 1:
+                self.stopVacuum()
+                break
+        return crash
+        
+        
+    def checkLaser(self):
+        crash = 0
+        # Get the data of the laser sensor, which consists of 180 pairs of values
+        laser_data = self.laser.getLaserData()
+        
+        # Distance in millimeters, we change to cm
+        laserCenter = laser_data.distanceData[90]/10
+        if laserCenter <= 10:
+            crash = 1
+            self.stopVacuum()
+        return crash 
+        
+          
+    def checkCrash(self): 
+        # Bumper
+        crashBumper = self.checkBumper()
+        # Laser
+        crashLaser= self.checkLaser()        
+        
+        if crashBumper == 1 or crashLaser == 1:
+            crash = 1
+        else:
+            crash = 0
+                
+        return crash
+    
+        
+        
+    ######   SATURATION FUNCTIONS   ######        
+    
     def initSatTime(self):
         if self.time == 0:
             self.time = time.time()
         if self.timeSat == 0:
             self.timeSat = time.time()
-            
-            
-    def initPerimTime(self):
-        if self.startTime == 0:
-            self.startTime = time.time()
             
         
     def RTy(self, angle, tx, ty, tz):
@@ -128,42 +174,39 @@ class MyAlgorithm2(threading.Thread):
         RTy = self.RTy(pi, 5.6, 4, 0)
         return RTy
         
-        
+     
     def reduceValueSquare(self, numRow, numColumn):
         # Reduce the value of a particular square
-        scale = 50
-        for i in range((numColumn * scale), (numColumn*scale + scale)):
-            for j in range((numRow * scale), (numRow*scale + scale)):
+        for i in range((numColumn * self.SCALE), (numColumn*self.SCALE + self.SCALE)):
+            for j in range((numRow * self.SCALE), (numRow*self.SCALE + self.SCALE)):
                 if self.grid[i][j] > 0:
-                    self.grid[i][j] = self.grid[i][j] - 2
-                    print i,j, self.grid[i][j]
+                    self.grid[i][j] = self.grid[i][j] - self.SUB_VAL_GRID
                     
-        
+    
     def reduceValueTime(self):
         # Number of rows is 10 and number of columns is 10
-        numRowsColumns = 10
         # Scrolls the entire image
-        for i in range(0, numRowsColumns):
-            for j in range(0, numRowsColumns):
+        for i in range(0, self.NUM_ROWS_COLUMNS):
+            for j in range(0, self.NUM_ROWS_COLUMNS):
                 self.reduceValueSquare(i, j)
-            
-        
+                
+                
     def changeValuesGrid(self):
         # Change the value of the grid depending on where the vacuum goes
         x = self.pose3d.getX()
         y = self.pose3d.getY()
-        scale = 50
 
-        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * scale
+        final_poses = self.RTVacuum() * np.matrix([[x], [y], [1], [1]]) * self.SCALE
 
         # Grid 500 x 500 and we want a grid of 10 x 10
         # We keep the whole section of the division to know in which square this is
-        numX = int(final_poses.flat[0] / scale)
-        numY = int(final_poses.flat[1] / scale)
+        numX = int(final_poses.flat[0] / self.SCALE)
+        numY = int(final_poses.flat[1] / self.SCALE)
         
-        for i in range((numX * scale), (numX*scale + scale)):
-            for j in range((numY * scale), (numY*scale + scale)):
-                self.grid[j][i] = self.grid[j][i] + 10.0
+        for i in range((numX * self.SCALE), (numX*self.SCALE + self.SCALE)):
+            for j in range((numY * self.SCALE), (numY*self.SCALE + self.SCALE)):
+                if self.grid[j][i] < self.MAX_VAL_GRID:
+                    self.grid[j][i] = self.grid[j][i] + self.ADD_VAL_GRID
         
         
     def showGrid(self):
@@ -180,31 +223,37 @@ class MyAlgorithm2(threading.Thread):
 		
     def checkSaturation(self):
         saturation = False
-        numRowsColumns = 10
-        scale = 50
         numSquaresVisited = 0
-        for i in range(0, numRowsColumns):
-            for j in range(0, numRowsColumns):
+        for i in range(0, self.NUM_ROWS_COLUMNS):
+            for j in range(0, self.NUM_ROWS_COLUMNS):
                 # I check the first pixel of the square because they all have the same value
-                valuePos = self.grid[j*scale][i*scale]
+                valuePos = self.grid[j*self.SCALE][i*self.SCALE]
                 if valuePos != 0:
                     numSquaresVisited = numSquaresVisited + 1
                     
-        if numSquaresVisited < 3:
+        if numSquaresVisited < self.MAX_SQUARES:
             saturation = True
+        print 'squareeeee',  numSquaresVisited
         return saturation
+    
+    
+    def checkSaturationVacuum(self):
+        timeNow = time.time()
+        if self.saturation == False:          
+            if abs(self.time - timeNow) >= self.SECONDS_REDUCE:
+                # If 5 seconds have elapsed we reduce the value of the squares of the grid
+                self.reduceValueTime()
+                self.time = 0
+                
+            if abs(self.timeSat - timeNow) >= self.SECONDS_SAT:
+                self.saturation = self.checkSaturation()
+                if self.saturation == True:
+                    # Stop
+                    self.stopVacuum()
+                self.timeSat = 0
+                
         
-        
-    def checkCrash(self):
-        for i in range(0, 350):
-            # Returns 1 if it collides, and 0 if it doesn't collide
-            crash = self.bumper.getBumperData().state
-            if crash == 1:
-                self.motors.sendW(0)
-                self.motors.sendV(0)
-                break
-        return crash
-        
+    ######   VACUUM FUNCTIONS   #######         
         
     def stopVacuum(self):
         self.motors.sendW(0)
@@ -218,6 +267,12 @@ class MyAlgorithm2(threading.Thread):
         # Go backwards
         self.motors.sendV(-0.1)
         time.sleep(1)
+        
+    
+    def goForward(self,v):
+        self.motors.sendW(0)
+        time.sleep(1)
+        self.motors.sendV(v)
         
         
     def returnOrientation(self, yaw):
@@ -251,6 +306,22 @@ class MyAlgorithm2(threading.Thread):
             turn = False
         return turn
         
+    
+    def restartVariables(self):
+        self.startTime = 0
+        self.crashObstacle = False
+        self.obstacleRight = False
+        self.noObstRight = False
+        self.corner = False
+        self.sizeVacuum = False
+        
+        
+        
+    ######   PERIMETER FUNCTIONS   ######
+    
+    def initPerimTime(self):
+        if self.startTime == 0:
+            self.startTime = time.time()
         
     def calculateSideTriangle(self, a, b, angle):
         c = math.sqrt(pow(a,2) + pow(b,2) - 2*a*b*math.cos(angle))
@@ -290,12 +361,6 @@ class MyAlgorithm2(threading.Thread):
         if giro == False:
             self.motors.sendW(0)
             self.corner = False
-    
-    
-    def goForward(self,v):
-        self.motors.sendW(0)
-        time.sleep(1)
-        self.motors.sendV(v)
         
             
     def goNextToWall(self, laserRight):
@@ -309,32 +374,7 @@ class MyAlgorithm2(threading.Thread):
             self.motors.sendW(-0.1)
         else:
             self.motors.sendW(0)
-            self.motors.sendV(0.1)
-            
-            
-    def restartVariables(self):
-        self.startTime = 0
-        self.crashObstacle = False
-        self.obstacleRight = False
-        self.noObstRight = False
-        self.corner = False
-        self.sizeVacuum = False
-        
-    
-    def checkSaturationVacuum(self):
-        timeNow = time.time()
-        if self.saturation == False:          
-            if abs(self.time - timeNow) >= 2:
-                # If 5 seconds have elapsed we reduce the value of the squares of the grid
-                self.reduceValueTime()
-                self.time = 0
-                
-            if abs(self.timeSat - timeNow) >= 20:
-                self.saturation = self.checkSaturation()
-                if self.saturation == True:
-                    # Stop
-                    self.stopVacuum()
-                self.timeSat = 0
+            self.motors.sendV(0.1)        
     
 
     def execute(self):
@@ -363,7 +403,7 @@ class MyAlgorithm2(threading.Thread):
         print (crash)
         
         if self.saturation == False:
-            if crash == 1:
+            if crash == 1 and self.crash == False:
                 print ("CRAAASH")
                 # Stop and go backwards
                 self.stopAndBackwards()
@@ -386,8 +426,8 @@ class MyAlgorithm2(threading.Thread):
                     print ("Turn done")
                     self.firstTurn = True
                     # Go forwards
-                    self.goForward(0.24)
-                    time.sleep(1)
+                    self.goForward(0.22)
+                    time.sleep(0.7)
                     self.secondTurn = False
                     
                     
@@ -428,7 +468,7 @@ class MyAlgorithm2(threading.Thread):
             timeNow = time.time()
             
             # Only walks the wall for a while
-            if self.startTime - timeNow < 60:
+            if self.startTime - timeNow < self.TIME_PERIM:
                 if crash == 0 and self.crashObstacle == False:             
                     # I go forward until I find an obstacle
                     self.goForward(0.5)
