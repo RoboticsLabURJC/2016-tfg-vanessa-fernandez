@@ -58,7 +58,7 @@ class MyAlgorithm2(threading.Thread):
         self.SUB_VAL_GRID = 2
         self.MAX_SQUARES = 3
         self.SECONDS_REDUCE = 1
-        self.SECONDS_SAT = 60
+        self.SECONDS_SAT = 200
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -314,6 +314,7 @@ class MyAlgorithm2(threading.Thread):
         self.noObstRight = False
         self.corner = False
         self.sizeVacuum = False
+        self.saturation = False
         
         
         
@@ -426,7 +427,7 @@ class MyAlgorithm2(threading.Thread):
                     print ("Turn done")
                     self.firstTurn = True
                     # Go forwards
-                    self.goForward(0.22)
+                    self.goForward(0.24)
                     time.sleep(0.7)
                     self.secondTurn = False
                     
