@@ -14,8 +14,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see http://www.gnu.org/licenses/.
 #  Authors :
-#       Francisco Miguel Rivas Montero <franciscomiguel.rivas@urjc.es>
-#
+#       Irene Lope Rodriguez<irene.lope236@gmail.com>
+#       Vanessa Fernandez Martinez<vanessa_1895@msn.com>
 
 from gui.widgets.teleopWidget import TeleopWidget
 from gui.widgets.mapWidget import MapWidget
