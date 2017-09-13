@@ -1,0 +1,91 @@
+\select@language {spanish}
+\contentsline {chapter}{\'{I}ndice de figuras}{VII}{chapter*.3}
+\contentsline {chapter}{\IeC {\'I}ndice de tablas}{XI}{chapter*.4}
+\contentsline {chapter}{Acr\IeC {\'o}nimos}{XIII}{chapter*.5}
+\contentsline {chapter}{\numberline {1}Introducci\IeC {\'o}n}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Rob\IeC {\'o}tica}{1}{section.1.1}
+\contentsline {subsection}{\numberline {1.1.1}Clasificaci\IeC {\'o}n de los robots}{4}{subsection.1.1.1}
+\contentsline {section}{\numberline {1.2}Software para robots}{10}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Middlewares rob\IeC {\'o}ticos}{10}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Simuladores rob\IeC {\'o}ticos}{11}{subsection.1.2.2}
+\contentsline {subsection}{\numberline {1.2.3}Bibliotecas}{12}{subsection.1.2.3}
+\contentsline {section}{\numberline {1.3}Docencia en rob\IeC {\'o}tica}{13}{section.1.3}
+\contentsline {subsection}{\numberline {1.3.1}Docencia en secundaria}{14}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {1.3.2}Docencia en la universidad}{15}{subsection.1.3.2}
+\contentsline {section}{\numberline {1.4}JdeRobot-Academy}{17}{section.1.4}
+\contentsline {chapter}{\numberline {2}Objetivos}{21}{chapter.2}
+\contentsline {section}{\numberline {2.1}Objetivos}{21}{section.2.1}
+\contentsline {section}{\numberline {2.2}Requisitos}{23}{section.2.2}
+\contentsline {section}{\numberline {2.3}Metodolog\IeC {\'\i }a}{23}{section.2.3}
+\contentsline {section}{\numberline {2.4}Plan de trabajo}{26}{section.2.4}
+\contentsline {chapter}{\numberline {3}Infraestructura}{28}{chapter.3}
+\contentsline {section}{\numberline {3.1}Simulador Gazebo}{28}{section.3.1}
+\contentsline {section}{\numberline {3.2}Entorno JdeRobot}{30}{section.3.2}
+\contentsline {section}{\numberline {3.3}Python}{32}{section.3.3}
+\contentsline {section}{\numberline {3.4}OpenCV}{33}{section.3.4}
+\contentsline {section}{\numberline {3.5}PyQt}{35}{section.3.5}
+\contentsline {chapter}{\numberline {4}Pr\IeC {\'a}ctica:Navegaci\IeC {\'o}n global de un TeleTaxi con GPP}{37}{chapter.4}
+\contentsline {section}{\numberline {4.1}Enunciado}{37}{section.4.1}
+\contentsline {section}{\numberline {4.2}Infraestructura}{38}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Taxi\_Holo}{38}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Sensores de posici\IeC {\'o}n}{40}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Modelo cityLarge}{41}{subsection.4.2.3}
+\contentsline {subsection}{\numberline {4.2.4}Mundo de Gazebo}{42}{subsection.4.2.4}
+\contentsline {section}{\numberline {4.3}Componente Acad\IeC {\'e}mico}{43}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Interfaz gr\IeC {\'a}fica de la pr\IeC {\'a}ctica}{45}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Clase Grid}{48}{subsection.4.3.2}
+\contentsline {section}{\numberline {4.4}Soluci\IeC {\'o}n de Referencia}{53}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Fundamentos Te\IeC {\'o}ricos de la Navegaci\IeC {\'o}n global y el algoritmo GPP}{54}{subsection.4.4.1}
+\contentsline {subsection}{\numberline {4.4.2}Construcci\IeC {\'o}n del mapa del gradiente}{56}{subsection.4.4.2}
+\contentsline {subsubsection}{\numberline {4.4.2.1}Generaci\IeC {\'o}n campo ficticio de navegaci\IeC {\'o}n global}{57}{subsubsection.4.4.2.1}
+\contentsline {subsubsection}{\numberline {4.4.2.2}Penalizaci\IeC {\'o}n por cercan\IeC {\'\i }a de obst\IeC {\'a}culos}{60}{subsubsection.4.4.2.2}
+\contentsline {subsubsection}{\numberline {4.4.2.3}C\IeC {\'a}lculo de ruta ideal}{62}{subsubsection.4.4.2.3}
+\contentsline {subsection}{\numberline {4.4.3}Pilotaje del robot}{64}{subsection.4.4.3}
+\contentsline {section}{\numberline {4.5}Evaluador Autom\IeC {\'a}tico}{72}{section.4.5}
+\contentsline {section}{\numberline {4.6}Experimentaci\IeC {\'o}n}{74}{section.4.6}
+\contentsline {chapter}{\numberline {5}Pr\IeC {\'a}ctica: Vacuum}{78}{chapter.5}
+\contentsline {section}{\numberline {5.1}Enunciado de la pr\IeC {\'a}ctica}{78}{section.5.1}
+\contentsline {section}{\numberline {5.2}Dise\IeC {\~n}o general de la pr\IeC {\'a}ctica}{79}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Dise\IeC {\~n}o general}{79}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Hilos de ejecuci\IeC {\'o}n de la pr\IeC {\'a}ctica}{80}{subsection.5.2.2}
+\contentsline {subsection}{\numberline {5.2.3}C\IeC {\'o}mo ejecutar la pr\IeC {\'a}ctica}{81}{subsection.5.2.3}
+\contentsline {section}{\numberline {5.3}Infraestructura}{82}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Roomba}{82}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Sensor l\IeC {\'a}ser}{83}{subsection.5.3.2}
+\contentsline {subsection}{\numberline {5.3.3}Sensor bumper}{83}{subsection.5.3.3}
+\contentsline {subsection}{\numberline {5.3.4}Plugins}{84}{subsection.5.3.4}
+\contentsline {subsection}{\numberline {5.3.5}Modelo House}{84}{subsection.5.3.5}
+\contentsline {subsection}{\numberline {5.3.6}Mundo de Gazebo}{86}{subsection.5.3.6}
+\contentsline {subsection}{\numberline {5.3.7}Archivo de configuraci\IeC {\'o}n}{87}{subsection.5.3.7}
+\contentsline {section}{\numberline {5.4}Aplicaci\IeC {\'o}n gr\IeC {\'a}fica}{88}{section.5.4}
+\contentsline {section}{\numberline {5.5}Gr\IeC {\'a}fica de la derivada del porcentaje}{92}{section.5.5}
+\contentsline {section}{\numberline {5.6}\IeC {\'A}rbitro}{94}{section.5.6}
+\contentsline {section}{\numberline {5.7}Soluci\IeC {\'o}n}{98}{section.5.7}
+\contentsline {subsection}{\numberline {5.7.1}Algoritmo empleado por distintas aspiradoras rob\IeC {\'o}ticas}{98}{subsection.5.7.1}
+\contentsline {subsection}{\numberline {5.7.2}Algoritmo empleado por Roomba serie 500, 600, 700, 800}{101}{subsection.5.7.2}
+\contentsline {subsection}{\numberline {5.7.3}Soluci\IeC {\'o}n desarrollada}{103}{subsection.5.7.3}
+\contentsline {subsection}{\numberline {5.7.4}Experimentaci\IeC {\'o}n}{109}{subsection.5.7.4}
+\contentsline {chapter}{\numberline {6}Pr\IeC {\'a}ctica: Autopark}{116}{chapter.6}
+\contentsline {section}{\numberline {6.1}Enunciado de la pr\IeC {\'a}ctica}{116}{section.6.1}
+\contentsline {section}{\numberline {6.2}Dise\IeC {\~n}o general de la pr\IeC {\'a}ctica}{117}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Dise\IeC {\~n}o general}{117}{subsection.6.2.1}
+\contentsline {subsection}{\numberline {6.2.2}Hilos de ejecuci\IeC {\'o}n de la pr\IeC {\'a}ctica}{118}{subsection.6.2.2}
+\contentsline {subsection}{\numberline {6.2.3}C\IeC {\'o}mo ejecutar la pr\IeC {\'a}ctica}{119}{subsection.6.2.3}
+\contentsline {section}{\numberline {6.3}Infraestructura}{120}{section.6.3}
+\contentsline {subsection}{\numberline {6.3.1}Taxi\_Holo\_Laser}{120}{subsection.6.3.1}
+\contentsline {subsection}{\numberline {6.3.2}Sensores l\IeC {\'a}ser}{121}{subsection.6.3.2}
+\contentsline {subsection}{\numberline {6.3.3}Plugins}{121}{subsection.6.3.3}
+\contentsline {subsection}{\numberline {6.3.4}Modelo acera}{122}{subsection.6.3.4}
+\contentsline {subsection}{\numberline {6.3.5}Modelo carNoMotor}{122}{subsection.6.3.5}
+\contentsline {subsection}{\numberline {6.3.6}Mundo de Gazebo}{123}{subsection.6.3.6}
+\contentsline {subsection}{\numberline {6.3.7}Archivo de configuraci\IeC {\'o}n}{126}{subsection.6.3.7}
+\contentsline {section}{\numberline {6.4}Aplicaci\IeC {\'o}n gr\IeC {\'a}fica}{127}{section.6.4}
+\contentsline {section}{\numberline {6.5}\IeC {\'A}rbitro}{129}{section.6.5}
+\contentsline {section}{\numberline {6.6}Soluci\IeC {\'o}n}{131}{section.6.6}
+\contentsline {subsection}{\numberline {6.6.1}C\IeC {\'o}mo aparcan los coches aut\IeC {\'o}nomos reales}{132}{subsection.6.6.1}
+\contentsline {subsection}{\numberline {6.6.2}Soluci\IeC {\'o}n desarrollada}{134}{subsection.6.6.2}
+\contentsline {subsection}{\numberline {6.6.3}Experimentaci\IeC {\'o}n}{138}{subsection.6.6.3}
+\contentsline {chapter}{\numberline {7}Conclusiones y trabajos futuros}{144}{chapter.7}
+\contentsline {section}{\numberline {7.1}Conclusiones}{144}{section.7.1}
+\contentsline {section}{\numberline {7.2}Trabajos futuras}{147}{section.7.2}
+\contentsline {chapter}{Bibliografia}{149}{section.7.2}
