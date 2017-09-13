@@ -373,7 +373,7 @@ if __name__ == "__main__":
     
     app = QApplication(sys.argv)
     ic = EasyIce.initialize(sys.argv)
-    pose3d = Pose3DClient(ic, "Vacuum.Pose3D", True)
+    pose3d = Pose3DClient(ic, "VacuumCleaner.Pose3D", True)
 
     myGUI = MainWindow(pose3d)
     myGUI.show()
