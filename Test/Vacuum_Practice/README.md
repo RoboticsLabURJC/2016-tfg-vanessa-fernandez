@@ -37,7 +37,7 @@ Para realizar la práctica se debe editar el fichero MyAlgorithm.py e insertar e
 ### API
 * pose3d.getYaw() - para otener la orientación del robot
 * bumper.getBumperData().state - para establecer si el robot ha chocado o no. Devuelve un 1 si el robot colisiona y un 0 si no ha chocado.
-* motors.sendW() - para establecer la velocidad angular
+* laser.getLaserData() - Permite obtener los datos del sensor láser, que se compone de 180 pares de valores (0-180º, distancia en milímetros). 
 * motors.sendV() - para establecer la velocidad lineal
 * motors.sendW() - para establecer la velocidad angular
 
