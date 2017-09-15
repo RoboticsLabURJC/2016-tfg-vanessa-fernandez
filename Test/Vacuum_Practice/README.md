@@ -7,8 +7,8 @@ El objetivo de esta práctica consiste en implementar la lógica de un algoritmo
 
 ## Cómo ejecutar
 Para lanzar el ejemplo, sigue los siguientes pasos:
-* Ejecución sin ver el mundo: `gzserver VacuumCleaner.world`
-* Ejecución viendo el mundo: `gazebo VacuumCleaner.world`
+* Ejecución sin ver el mundo: `gzserver Vacuum.world`
+* Ejecución viendo el mundo: `gazebo Vacuum.world`
 * Ejecución de la práctica y de la interfaz de usuario: `python2 vacuumCleaner.py --Ice.Config=vacuumCleaner.cfg`
 * Ejecución del evaluador automático: `python2 referee.py --Ice.Config=vacuumCleaner.cfg`
 * Ejecución de la gráfica de la derivada del porcentaje: `python2 graphicPercentaje.py --Ice.Config=vacuumCleaner.cfg`
