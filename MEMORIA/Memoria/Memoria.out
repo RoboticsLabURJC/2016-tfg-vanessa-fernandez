@@ -1,0 +1,87 @@
+\BOOKMARK [0][-]{chapter*.4}{\315ndice de figuras}{}% 1
+\BOOKMARK [0][-]{chapter*.5}{\315ndice de tablas}{}% 2
+\BOOKMARK [0][-]{chapter*.7}{Acr\363nimos}{}% 3
+\BOOKMARK [0][-]{chapter.1}{Introducci\363n}{}% 4
+\BOOKMARK [1][-]{section.1.1}{Rob\363tica}{chapter.1}% 5
+\BOOKMARK [1][-]{section.1.2}{Software para robots}{chapter.1}% 6
+\BOOKMARK [2][-]{subsection.1.2.1}{Middlewares rob\363ticos}{section.1.2}% 7
+\BOOKMARK [2][-]{subsection.1.2.2}{Simuladores rob\363ticos}{section.1.2}% 8
+\BOOKMARK [2][-]{subsection.1.2.3}{Bibliotecas}{section.1.2}% 9
+\BOOKMARK [1][-]{section.1.3}{Docencia en rob\363tica}{chapter.1}% 10
+\BOOKMARK [2][-]{subsection.1.3.1}{Docencia en secundaria}{section.1.3}% 11
+\BOOKMARK [2][-]{subsection.1.3.2}{Docencia en la universidad}{section.1.3}% 12
+\BOOKMARK [1][-]{section.1.4}{Entorno Docente JdeRobot-Academy}{chapter.1}% 13
+\BOOKMARK [0][-]{chapter.2}{Objetivos}{}% 14
+\BOOKMARK [1][-]{section.2.1}{Objetivos}{chapter.2}% 15
+\BOOKMARK [1][-]{section.2.2}{Requisitos}{chapter.2}% 16
+\BOOKMARK [1][-]{section.2.3}{Metodolog\355a}{chapter.2}% 17
+\BOOKMARK [1][-]{section.2.4}{Plan de trabajo}{chapter.2}% 18
+\BOOKMARK [0][-]{chapter.3}{Infraestructura}{}% 19
+\BOOKMARK [1][-]{section.3.1}{Simulador Gazebo}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.2}{Entorno JdeRobot}{chapter.3}% 21
+\BOOKMARK [1][-]{section.3.3}{Python}{chapter.3}% 22
+\BOOKMARK [1][-]{section.3.4}{Biblioteca OpenCV}{chapter.3}% 23
+\BOOKMARK [1][-]{section.3.5}{PyQt}{chapter.3}% 24
+\BOOKMARK [0][-]{chapter.4}{Pr\341ctica: Navegaci\363n global de un TeleTaxi con GPP}{}% 25
+\BOOKMARK [1][-]{section.4.1}{Enunciado}{chapter.4}% 26
+\BOOKMARK [1][-]{section.4.2}{Infraestructura}{chapter.4}% 27
+\BOOKMARK [2][-]{subsection.4.2.1}{Coche Taxi\137Holo}{section.4.2}% 28
+\BOOKMARK [2][-]{subsection.4.2.2}{Modelo de ciudad cityLarge}{section.4.2}% 29
+\BOOKMARK [2][-]{subsection.4.2.3}{Mundo de Gazebo}{section.4.2}% 30
+\BOOKMARK [1][-]{section.4.3}{Componente Acad\351mico}{chapter.4}% 31
+\BOOKMARK [2][-]{subsection.4.3.1}{Interfaz gr\341fica de la pr\341ctica}{section.4.3}% 32
+\BOOKMARK [2][-]{subsection.4.3.2}{C\363digo auxiliar: Clase Grid}{section.4.3}% 33
+\BOOKMARK [1][-]{section.4.4}{Soluci\363n de Referencia}{chapter.4}% 34
+\BOOKMARK [2][-]{subsection.4.4.1}{Fundamentos de la Navegaci\363n global y el algoritmo GPP}{section.4.4}% 35
+\BOOKMARK [2][-]{subsection.4.4.2}{Construcci\363n del mapa del gradiente}{section.4.4}% 36
+\BOOKMARK [3][-]{subsubsection.4.4.2.1}{Generaci\363n campo ficticio de navegaci\363n global}{subsection.4.4.2}% 37
+\BOOKMARK [3][-]{subsubsection.4.4.2.2}{Penalizaci\363n por cercan\355a de obst\341culos}{subsection.4.4.2}% 38
+\BOOKMARK [3][-]{subsubsection.4.4.2.3}{C\341lculo de ruta ideal}{subsection.4.4.2}% 39
+\BOOKMARK [2][-]{subsection.4.4.3}{Pilotaje del robot}{section.4.4}% 40
+\BOOKMARK [1][-]{section.4.5}{Evaluador Autom\341tico}{chapter.4}% 41
+\BOOKMARK [1][-]{section.4.6}{Experimentaci\363n}{chapter.4}% 42
+\BOOKMARK [2][-]{subsection.4.6.1}{Ejecuci\363n t\355pica}{section.4.6}% 43
+\BOOKMARK [2][-]{subsection.4.6.2}{Estudio de tiempos}{section.4.6}% 44
+\BOOKMARK [0][-]{chapter.5}{Pr\341ctica: Aspiradora aut\363noma}{}% 45
+\BOOKMARK [1][-]{section.5.1}{Enunciado de la pr\341ctica}{chapter.5}% 46
+\BOOKMARK [1][-]{section.5.2}{Infraestructura}{chapter.5}% 47
+\BOOKMARK [2][-]{subsection.5.2.1}{Roomba}{section.5.2}% 48
+\BOOKMARK [3][-]{subsubsection.5.2.1.1}{Sensor l\341ser}{subsection.5.2.1}% 49
+\BOOKMARK [3][-]{subsubsection.5.2.1.2}{Sensor bumper}{subsection.5.2.1}% 50
+\BOOKMARK [2][-]{subsection.5.2.2}{Modelo House}{section.5.2}% 51
+\BOOKMARK [2][-]{subsection.5.2.3}{Mundo de Gazebo}{section.5.2}% 52
+\BOOKMARK [1][-]{section.5.3}{Componente acad\351mico}{chapter.5}% 53
+\BOOKMARK [2][-]{subsection.5.3.1}{Interfaz gr\341fica de la pr\341ctica}{section.5.3}% 54
+\BOOKMARK [2][-]{subsection.5.3.2}{Gr\341fica de la derivada del porcentaje}{section.5.3}% 55
+\BOOKMARK [1][-]{section.5.4}{Soluci\363n de referencia}{chapter.5}% 56
+\BOOKMARK [2][-]{subsection.5.4.1}{Algoritmos empleados por distintas aspiradoras rob\363ticas}{section.5.4}% 57
+\BOOKMARK [2][-]{subsection.5.4.2}{Algoritmo empleado por Roomba serie 500, 600, 700, 800}{section.5.4}% 58
+\BOOKMARK [2][-]{subsection.5.4.3}{Soluci\363n desarrollada}{section.5.4}% 59
+\BOOKMARK [1][-]{section.5.5}{Evaluador autom\341tico}{chapter.5}% 60
+\BOOKMARK [1][-]{section.5.6}{Experimentaci\363n}{chapter.5}% 61
+\BOOKMARK [2][-]{subsection.5.6.1}{Ejecuci\363n t\355pica}{section.5.6}% 62
+\BOOKMARK [2][-]{subsection.5.6.2}{Ajuste del tiempo de navegaci\363n perimetral}{section.5.6}% 63
+\BOOKMARK [2][-]{subsection.5.6.3}{Experimentos de 45 minutos}{section.5.6}% 64
+\BOOKMARK [2][-]{subsection.5.6.4}{Ley de los rendimientos decrecientes}{section.5.6}% 65
+\BOOKMARK [0][-]{chapter.6}{Pr\341ctica: Aparcamiento Autom\341tico}{}% 66
+\BOOKMARK [1][-]{section.6.1}{Enunciado}{chapter.6}% 67
+\BOOKMARK [1][-]{section.6.2}{Infraestructura}{chapter.6}% 68
+\BOOKMARK [2][-]{subsection.6.2.1}{Modelo Taxi\137Holo\137Laser}{section.6.2}% 69
+\BOOKMARK [3][-]{subsubsection.6.2.1.1}{Sensores l\341ser}{subsection.6.2.1}% 70
+\BOOKMARK [2][-]{subsection.6.2.2}{Modelo acera}{section.6.2}% 71
+\BOOKMARK [2][-]{subsection.6.2.3}{Modelo carNoMotor}{section.6.2}% 72
+\BOOKMARK [2][-]{subsection.6.2.4}{Mundo de Gazebo}{section.6.2}% 73
+\BOOKMARK [1][-]{section.6.3}{Componente Acad\351mico}{chapter.6}% 74
+\BOOKMARK [2][-]{subsection.6.3.1}{Interfaz gr\341fica}{section.6.3}% 75
+\BOOKMARK [1][-]{section.6.4}{Soluci\363n de referencia}{chapter.6}% 76
+\BOOKMARK [2][-]{subsection.6.4.1}{Algoritmos empleados por los coches aut\363nomos reales}{section.6.4}% 77
+\BOOKMARK [2][-]{subsection.6.4.2}{Soluci\363n reactiva}{section.6.4}% 78
+\BOOKMARK [1][-]{section.6.5}{Evaluador autom\341tico}{chapter.6}% 79
+\BOOKMARK [1][-]{section.6.6}{Experimentaci\363n}{chapter.6}% 80
+\BOOKMARK [2][-]{subsection.6.6.1}{Ejecuci\363n t\355pica}{section.6.6}% 81
+\BOOKMARK [2][-]{subsection.6.6.2}{Aparcamiento lejano}{section.6.6}% 82
+\BOOKMARK [2][-]{subsection.6.6.3}{Experimento con la plaza casi superada}{section.6.6}% 83
+\BOOKMARK [0][-]{chapter.7}{Conclusiones}{}% 84
+\BOOKMARK [1][-]{section.7.1}{Conclusiones}{chapter.7}% 85
+\BOOKMARK [1][-]{section.7.2}{Trabajos futuros}{chapter.7}% 86
+\BOOKMARK [0][-]{chapter*.84}{Bibliograf\355a}{}% 87
