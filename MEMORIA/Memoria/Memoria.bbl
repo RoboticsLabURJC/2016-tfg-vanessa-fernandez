@@ -1,0 +1,585 @@
+\begin{thebibliography}{10}
+
+\bibitem{middleware1}
+Simone Ceriani and Martino Migliavacca.
+\newblock {Middleware in robotics}.
+\newblock {\em Advanced Methods of Information Technology for Autonomous
+  Robotics}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{urbi}
+J.~Baillie, A.~Demaille, Q.~Hocquet, M.~Nottale, and S~Tardieu.
+\newblock {The Urbi Universal Platform for Robotics}.
+\newblock {\em Simulation, Modeling and Programming for Autonomous Robots},
+  pages 580--591, 2008.
+\newblock [Accedido 23 de Septiembre de 2017].
+
+\bibitem{orocos}
+Herman Bruyninckx and Peter Soetens.
+\newblock {The OROCOS Project}.
+\newblock
+  \url{https://people.mech.kuleuven.be/~orocos/pub/stable/documentation/rtt/v1.10.x/doc-xml/orocos-overview.html},
+  2007.
+\newblock [Accedido 23 de Septiembre de 2017].
+
+\bibitem{orocos1}
+Jorge~Coronado Vallés.
+\newblock {\em {Desarrollo de aplicaciones embebidas de control en robots
+  móviles}}.
+\newblock PhD thesis, Universidad Politécnica de Valencia, 2013.
+\newblock [Accedido 23 de Septimbre de 2017].
+
+\bibitem{webots}
+{Webots,\textit{Cyberbotics}}.
+\newblock \url{https://www.cyberbotics.com/webots.php}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{pcl}
+Alberto Manuel~Mireles Suárez.
+\newblock {Re-identificación de personas en redes de sensores
+  RGBD,\textit{Universidad de las Palmas de Gran Canaria}}.
+\newblock \url{file:///C:/Users/jessi/Downloads/0710907_00000_0000.pdf}, 2015.
+\newblock [Accedido 23 de Septiembre de 2017].
+
+\bibitem{pcl1}
+Javier~Nuño Simón.
+\newblock {\em {Reconocimiento de objetos mediante sensor 3D Kinect}}.
+\newblock PhD thesis, Universidad Carlos III de Madrid, 2012.
+\newblock [Accedido 23 de Septimbre de 2017].
+
+\bibitem{AForge.NET}
+{AForge.NET Framework, \textit{AForge.NET}}.
+\newblock \url{http://www.aforgenet.com/framework/}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{modelo_espiral}
+Galo~Fariño R.
+\newblock {Modelo Espiral de un proyecto de desarrollo de software,
+  \textit{Administración y Evaluación de Proyectos}}.
+\newblock \url{http://www.ojovisual.net/galofarino/modeloespiral.pdf}, 2011.
+\newblock [Accedido 7 de Agosto de 2017].
+
+\bibitem{modelo_espiral1}
+{Modelo Espiral}.
+\newblock \url{http://modeloespiral.blogspot.com.es/}, 2009.
+\newblock [Accedido 7 de Agosto de 2017].
+
+\bibitem{python1}
+{What is PyQt?, \textit{Riverbank Computing Limited}}.
+\newblock \url{https://riverbankcomputing.com/software/pyqt/intro}, 2016.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{pqt}
+Jan Bodnar.
+\newblock {Introduction to PyQt5}.
+\newblock \url{http://zetcode.com/gui/pyqt5/introduction/}, 2017.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{gradient}
+Kurt Konolige.
+\newblock {A Gradient Method for Realtime Robot Control}.
+\newblock {\em SRI International}, 2000.
+
+\bibitem{navegacion_autolocalizacion3}
+José~Raúl Isado.
+\newblock {\em {Navegaci{\'o}n global de un robot usando el m{\'e}todo del
+  gradiente}}.
+\newblock PhD thesis, Universidad Rey Juan Carlos.Escuela Superior de Ciencias
+  Experimentales y Tecnología, 2005.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{navegacion_autolocalizacion4}
+Julio~Manuel Vega.
+\newblock {\em {Navegaci{\'o}n y autolocalizaci{\'o}n de un robot gu{\'i}a de
+  visitantes}}.
+\newblock PhD thesis, Universidad Rey Juan Carlos. Ingeniería Informática,
+  2009.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{localization1}
+Juan~Navarro Bosgos.
+\newblock {\em {Construcción de Mapas 3D Compactos desde Sensores RGBD}}.
+\newblock PhD thesis, Universidad Rey Juan Carlos.Ingeniería de
+  Telecomunicación, 2015.
+\newblock [Accedido 17 de Agosto de 2017].
+
+\bibitem{definicion_robotica}
+Florencia Ucha.
+\newblock {Definición de Robótica}.
+\newblock \url{https://www.definicionabc.com/tecnologia/robotica.php}, 2009.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{definicion_robot}
+{Definición de Robot}.
+\newblock \url{http://conceptodefinicion.de/robot/}, 2014.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{historia}
+Marilyn Perdigón.
+\newblock {El padre de la robótica, \textit{Los primeros robots}}.
+\newblock \url{http://marilynpg.blogspot.com.es/}, 2012.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{historia1}
+{Historia}.
+\newblock
+  \url{http://wiki.robotica.webs.upv.es/wiki-de-robotica/introduccion/historia/}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot}
+Yanet Maritza~Sagua Alanguía.
+\newblock {Clasificación de los Robots, \textit{Robótica Puno}}.
+\newblock
+  \url{http://roboticapuno.blogspot.com.es/2013/01/clasificacion-de-los-robots.html}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot1}
+{Clasificación de robots}.
+\newblock
+  \url{http://wiki.robotica.webs.upv.es/wiki-de-robotica/introduccion/clasificacion-de-robots/}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot2}
+{Generaciones de la Robótica, \textit{Todo sobre la Robótica}}.
+\newblock
+  \url{http://conozcamoslarobotica.blogspot.com.es/p/generaciones-de-la-robotica.html}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot3}
+{Robots Militares, \textit{Actualidad Gadget}}.
+\newblock \url{https://www.actualidadgadget.com/tag/robots-militares/}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot4}
+Víctor~R. González.
+\newblock {Definición del Robot Industrial, \textit{Robots industriales}}.
+\newblock
+  \url{http://platea.pntic.mec.es/vgonzale/cyr_0204/ctrl_rob/robotica/industrial.htm},
+  2002.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{clasificacion_robot5}
+{Importancia de la Robótica en la Educación, \textit{Educatronics. Ciencia,
+  arte y arquitectura}}.
+\newblock
+  \url{http://educatronics.com/publicaciones/importancia-de-la-rob%C3%B3tica-en-la-educacion}.
+\newblock [Accedido 5 de Agosto de 2017].
+
+\bibitem{robotica_educativa}
+I.~Moreno, L.~Mu{\~n}oz, J.~Rolando, J.~Quintero, K.~Pitt{\'i}, and J.~Quiel.
+\newblock {La robótica educativa, una herramienta para la
+  enseñanza-aprendizaje de las ciencias y las tecnologías.}
+\newblock {\em Revista Teoría de la Educación: Educación y Cultura en la
+  Sociedad de la Información.}, 13(2):74--90, July 2012.
+
+\bibitem{robotica_educativa1}
+J.M. Ca{\~n}as, A.~Mart{\'i}, E.~Perdices, F.~Rivas, and R.~Calvo.
+\newblock {Entorno docente para la programación de la inteligencia de los
+  robots}.
+\newblock {\em Iberoamericana de Automática e Informática Industrial}, pages
+  1--12, 2016.
+
+\bibitem{modelo_espiral2}
+L.F Bello and J.Gutierrez.
+\newblock {Modelo en Espiral y Modelo Basado en Prototipos}.
+\newblock
+  \url{https://prezi.com/y7slahvparel/modelo-en-espiral-y-modelo-basado-en-prototipos-para-el-desarrollo-de-software/},
+  2017.
+\newblock [Accedido 7 de Agosto de 2017].
+
+\bibitem{modelo_espiral3}
+Sonia Posligua.
+\newblock {Modelo en Espiral}.
+\newblock \url{https://es.slideshare.net/soniaposligua/modelo-enespiral}, 2013.
+\newblock [Accedido 7 de Agosto de 2017].
+
+\bibitem{historia_python}
+Carlos Santana.
+\newblock {Historia de Python}.
+\newblock \url{https://www.codejobs.biz/es/blog/2013/03/03/historia-de-python},
+  2013.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{tutorial_python}
+Python~Software Foundation.
+\newblock {Tutorial de Python}.
+\newblock \url{http://docs.python.org.ar/tutorial/3/real-index.html}, 2017.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{historia_python1}
+{Python, \textit{EcuRed}}.
+\newblock \url{https://www.ecured.cu/Python}, 2017.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{navegacion_autolocalizacion}
+Julio~M. Vega.
+\newblock
+  {Navegaci{\'o}n y autolocalizaci{\'o}n de un robot gu{\'i}a de visitantes}.
+\newblock
+  \url{https://gsyc.urjc.es/jmvega/documentation/2008-finalProject-guideRobot-talk.pdf},
+  2008.
+\newblock [Accedido 9 de Agosto de 2017].
+
+\bibitem{navegacion_autolocalizacion1}
+{Navegaci{\'o}n en Robots M{\'o}viles, \textit{Planificaci{\'o}n de
+  Trayectorias para Robots M{\'o}viles }}.
+\newblock \url{http://webpersonal.uma.es/~VFMM/PDF/cap2.pdf}.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{navegacion_autolocalizacion2}
+J.M. Ca{\~a}as, J.L. Isado, and L.~Garc{\'i}a.
+\newblock {Robot navigation combining the Gradient Method and VFF inside JDE
+  architecture}.
+\newblock 2005.
+
+\bibitem{planificacion_movimiento}
+Adrián González.
+\newblock {\em {Planificaci{\'o}n de Movimiento en Rob{\'o}tica M{\'o}vil
+  utilizando ret{\'i}culas de estados}}.
+\newblock PhD thesis, Universidad de Santiago de Compostela.Escola Técnica
+  Superior de Enxeñaria, 2011.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{navegacion}
+Julio~Manuel Vega.
+\newblock {\em {Navegaci{\'o}n visual del robot Pioneer}}.
+\newblock PhD thesis, Universidad Rey Juan Carlos.Ingeniería Técnica en
+  Informática de Sistemas, 2005.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{navegacion_autonoma}
+{Navegación autónoma, \textit{Cuentos Cuánticos}}.
+\newblock \url{https://cuentos-cuanticos.com/2011/11/12/navegacion-autonoma/},
+  2011.
+\newblock [Accedido 10 de Agosto de 2017].
+
+\bibitem{planificacion_movimiento1}
+Mariano~Gómez Plaza.
+\newblock {\em {Planificación óptima de movimiento y aprendizaje por refuerzo
+  en vehículos móviles autónomos}}.
+\newblock PhD thesis, Universidad de Alcalá. Escuela Politécnica Superior,
+  2009.
+\newblock [Accedido 11 de Agosto de 2017].
+
+\bibitem{programacion_robot}
+J.M Cañas.
+\newblock {\em {Programación de robots con la plataforma Jderobot}}.
+\newblock PhD thesis, Universidad de Málaga, 2009.
+\newblock [Accedido 11 de Agosto de 2017].
+
+\bibitem{gazebo1}
+Lucas Martín.
+\newblock {Gazebo, simulador de robótica, \textit{Automatismos Mar del
+  Plata}}.
+\newblock
+  \url{http://www.automatismos-mdq.com.ar/blog/2017/01/gazebo-simulador-de-robotica.html},
+  2017.
+\newblock [Accedido 12 de Agosto de 2017].
+
+\bibitem{gazebo2}
+{Gazebo Simulator: simular un robot nunca fue tan fácil, \textit{Robologs}}.
+\newblock
+  \url{https://robologs.net/2016/06/25/gazebo-simulator-simular-un-robot-nunca-fue-tan-facil/},
+  2016.
+\newblock [Accedido 12 de Agosto de 2017].
+
+\bibitem{tipos_movimiento}
+Grupo SIRP.
+\newblock {Tipos de Movimiento y Grados de Libertad}.
+\newblock
+  \url{https://es.slideshare.net/EducaredColombia/tipos-de-movimiento-y-grados-de-libertad}.
+\newblock [Accedido 13 de Agosto de 2017].
+
+\bibitem{mindstorms}
+{Lego NXT Holonómico, \textit{Lego NXT Mindstorms}}.
+\newblock \url{http://www.lejosconlego.com/2013/02/lego-nxt-holonomico.html}.
+\newblock [Accedido 13 de Agosto de 2017].
+
+\bibitem{odometria}
+{Que es la odometría, \textit{Arqhys Arquitectura}}.
+\newblock \url{http://www.arqhys.com/contenidos/quees-odometria.html}, 2017.
+\newblock [Accedido 13 de Agosto de 2017].
+
+\bibitem{sdf}
+{SDF}.
+\newblock \url{http://sdformat.org/}, 2017.
+\newblock [Accedido 13 de Agosto de 2017].
+
+\bibitem{simuladores}
+{Simuladores}.
+\newblock
+  \url{https://eva.fing.edu.uy/pluginfile.php/127423/mod_resource/content/1/simuladores.pdf}.
+\newblock [Accedido 13 de Agosto de 2017].
+
+\bibitem{irobot}
+iRobot Corporation.
+\newblock {\em Manual Roomba 500. Robot de Limpieza Aspirador}, 2010.
+\newblock [Accedido 14 de Agosto de 2017].
+
+\bibitem{irobot1}
+iRobot Corporation.
+\newblock {\em Manual Roomba 800}, 2014.
+\newblock [Accedido 14 de Agosto de 2017].
+
+\bibitem{aspiradora}
+Elena Rodríguez.
+\newblock {\em {Sistema de Control de Aspiradora Automática}}.
+\newblock PhD thesis, Universidad Pontificia Comillas. Escuela Técnica
+  Superior de Ingeniería, 2008.
+\newblock [Accedido 14 de Agosto de 2017].
+
+\bibitem{aspiradora1}
+Lucía Ruiz.
+\newblock {Las Mejores Aspiradoras Robot del 2017 – Guía de Compra,
+  \textit{Aspiradoras de mano}}.
+\newblock \url{http://www.aspiradorasdemano.com/mejores-aspiradoras-robot/},
+  2017.
+\newblock [Accedido 14 de Agosto de 2017].
+
+\bibitem{vision}
+Ana Misiego.
+\newblock {\em {Visión Artificial y su aplicación en la automatización de
+  tareas de limpieza }}.
+\newblock PhD thesis, Universidad de Valladolid.Escuela de Ingenierías
+  Industriales, 2017.
+\newblock [Accedido 15 de Agosto de 2017].
+
+\bibitem{xiaomi}
+Jason Roberts.
+\newblock {Xiaomi Mi robot vacuum cleaner – what lays behind the hype,
+  \textit{Vacuums Guide}}.
+\newblock \url{https://www.vacuumsguide.com/xiaomi-mi-robot-vacuum-cleaner/},
+  2016.
+\newblock [Accedido 15 de Agosto de 2017].
+
+\bibitem{xiaomi1}
+{Test Robot aspiradora Xiaomi Mi, \textit{Las aspiradoras}}.
+\newblock \url{http://www.lasaspiradoras.com/test-robot-aspiradora-xiaomi-mi/},
+  2017.
+\newblock [Accedido 15 de Agosto de 2017].
+
+\bibitem{trilobite}
+Electrolux.
+\newblock {\em Manual Trilobite}, 2001.
+\newblock [Accedido 15 de Agosto de 2017].
+
+\bibitem{localization}
+Guido Zunino.
+\newblock {\em {Simultaneous Localization and Mapping for Navigation in
+  Realistic Environments }}.
+\newblock PhD thesis, Royal Institute of Technology, 2002.
+\newblock [Accedido 16 de Agosto de 2017].
+
+\bibitem{roomba_navigation}
+Julia Layton.
+\newblock {How Robotic Vacuums Work, \textit{HowStuffWorks }}.
+\newblock
+  \url{http://electronics.howstuffworks.com/gadgets/home/robotic-vacuum2.htm}.
+\newblock [Accedido 16 de Agosto de 2017].
+
+\bibitem{roomba_lg}
+{Robot aspirador LG Hombot Turbo. Especial casas con mascotas, niños y
+  alfombras, \textit{LG}}.
+\newblock \url{http://www.lg.com/es/aspiradoras/lg-VR65710LVMP}, 2017.
+\newblock [Accedido 16 de Agosto de 2017].
+
+\bibitem{roomba_navigation1}
+{Roomba navigation algorithm, \textit{Random Sequence}}.
+\newblock
+  \url{http://www.randseq.org/2012/11/roomba-navigation-algorithm.html}, 2012.
+\newblock [Accedido 16 de Agosto de 2017].
+
+\bibitem{introduccion_espirales}
+{Introducción a las Espirales}.
+\newblock \url{hhttp://www.ieshumanes.com/nw/Espiral/espirales.pdf}.
+\newblock [Accedido 17 de Agosto de 2017].
+
+\bibitem{espirales_funciones_polares}
+Damiani Díaz.
+\newblock {Espirales y funciones polares,\textit{Pontificia Universidad
+  Católica de Ecuador}}.
+\newblock
+  \url{http://calculodiferencial-pucesd.blogspot.com.es/2012/12/espirales-y-funciones-polares.html},
+  2012.
+\newblock [Accedido 17 de Agosto de 2017].
+
+\bibitem{espiral_arquimedes}
+{La Espiral de Arquímedes}.
+\newblock
+  \url{http://www.ite.educacion.es/formacion/enred/web_espiral/matematicas_1/arquimedes.htm}.
+\newblock [Accedido 17 de Agosto de 2017].
+
+\bibitem{repositorio_parking}
+Jordan~Van Duyne.
+\newblock {P{\'a}gina del repositorio AutonomousParking}.
+\newblock \url{https://github.com/jovanduy/AutonomousParking}, 2017.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo}
+{Avances tecnológicos en el aparcamiento autónomo,\textit{Central Recambio
+  Original}}.
+\newblock
+  \url{http://www.recambiooriginal.com/blog/recambios-originales/mecanica/avances-tecnologicos-aparcamiento-autonomo/},
+  2017.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo1}
+Nacho Teso.
+\newblock {Aparcamiento autónomo: cómo funciona su
+  tecnología,\textit{Noticias coches.com}}.
+\newblock
+  \url{https://noticias.coches.com/noticias-motor/aparcamiento-autonomo-como-funciona-su-tecnologia/234288},
+  2016.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo2}
+Ibáñez.
+\newblock {Tecnología para el coche: sistemas de aparcamiento
+  automático,\textit{xataka}}.
+\newblock
+  \url{https://www.xataka.com/automovil/tecnologia-para-el-coche-sistemas-de-aparcamiento-automatico},
+  2012.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo3}
+José~Manuel Maletá.
+\newblock {Daimler y Bosch, un ensayo de 'parking' autónomo desde el móvil en
+  el museo Mercedes-Benz,\textit{El Mundo}}.
+\newblock
+  \url{http://www.elmundo.es/motor/2017/07/24/59762c8522601d11508b467a.html},
+  2017.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo4}
+Ibáñez.
+\newblock {De 0 a 5: cuáles son los diferentes niveles de conducción
+  autónoma, a fondo,\textit{xataka}}.
+\newblock
+  \url{https://www.xataka.com/automovil/de-0-a-5-cuales-son-los-diferentes-niveles-de-conduccion-autonoma},
+  2017.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{aparcamiento_autonomo5}
+Markus Maurer, J.~Christian Gerdes, Barbara Lenz, and Hermann Winner.
+\newblock {\em {Autonomous Driving. Technical, Legal and Social Aspects}}.
+\newblock Springer Open, Daimler und Benz-Stiftung, Ladenburg, 2016.
+
+\bibitem{aparcamiento_autonomo6}
+Julio Benítez.
+\newblock {Sistemas de aparcamiento inteligente}.
+\newblock
+  \url{http://www.vidapremium.com/sistemas-de-aparcamiento-inteligente-2031.htm#5},
+  2017.
+\newblock [Accedido 19 de Agosto de 2017].
+
+\bibitem{opencv}
+{P{\'a}gina Oficial de OpenCV}.
+\newblock \url{http://opencv.org/}, 2017.
+
+\bibitem{robotica_educativa2}
+Jose~Cabrera Lozano.
+\newblock {Definición de robótica educativa\textit{Edukative, Robótica
+  educativa}}.
+\newblock \url{https://edukative.es/definicion-robotica-educativa/}, 2014.
+\newblock [Accedido 11 de Septiembre de 2017].
+
+\bibitem{robotica_educativa3}
+{Iniciativas que promueven las competencias 4C en los alumnos: creatividad,
+  pensamiento crítico, colaboración y comunicación,\textit{innedu}}.
+\newblock
+  \url{http://www.innedu.es/iniciativas-que-promueven-las-competencias-4c-en-los-alumnos-creatividad-pensamiento-critico-colaboracion-y-comunicacion/#.WbbxB8hJbIV}.
+\newblock [Accedido 11 de Septiembre de 2017].
+
+\bibitem{robotica_educativa4}
+{Importancia de los videojuegos para las habilidades del siglo
+  XXI,\textit{ÁrbolABC.com}}.
+\newblock
+  \url{https://arbolabc.com/blog/importancia-de-los-videojuegos-para-las-habilidades-del-siglo-xxi/}.
+\newblock [Accedido 11 de Septiembre de 2017].
+
+\bibitem{robotica_educativa5}
+{Las Cuatro Habilidades De Una Educación Del Siglo 21,\textit{Fundación SM}}.
+\newblock
+  \url{http://www.seminariointernacional.com.mx/blog/Las-cuatro-habilidades-de-una-educacion-del-siglo-21},
+  2015.
+\newblock [Accedido 11 de Septiembre de 2017].
+
+\bibitem{robotic_educativa}
+G.~Ocaña, I.~Romero, F.~Gil, and A.~Codina.
+\newblock {Implantación de la nueva asignatura “Robótica” en Enseñanza
+  Secundaria y Bachillerato}.
+\newblock {\em Investigación en la Escuela}, 13(87):65--79, 2015.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa1}
+{JdeRobot-kids,\textit{JdeRobot}}.
+\newblock \url{http://jderobot.org/Robotica-en-secundaria}, 2017.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa2}
+{Tutoriales de robóticaTutoriales de robótica}.
+\newblock \url{https://www.solidworks.es/sw/education/9931_ESN_HTML.htm}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa3}
+Ricardo Tellez.
+\newblock {A thousand robots for each student: using cloud robot simulations to
+  teach robotics}.
+\newblock {\em The Construct Sim}, 2016.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa4}
+Robótica en~la Universidad~de Alcalá.
+\newblock {Proyecto TuBot 2015,\textit{Alcabot}}.
+\newblock
+  \url{http://asimov.depeca.uah.es/robotica/mod/resource/view.php?id=1188},
+  2015.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa5}
+{Grado en Ingeniería Robótica,\textit{Universidad de Alicante}}.
+\newblock
+  \url{https://cvnet.cpd.ua.es/webcvnet/planestudio/planestudiond.aspx?plan=C211#},
+  2016.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa6}
+{Plan de Estudios Electrónica, Robótica y Mecatrónica,\textit{Universidad de
+  Málaga}}.
+\newblock
+  \url{http://www.uma.es/grado-en-ingenieria-electronica-robotica-y-mecatronica/info/9857/plan-de-estudios-electronica-robotica-y-mecatronica/},
+  2017.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{robotic_educativa7}
+{471 Másters oficiales de ingeniería electrónica robotica
+  mecatroóica,\textit{educaweb}}.
+\newblock
+  \url{http://www.educaweb.com/masters-oficiales-de/ingenieria-electronica-robotica-mecatronica/},
+  2017.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{middleware}
+{Robotics middleware,\textit{Wikipedia}}.
+\newblock \url{https://en.wikipedia.org/wiki/Robotics_middleware}, 2017.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{open_source}
+{Open Source Robotics Software/Hardware List,\textit{Learn Robotix}}.
+\newblock \url{http://learnrobotix.com/open-source-robotics-software.html}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\bibitem{opecv_educacion}
+V.~M. Arévalo, J.~González, and G.~Ambrosio.
+\newblock {\em {La Librería de Visión Artificial OpenCV, Aplicación a la
+  Docencia e Investigación}}.
+\newblock PhD thesis, Dpto. De Ingeniería de Sistemas y Automática,
+  Universidad de Málaga, 2004.
+\newblock [Accedido 12 de Septimbre de 2017].
+
+\bibitem{BoofCV}
+{BoofCV}.
+\newblock \url{https://boofcv.org/index.php?title=Main_Page}.
+\newblock [Accedido 12 de Septiembre de 2017].
+
+\end{thebibliography}
