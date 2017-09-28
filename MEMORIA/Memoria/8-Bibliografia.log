@@ -1,0 +1,24 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6350 64-bit) (preloaded format=pdflatex 2017.8.11)  15 AUG 2017 21:02
+entering extended mode
+**./8-Bibliografia.tex
+(8-Bibliografia.tex
+LaTeX2e <2017-04-15>
+Babel <3.10> and hyphenation patterns for 75 language(s) loaded.
+\bibdata{Memoria}
+No file 8-Bibliografia.bbl.
+)
+! Emergency stop.
+<*> ./8-Bibliografia.tex
+                        
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 7 strings out of 493323
+ 126 string characters out of 3139066
+ 53648 words of memory out of 3000000
+ 3645 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 5i,0n,3p,68b,17s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!

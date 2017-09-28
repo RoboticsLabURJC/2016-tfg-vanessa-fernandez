@@ -1,0 +1,150 @@
+\documentclass[a4paper, 12pt, oneside]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{layout}
+\usepackage{emptypage}
+\usepackage{fancyhdr}
+\usepackage[spanish,es-tabla]{babel}
+%\usepackage[Conny]{fncychap}
+%\usepackage{graphicx}
+\usepackage{subfigure} % subfiguras
+\usepackage{caption}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage[a4paper,top=3cm, bottom=3cm, inner=2.5cm, outer=2.5cm]{geometry}
+\usepackage{listings}
+\usepackage[spanish]{babel}
+\usepackage{url}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{rotating} 
+\usepackage{color}
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
+\usepackage[spanish]{babel}
+\usepackage{enumerate}
+\usepackage[acronym, nonumberlist]{glossaries}
+\makeglossaries
+\include{0-Acronimos}
+
+\makeatletter
+\renewcommand{\@makeschapterhead}[1]{%
+%  \vspace*{50\p@}%
+  \vspace*{0\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par \nobreak
+%    \vskip 40\p@
+    \vskip 15\p@
+  }}
+\makeatother
+
+\renewcommand{\baselinestretch}{1.4}
+\setlength{\headheight}{16pt} 
+\captionsetup{justification=justified}
+\pretolerance=1000
+
+\chead[]{}
+\rhead[]{}
+\renewcommand{\headrulewidth}{0.5pt}
+
+\pagestyle{empty}
+
+\title{Nuevas Prácticas en el Entorno Docente de Robótica JdeRobot-Academy}
+\author{Vanessa Fernández Martínez}
+
+\lstset{
+	float=hbp,
+	basicstyle=\ttfamily\small,
+	columns=flexible,
+	tabsize=4,
+	frame=single,
+	extendedchars=true,
+	showspaces=false,
+	showstringspaces=false,
+	numbers=none,
+	numberstyle=\tiny,
+	breaklines=false,
+	breakautoindent=true,
+	captionpos=b
+}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+\definecolor{lightgray}{gray}{0.9}
+
+\begin{document}
+%%%%%%%%%%%%%%% Portada %%%%%%%%%%%%%%%%%%%%
+\include{0-Portada}
+
+\pagenumbering{Roman}
+
+%%%%%%%%%%%%%%% Agradecimientos %%%%%%%%%%%%
+\include{0-Agradecimientos}
+
+
+%%%%%%%%%%%%%%% Resumen %%%%%%%%%%%%%%%%%%%%
+\include{0-Resumen}
+\cleardoublepage
+
+%%%%%%%%%%%%%%% Índices %%%%%%%%%%%%%%%%%%%%
+%\cleardoublepage
+\renewcommand{\tablename}{Tabla}
+%\renewcommand{\listtablename}{Índice de tablas}
+%\tableofcontents
+
+%\cleardoublepage % Í­ndice de figuras
+%\addcontentsline{toc}{chapter}{\listfigurename}
+%\listoffigures
+
+%\cleardoublepage % Í­ndice de tablas
+%\addcontentsline{toc}{chapter}{Índice de tablas}
+%\listoftables 
+\cleardoublepage
+\tableofcontents % indice de contenidos
+
+\cleardoublepage
+\listoffigures % indice de figuras
+\addcontentsline{toc}{chapter}{Índice de figuras} % para que aparezca en el indice de contenidos
+
+\cleardoublepage
+\listoftables % indice de tablas
+\addcontentsline{toc}{chapter}{Índice de tablas} % para que aparezca en el indice de contenidos
+
+
+%%%%%%%%%%%%%%% Acronimos %%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\acronymname}{Acrónimos}
+\cleardoublepage
+\printglossary[type=\acronymtype]
+\addcontentsline{toc}{chapter}{Acrónimos}
+\cleardoublepage
+ 
+%%%%%%%%%%%%%%% Capí­tulos %%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setlength{\parindent}{6mm}
+
+\lhead[]{CAPÍTULO \thechapter. INTRODUCCIÓN}
+\include{1-Introduccion}
+\lhead[]{CAPÍTULO \thechapter. OBJETIVOS}
+\include{2-Objetivos}
+\lhead[]{CAPÍTULO \thechapter. INFRAESTRUCTURA}
+\include{3-Infraestructura}
+\lhead[]{CAPÍTULO \thechapter. GPP}
+\include{4-GPP}
+\lhead[]{CAPÍTULO \thechapter. ASPIRADORA AUTÓNOMA}
+\include{5-Roomba}
+\lhead[]{CAPÍTULO \thechapter. APARCAMIENTO AUTOMÁTICO}
+\include{6-Autoparking}
+\lhead[]{CAPÍTULO \thechapter. CONCLUSIONES}
+\include{7-Conclusiones}
+
+%%%%%%%%%%%%%%% Bibliograí­a %%%%%%%%%%%%%%%
+
+\nocite{*}
+\lhead[]{BIBLIOGRAFÍA}
+\include{8-Bibliografia}
+\end{document}
