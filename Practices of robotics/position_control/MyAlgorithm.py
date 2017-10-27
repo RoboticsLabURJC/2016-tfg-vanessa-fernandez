@@ -16,25 +16,6 @@ time_cycle = 80
 
 class MyAlgorithm(threading.Thread):
 
-    class pid(object):
-        def __init__(self, kp, kd, ki):
-            # Constant of PID control
-            self.kp = kp
-            self.kd = kd
-            self.ki = ki
-            self.error = 0
-            self.acumulate_error = 0
-
-        def calculateU(self, e):
-            proportional = self.kp * e
-            derivate = self.kd * (e - self.error)
-            self.acumulate_error = self.acumulate_error + e
-            integral = self.ki*(self.acumulate_error)
-            u =  -(proportional) -(derivate) -(integral)
-            self.error = e
-            return u
-            
-
     def __init__(self, camera, navdata, pose, cmdvel, extra):
         self.camera = camera
         self.navdata = navdata
@@ -44,11 +25,6 @@ class MyAlgorithm(threading.Thread):
 
         self.beacons=[]
         self.initBeacons()
-        self.minError=0.01
-
-        # Constructor PID
-        self.pidX = self.pid(0.655,0.000112,0.00029)
-        self.pidY = self.pid(0.655,0.000112,0.00029)
 
         self.stop_event = threading.Event()
         self.kill_event = threading.Event()
@@ -111,42 +87,3 @@ class MyAlgorithm(threading.Thread):
         # Getting actual beacon
         actualBeacon = self.getNextBeacon()
 
-        if actualBeacon != None:
-
-            # Coordinates of target
-            posX_target = actualBeacon.getPose().x
-            posY_target = actualBeacon.getPose().y
-
-            # Calculating the error (position of target minus position of drone)
-            errorx = posX_target - self.pose.getPose3D().x
-            errory = posY_target - self.pose.getPose3D().y
-
-            # Controlador PID
-            controladorX = self.pidX.calculateU(errorx)
-            controladorY = self.pidY.calculateU(errory)
-
-            print("error", errorx, errory)
-            print(controladorX, controladorY)
-
-            # Correct position
-            if abs(controladorX) > self.minError:
-                self.cmdvel.setVX(-controladorX)
-
-            if abs(controladorY) > self.minError:
-                self.cmdvel.setVY(-controladorY)
-
-            # If the margin is minimum, then we have got the target
-            if (abs(controladorX) <= self.minError) and (abs(controladorY) <= self.minError):
-                # We have got the target.
-                actualBeacon.setReached(True)
-                # The acumulate error is zero
-                self.pidX.acumulate_error = 0
-                self.pidY.acumulate_error = 0
-            else:
-                # Send speed 
-                self.cmdvel.sendVelocities()
-
-        else:
-            # If the drone has visited all targets, then the drone stop
-            self.cmdvel.sendCMDVel(0,0,0,0,0,0)
-        pass
