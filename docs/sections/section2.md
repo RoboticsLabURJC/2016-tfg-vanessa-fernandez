@@ -16,7 +16,7 @@ In the next picture we see a blue mantle that are laser readings, we also have a
 
 The steps we must follow are:
 
-1. Getting the position of the sub-goal to which we want to reach: 
+- Getting the position of the sub-goal to which we want to reach: 
 
 <pre>
 self.currentTarget=self.getNextTarget()
@@ -25,7 +25,7 @@ self.targety = self.currentTarget.getPose().y
 </pre>
 
 
-2. We get the robot position and orientation of the robot with respect to the map: 
+- We get the robot position and orientation of the robot with respect to the map: 
 
 <pre>
 rx = self.sensor.getRobotX()
@@ -34,7 +34,7 @@ rt = self.sensor.getRobotTheta()
 </pre>
 
 
-3. We mark the sub-objectives for which we have already crossed: 
+- We mark the sub-objectives for which we have already crossed: 
 
 <pre>
 if(abs(ry)<(abs(self.targety)+1) and abs(ry)>(abs(self.targety)-1)):
@@ -42,7 +42,7 @@ if(abs(ry)<(abs(self.targety)+1) and abs(ry)>(abs(self.targety)-1)):
 </pre>
 
 
-4. We obtain the data of the laser sensor, which consist of 180 pairs of values and we obtain the laser data more clearly: 
+- We obtain the data of the laser sensor, which consist of 180 pairs of values and we obtain the laser data more clearly: 
 
 <pre>
 laser_data = self.sensor.getLaserData()
@@ -50,14 +50,14 @@ laser = parse_laser_data(laser_data)
 </pre>
 
 
-5. We convert the absolute coordinates of the sub-goal in coordinates relative to the robot: 
+- We convert the absolute coordinates of the sub-goal in coordinates relative to the robot: 
 
 <pre>
 self.carx,self.cary=absolutas2relativas(self.targetx,self.targety,rx,ry,rt)
 </pre>
 
 
-6. With the laser data, we obtain the repulsive vector: 
+- With the laser data, we obtain the repulsive vector: 
 
 <pre>
 dist_threshold = 6
@@ -76,7 +76,7 @@ self.obsx,self.obsy = vff_repulsor
 </pre>
 
 
-7. We calculate the module of repulsive vector and depending in its value remains as is or increase its weight: 
+- We calculate the module of repulsive vector and depending in its value remains as is or increase its weight: 
 
 <pre>
 mod_repulsor = pow(pow(self.obsx,2) + pow(self.obsy,2),0.5)
@@ -85,7 +85,7 @@ if (mod_repulsor > 1.55):
 </pre>
 
 
-8. We make the sum of the attractor and repulsive vectors to obtain the resulting vector:
+- We make the sum of the attractor and repulsive vectors to obtain the resulting vector:
 
 <pre>
 self.avgx = self.carx + self.obsx
@@ -93,14 +93,14 @@ self.avgy = self.cary + self.obsy
 </pre>
 
 
-9. Calculation of the speed module: 
+- Calculation of the speed module: 
 
 <pre>
 speed = pow(pow(self.avgx,2) + pow(self.avgy,2),0.5)
 </pre>
 
 
-10. Calculation of the correction: 
+- Calculation of the correction: 
 
 <pre>
 if (abs(self.obsx) > 2):
@@ -116,7 +116,7 @@ if ((self.obsx == (-self.carx)) and (self.obsy == (-self.cary))):
 </pre>
 
 
-11. Calculation of the angle: 
+- Calculation of the angle: 
 
 <pre>
 if (speed < 1):
@@ -129,7 +129,7 @@ if(self.avgy > 0):
 </pre>
 
 
-12. We assign the traction and rotation speeds: 
+- We assign the traction and rotation speeds: 
 
 <pre>
 # Linear speed
@@ -162,7 +162,7 @@ Here, we see a video of this practice:
 
 I have made the solution of the VFF's algorithm for the version 5.4.2 of JdeRobot. I made some changes to the solution from the previous version of JdeRobot.The changes are:
 
-1. How to get the robot's position:
+- How to get the robot's position:
 
 <pre>
 rx = self.pose3d.getX()/1000
@@ -171,7 +171,7 @@ rt = self.pose3d.getYaw()
 </pre>
 
 
-2. The linear speed and the angular speed:
+- The linear speed and the angular speed:
 
 <pre>
 if ((speed < 1) or (speed > 3)):
