@@ -84,46 +84,46 @@ The .word file is as follows:
 <pre>
 <?xml version="1.0" ?>
 <sdf version="1.5">
-	<world name="default">
-		<scene>
-      		<grid>false</grid>
-    	</scene>
-    	<!-- A global light source -->
-    	<include>
-      		<uri>model://sun</uri>
-    	</include>
+<world name="default">
+	<scene>
+	<grid>false</grid>
+</scene>
+<!-- A global light source -->
+<include>
+	<uri>model://sun</uri>
+</include>
 
-    	<!-- A ground plane -->
-    	<include>
-      		<uri>model://ground_plane</uri>
-    	</include>
+<!-- A ground plane -->
+<include>
+	<uri>model://ground_plane</uri>
+</include>
 
-		<!-- A car-->
-    	<include>
-      		<uri>model://carApriltag</uri>
-      		<pose>0 0 0.5 0 0 3.15</pose>
-    	</include>
-    	<!-- A road -->
-    	<road name="my_road">
-      		<width>3</width>
-      		<point>0 -20 0.02</point>
-      		<point>0 0 0.02</point>
-      		<point>0 20 0.02</point>
-    	</road>
-    	<road name="my_road2">
-      		<width>3</width>
-      		<point>-20 20 0.02</point>
-      		<point>0 20 0.02</point>
-      		<point>20 20 0.02</point>
-    	</road>
+	<!-- A car-->
+<include>
+	<uri>model://carApriltag</uri>
+	<pose>0 0 0.5 0 0 3.15</pose>
+</include>
+<!-- A road -->
+<road name="my_road">
+	<width>3</width>
+	<point>0 -20 0.02</point>
+	<point>0 0 0.02</point>
+	<point>0 20 0.02</point>
+</road>
+<road name="my_road2">
+	<width>3</width>
+	<point>-20 20 0.02</point>
+	<point>0 20 0.02</point>
+	<point>20 20 0.02</point>
+</road>
 
-		<!-- A houses-->
-		<include>
-          	<static>true</static>
-			<uri>model://house_3</uri>
-      		<pose>-4 13 0.5 0 0 1.6</pose>
-		</include>
-  	</world>
+	<!-- A houses-->
+	<include>
+  	<static>true</static>
+		<uri>model://house_3</uri>
+	<pose>-4 13 0.5 0 0 1.6</pose>
+	</include>
+</world>
 </sdf>
 </pre>
 
