@@ -11,7 +11,7 @@ In order to implement this practice we have Gazebo simulator and JdeRobot platfo
 In the next picture we see a blue mantle that are laser readings, we also have a green vector, which is the attractor vector; a red vector, which is the repulsive vector; and finally a black vector, which is the combination of the two. 
 
 
-![Obstacle avoidance](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/obstacle_avoidance.png)
+![Obstacle avoidance](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/obstacle_avoidance.png)
 
 
 The steps we must follow are:
@@ -148,13 +148,13 @@ else:
 
 Here, we see a video of this practice: 
 
-[![Práctica 2- Obstacle avoidance](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=8dEg-3qunU4)
+[![Práctica 2- Obstacle avoidance](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=8dEg-3qunU4)
 
 
 
 * Problem with solution of VFF
 
-[![Problem obstacle avoidance](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=rCKQaw2_0hA)
+[![Problem obstacle avoidance](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=rCKQaw2_0hA)
 
 
 
@@ -185,6 +185,6 @@ else:
     self.motors.sendW(angle * 0.75)
 </pre>
 
-[![Obstacle avoidance (versión 5.4.2 de JdeRobot)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=kVPGPjUv1oM)
+[![Obstacle avoidance (versión 5.4.2 de JdeRobot)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/obst_avoidance.png)](https://www.youtube.com/watch?v=kVPGPjUv1oM)
 
 
