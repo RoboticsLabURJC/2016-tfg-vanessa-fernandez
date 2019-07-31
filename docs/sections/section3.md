@@ -8,7 +8,7 @@ In this practice we will use the Gazebo simulator, the Jderobot platform (we rel
 
 The practice is to perform a PID control reagent and complete a lap of the Formula 1 circuit. To achieve this goal our Formula 1 will consist of two sensors, which are two cameras, a left and a right; also we have two actuators: speed traction and rotation speed. The cameras provide us with pixel information as an array of numbers that serve to guide our Formula 1. The circuit can be seen in the following image: 
 
-![Follow line](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/follow_line.png)
+![Follow line](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/follow_line.png)
 
 
 The steps we must follow are: 
@@ -64,7 +64,7 @@ self.setLeftImageFiltered(imageLeft_HSV_filtered_Mask)
 
 Here, we see the images of the right and left cameras. The images are in color and binary: 
 
-![Images](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/camera.png)
+![Images](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/camera.png)
 
 
 6. In the binary image, the road is white and the rest is black. With this image we can analyze the points of interest of the image. First we must find the two endpoints of the red line: 
@@ -135,7 +135,7 @@ else:
 
 Here, we see a video of this practice: 
 
-[![Follow line](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/follow_line.png)](https://www.youtube.com/watch?v=4yGpB2qFSyQ)
+[![Follow line](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/follow_line.png)](https://www.youtube.com/watch?v=4yGpB2qFSyQ)
 
 
 
