@@ -44,7 +44,7 @@ sudo apt-get update
 
 I have used the code of global_navigation practice to introduce new objects in the world of this practice. In this practice we have a yellowTaxi model. We can see a picture of the world with the taxi below: 
 
-![Gazebo](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/gazebo7.png)
+![Gazebo](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/gazebo7.png)
 
 
 In the [repository](https://github.com/JdeRobot/TeachingRobotics/tree/master/src/global_navigation), I´ve changed the cityMedium.world and cityLarge.world files. I added coke_can and Hokuyo models in the world of Gazebo. To do this in the code of the two .world files, I added the following code behind the model sun: 
@@ -70,7 +70,7 @@ In the [repository](https://github.com/JdeRobot/TeachingRobotics/tree/master/src
 
  New objects included in the Gazebo world, we can see in the picture below: 
 
-![Gazebo](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/gazebo7_2.png)
+![Gazebo](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/gazebo7_2.png)
 
 
 * **Gazebo 7**
