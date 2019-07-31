@@ -6,47 +6,47 @@ layout: default
 
 * **Eighth step with solution:**
 
-[![Stop Practice v8 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=IOdmZzXmbf8)
+[![Stop Practice v8 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=IOdmZzXmbf8)
 
 
 * **Seventh step with solution**
 
-[![Stop Practice v7 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=Tne9SZRI4vE)
+[![Stop Practice v7 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=Tne9SZRI4vE)
 
 
 * **Sixth step with solution**
 
-[![Stop Practice v6 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=cyYbcvvSaT4)
+[![Stop Practice v6 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=cyYbcvvSaT4)
 
 
 * **Fifth step with solution**
 
-[![Stop Practice v5 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=z3Q7idhFOVM)
+[![Stop Practice v5 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=z3Q7idhFOVM)
 
 
 * **Fourth step with solution**
 
-[![Stop Practice v4 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=ggxYFdi1Wvs)
+[![Stop Practice v4 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=ggxYFdi1Wvs)
 
 
 * **Updated**
 
-![New world](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/new_stop.png)
+![New world](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/new_stop.png)
 
 
 * **Third step with solution**
 
-[![Stop Practice v3 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=dgnApi4-rtA)
+[![Stop Practice v3 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=dgnApi4-rtA)
 
 
 * **Second step with solution**
 
-[![Stop Practice v2 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=cozAPOndtoY)
+[![Stop Practice v2 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=cozAPOndtoY)
 
 
 * **First step with solution**
 
-[![Stop Practice v1 (JdeRobot Academy)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=zHv_F0uZM7c)
+[![Stop Practice v1 (JdeRobot Academy)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=zHv_F0uZM7c)
 
 
 
@@ -54,21 +54,21 @@ layout: default
 
 I've modified the stop.world. Now, there are cars that move in different directions and at different speeds. 
 
-[![Dummy](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=kF8ISlxbMHA)
+[![Dummy](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=kF8ISlxbMHA)
 
 
 * **Cars that move by themselves in the Stop world**
 
 I've maked a world named stop.world in Gazebo. In this world, there are cars that move by themself.
 
-[![Dummycar stop: test in Gazebo](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=0JcB6dxByd0)
+[![Dummycar stop: test in Gazebo](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=0JcB6dxByd0)
 
 
 * **Collisions with objects + kobukiViewer**
 
 I've created a world in Gazebo using a .dae file. To create this file I has used the program Sketchup in Windows.In the world I added a turtlebot to teleoperate it with kobukiViewer component.In the following video we can see how it moves the turtlebot when we teleoperate it. When I've created the world I've added a collision mesh for road.Thus the robot doesn't fall.
 
-[![kobukiViewer (JdeRobot)](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=g1MN0oACf48)
+[![kobukiViewer (JdeRobot)](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/stop.png)](https://www.youtube.com/watch?v=g1MN0oACf48)
 
 
 * **Roads, house and carApriltag in Gazebo**
@@ -128,7 +128,7 @@ The .word file is as follows:
 </pre>
 
 
-![World](https://roboticsurjc-students.github.io/2016-tfg-vanessa-fernandez/images/car_house.png)
+![World](https://roboticslaburjc.github.io/2016-tfg-vanessa-fernandez/images/car_house.png)
 
 
 
