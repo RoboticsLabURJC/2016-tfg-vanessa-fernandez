@@ -3,6 +3,7 @@ layout: default
 ---
 # Vanessa Fernández's TFG student: new exercises in TeachingRobotics
 
+* [Vacuum Cleaner Practice](sections/section7.md)
 * [Autopark Practice](sections/section6.md)
 * [Stop Practice](sections/section5.md)
 * [Gazebo and others](sections/section4.md)
